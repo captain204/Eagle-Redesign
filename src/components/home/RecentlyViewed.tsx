@@ -6,10 +6,10 @@ import { History } from "lucide-react";
 
 // Mock Data reusing the structure
 const RECENT_PRODUCTS = [
-    { id: 101, name: "1stEagle Power Bank 10000mAh (E10 Plus)", price: 15900, originalPrice: 20000, image: "/images/1steagle/uploaded_media_3.jpg", tag: "Best Seller" },
-    { id: 102, name: "1stEagle Big Generator 60000mAh (E600)", price: 36000, image: "/images/1steagle/uploaded_media_2.jpg" },
-    { id: 103, name: "1stEagle Mini Generator 50000mAh (E500)", price: 49500, originalPrice: 60000, image: "/images/1steagle/uploaded_media_4.jpg" },
-    { id: 104, name: "1stEagle Mobile Power (Black)", price: 12500, image: "/images/1steagle/uploaded_media_1.jpg" },
+    { id: 101, name: "1stEagle Power Bank 10000mAh (E10 Plus)", price: 15900, originalPrice: 20000, image: "/images/1steagle/uploaded_media_3_1771516262315.jpg", tag: "Best Seller" },
+    { id: 102, name: "1stEagle Big Generator 60000mAh (E600)", price: 36000, image: "/images/1steagle/uploaded_media_2_1771516262315.jpg" },
+    { id: 103, name: "1stEagle Mini Generator 50000mAh (E500)", price: 49500, originalPrice: 60000, image: "/images/1steagle/uploaded_media_4_1771516262315.jpg" },
+    { id: 104, name: "1stEagle Mobile Power (Black)", price: 12500, image: "/images/1steagle/uploaded_media_1_1771516262315.jpg" },
 ];
 
 export function RecentlyViewed() {

@@ -36,7 +36,7 @@ export function Header() {
             <div className="container mx-auto px-4 flex items-center justify-between gap-4">
                 {/* Logo */}
                 <Link href="/" className="shrink-0 flex items-center gap-1 group">
-                    <div className="relative w-40 h-16">
+                    <div className="relative w-20 h-8 md:w-32 md:h-12"> {/* Further reduced size for mobile */}
                         <Image
                             src="/images/1steagle/logo.jpg"
                             alt="1stEagle"

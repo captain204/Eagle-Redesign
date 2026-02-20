@@ -23,14 +23,14 @@ export function CartDrawer() {
             id: 1,
             name: "1stEagle Power Bank 10000mAh (E10 Plus)",
             price: 15900,
-            image: "/images/1steagle/uploaded_media_3.jpg",
+            image: "/images/1steagle/uploaded_media_3_1771516262315.jpg",
             quantity: 1,
         },
         {
             id: 2,
             name: "1stEagle Mobile Power (Black)",
             price: 12500,
-            image: "/images/1steagle/uploaded_media_1.jpg",
+            image: "/images/1steagle/uploaded_media_1_1771516262315.jpg",
             quantity: 2,
         },
     ]);
@@ -77,7 +77,7 @@ export function CartDrawer() {
                             {items.map((item) => (
                                 <div key={item.id} className="flex gap-4">
                                     <div className="relative w-20 h-20 rounded-md overflow-hidden bg-gray-100 flex-shrink-0">
-                                        <img src={item.image} alt={item.name} className="w-full h-full object-cover" />
+                                        <img src={item.image} alt={item.name} className="w-full h-full object-contain p-1 mix-blend-multiply" />
                                     </div>
                                     <div className="flex-1">
                                         <h4 className="font-medium text-sm line-clamp-2">{item.name}</h4>

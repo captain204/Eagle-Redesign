@@ -6,14 +6,14 @@ import { ChevronDown } from "lucide-react";
 
 // Mock Data
 const PRODUCTS = [
-    { id: 1, name: "FreePods 4 Active Noise Cancelling Earbuds", price: 21900, originalPrice: 35000, image: "p1.jpg", tag: "Best Seller", category: "Audio" },
-    { id: 2, name: "Watch 2 Pro Bluetooth Calling Smart Watch", price: 28500, originalPrice: 45000, image: "p2.jpg", tag: "New", category: "Wearables" },
-    { id: 3, name: "20000mAh Massive Power Bank", price: 12500, originalPrice: 15000, image: "p3.jpg", category: "Power" },
-    { id: 4, name: "AniFast 20W Fast Charger Kit", price: 6500, image: "p4.jpg", category: "Accessories" },
-    { id: 5, name: "BoomPop 2 Wireless Headset", price: 18900, originalPrice: 24000, image: "p5.jpg", category: "Audio" },
-    { id: 6, name: "SmartClipper Professional Hair Trimmer", price: 15000, image: "p6.jpg", category: "Personal Care" },
-    { id: 7, name: "Travel Adapter Universal", price: 4500, image: "p7.jpg", category: "Accessories" },
-    { id: 8, name: "SoundPro Bluetooth Speaker", price: 32000, originalPrice: 38000, image: "p8.jpg", category: "Audio" },
+    { id: 1, name: "FreePods 4 Active Noise Cancelling Earbuds", price: 21900, originalPrice: 35000, image: "/images/1steagle/earbuds_blue.jpg", tag: "Best Seller", category: "Audio" },
+    { id: 2, name: "Watch 2 Pro Bluetooth Calling Smart Watch", price: 28500, originalPrice: 45000, image: "/images/1steagle/hero_1.jpg", tag: "New", category: "Wearables" },
+    { id: 3, name: "20000mAh Massive Power Bank", price: 12500, originalPrice: 15000, image: "/images/1steagle/powerbank_orange.jpg", category: "Power" },
+    { id: 4, name: "AniFast 20W Fast Charger Kit", price: 6500, image: "/images/1steagle/usb_red.jpg", category: "Accessories" },
+    { id: 5, name: "1stEagle Mobile Power (Black)", price: 18900, originalPrice: 24000, image: "/images/1steagle/uploaded_media_1_1771516262315.jpg", category: "Audio" },
+    { id: 6, name: "1stEagle Big Generator 60000mAh", price: 36000, image: "/images/1steagle/uploaded_media_2_1771516262315.jpg", category: "Personal Care" },
+    { id: 7, name: "1stEagle Power Bank 10000mAh", price: 15900, image: "/images/1steagle/uploaded_media_3_1771516262315.jpg", category: "Accessories" },
+    { id: 8, name: "1stEagle Mini Generator 50000mAh", price: 49500, originalPrice: 60000, image: "/images/1steagle/uploaded_media_4_1771516262315.jpg", category: "Audio" },
 ];
 
 const CATEGORIES = ["All", "Audio", "Power", "Wearables", "Accessories", "Personal Care"];

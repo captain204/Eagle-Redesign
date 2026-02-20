@@ -16,20 +16,20 @@ export function FlashSales() {
                         <h2 className="text-3xl md:text-4xl font-extrabold text-black uppercase tracking-tight">Flash Sales</h2>
 
                         {/* Countdown Timer */}
-                        <div className="flex items-center gap-2 bg-black/90 text-white px-4 py-2 rounded-lg shadow-lg w-fit">
+                        <div className="flex flex-wrap items-center justify-center gap-1 md:gap-2 bg-black/90 text-white px-3 py-2 md:px-4 md:py-2 rounded-lg shadow-lg w-fit">
                             <div className="flex flex-col items-center">
-                                <span className="text-xl font-mono font-bold leading-none">02</span>
-                                <span className="text-[10px] text-gray-400 uppercase">Hrs</span>
+                                <span className="text-lg md:text-xl font-mono font-bold leading-none">02</span>
+                                <span className="text-[9px] md:text-[10px] text-gray-400 uppercase">Hrs</span>
                             </div>
-                            <span className="text-xl font-bold -mt-3">:</span>
+                            <span className="text-lg md:text-xl font-bold -mt-3">:</span>
                             <div className="flex flex-col items-center">
-                                <span className="text-xl font-mono font-bold leading-none">14</span>
-                                <span className="text-[10px] text-gray-400 uppercase">Min</span>
+                                <span className="text-lg md:text-xl font-mono font-bold leading-none">14</span>
+                                <span className="text-[9px] md:text-[10px] text-gray-400 uppercase">Min</span>
                             </div>
-                            <span className="text-xl font-bold -mt-3">:</span>
+                            <span className="text-lg md:text-xl font-bold -mt-3">:</span>
                             <div className="flex flex-col items-center">
-                                <span className="text-xl font-mono font-bold leading-none text-primary">35</span>
-                                <span className="text-[10px] text-gray-400 uppercase">Sec</span>
+                                <span className="text-lg md:text-xl font-mono font-bold leading-none text-primary">35</span>
+                                <span className="text-[9px] md:text-[10px] text-gray-400 uppercase">Sec</span>
                             </div>
                         </div>
                     </div>

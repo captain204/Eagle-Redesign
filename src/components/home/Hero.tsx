@@ -5,29 +5,52 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { ChevronRight, ChevronLeft } from "lucide-react";
 
+const SLIDE_DURATION = 6000; // 6 seconds per slide
+
 const slides = [
     {
         id: 1,
         title: "Power Your World",
         subtitle: "1stEagle High Capacity Generators",
         image: "/images/1steagle/hero_1.jpg",
-        bgColor: "bg-[#1a1a1a]",
     },
     {
         id: 2,
         title: "Stay Connected",
         subtitle: "Premium Power Banks",
         image: "/images/1steagle/powerbank_orange.jpg",
-        bgColor: "bg-[#0d0d0d]",
     },
     {
         id: 3,
         title: "Pure Sound",
         subtitle: "True Wireless Earbuds",
         image: "/images/1steagle/earbuds_blue.jpg",
-        bgColor: "bg-[#222222]",
-    },
+    }
 ];
+
+// Animation variants for staggered text reveal
+const containerVariants = {
+    hidden: { opacity: 0 },
+    show: {
+        opacity: 1,
+        transition: {
+            staggerChildren: 0.2,
+            delayChildren: 0.3,
+        }
+    },
+    exit: { opacity: 0, transition: { duration: 0.3 } }
+};
+
+const textVariants = {
+    hidden: { opacity: 0, y: 30 },
+    show: {
+        opacity: 1,
+        y: 0,
+        transition: {
+            duration: 0.8
+        }
+    }
+};
 
 export function Hero() {
     const [current, setCurrent] = useState(0);
@@ -35,15 +58,15 @@ export function Hero() {
     useEffect(() => {
         const timer = setInterval(() => {
             setCurrent((prev) => (prev + 1) % slides.length);
-        }, 6000);
+        }, SLIDE_DURATION);
         return () => clearInterval(timer);
-    }, []);
+    }, [current]); // reset timer when manually changing slides
 
     const nextSlide = () => setCurrent((prev) => (prev + 1) % slides.length);
     const prevSlide = () => setCurrent((prev) => (prev - 1 + slides.length) % slides.length);
 
     return (
-        <section className="relative w-full h-[300px] md:h-[500px] overflow-hidden bg-black group">
+        <section className="relative w-full h-[400px] md:h-[600px] overflow-hidden bg-black group">
             <AnimatePresence mode="wait">
                 <motion.div
                     key={current}
@@ -51,63 +74,94 @@ export function Hero() {
                     animate={{ opacity: 1 }}
                     exit={{ opacity: 0 }}
                     transition={{ duration: 0.8 }}
-                    className={`absolute inset-0 flex items-center justify-center ${slides[current].bgColor}`}
+                    className="absolute inset-0 flex items-center justify-center bg-black"
                 >
-                    <div className="absolute inset-0 z-0">
+                    {/* Background Image with Ken Burns Zoom Effect */}
+                    <motion.div
+                        className="absolute inset-0 z-0 origin-center"
+                        initial={{ scale: 1 }}
+                        animate={{ scale: 1.08 }} // Continuous slow zoom
+                        transition={{ duration: SLIDE_DURATION / 1000, ease: "linear" }}
+                    >
                         <img
                             src={slides[current].image}
                             alt={slides[current].title}
-                            className="w-full h-full object-cover opacity-60"
+                            className="w-full h-full object-cover opacity-70 mix-blend-screen"
                         />
-                    </div>
+                    </motion.div>
+
+                    {/* Premium Gradient Overlay for Text Legibility */}
+                    <div className="absolute inset-0 bg-gradient-to-r from-black/90 via-black/50 to-transparent z-10 pointer-events-none" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent z-10 pointer-events-none md:hidden" />
+
                     {/* Content Container */}
                     <div className="container relative h-full flex flex-col justify-center px-6 md:px-12 z-20">
                         <motion.div
-                            initial={{ y: 30, opacity: 0 }}
-                            animate={{ y: 0, opacity: 1 }}
-                            transition={{ delay: 0.3 }}
-                            className="max-w-xl space-y-4"
+                            variants={containerVariants}
+                            initial="hidden"
+                            animate="show"
+                            exit="exit"
+                            className="max-w-2xl space-y-6"
                         >
-                            <h2 className="text-primary font-bold tracking-widest uppercase text-sm md:text-base">
+                            <motion.h2
+                                variants={textVariants}
+                                className="text-primary font-bold tracking-[0.2em] uppercase text-xs md:text-sm flex items-center gap-4"
+                            >
+                                <span className="w-8 h-[2px] bg-primary"></span>
                                 {slides[current].subtitle}
-                            </h2>
-                            <h1 className="text-4xl md:text-7xl font-extrabold text-white leading-tight">
+                            </motion.h2>
+
+                            <motion.h1
+                                variants={textVariants}
+                                className="text-4xl md:text-6xl lg:text-7xl font-black text-white leading-[1.1] tracking-tight"
+                            >
                                 {slides[current].title}
-                            </h1>
-                            <Button className="bg-primary text-black hover:bg-white hover:text-black font-bold rounded-full px-8 py-6 text-lg transition-all transform hover:scale-105">
-                                Buy Now
-                            </Button>
+                            </motion.h1>
+
+                            <motion.div variants={textVariants}>
+                                <Button className="mt-4 bg-primary text-black hover:bg-white hover:text-black font-extrabold rounded-full px-8 py-6 text-base md:text-lg transition-all transform hover:scale-105 shadow-[0_0_20px_rgba(255,102,0,0.3)]">
+                                    Shop Collection
+                                </Button>
+                            </motion.div>
                         </motion.div>
                     </div>
-
-                    {/* Background Pattern/Gradient */}
-                    <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/40 to-transparent z-10 pointer-events-none" />
                 </motion.div>
             </AnimatePresence>
 
-            {/* Navigation Buttons */}
+            {/* Navigation Arrows (Visible on Hover for desktop, always on for mobile) */}
             <button
                 onClick={prevSlide}
-                className="absolute left-4 top-1/2 -translate-y-1/2 p-2 bg-black/30 text-white rounded-full hover:bg-primary hover:text-black transition-all opacity-0 group-hover:opacity-100 z-30"
+                className="absolute left-4 top-1/2 -translate-y-1/2 p-3 bg-black/20 backdrop-blur-md border border-white/10 text-white rounded-full hover:bg-white hover:text-black transition-all opacity-0 md:group-hover:opacity-100 z-30"
             >
-                <ChevronLeft size={32} />
+                <ChevronLeft size={24} strokeWidth={2.5} />
             </button>
             <button
                 onClick={nextSlide}
-                className="absolute right-4 top-1/2 -translate-y-1/2 p-2 bg-black/30 text-white rounded-full hover:bg-primary hover:text-black transition-all opacity-0 group-hover:opacity-100 z-30"
+                className="absolute right-4 top-1/2 -translate-y-1/2 p-3 bg-black/20 backdrop-blur-md border border-white/10 text-white rounded-full hover:bg-white hover:text-black transition-all opacity-0 md:group-hover:opacity-100 z-30"
             >
-                <ChevronRight size={32} />
+                <ChevronRight size={24} strokeWidth={2.5} />
             </button>
 
-            {/* Dots */}
-            <div className="absolute bottom-6 left-1/2 transform -translate-x-1/2 flex space-x-3 z-30">
+            {/* Animated Progress Bar Pagination */}
+            <div className="absolute bottom-6 md:bottom-12 left-6 md:left-12 flex space-x-3 z-30">
                 {slides.map((_, index) => (
                     <button
                         key={index}
                         onClick={() => setCurrent(index)}
-                        className={`transition-all duration-300 rounded-full h-2 ${index === current ? "w-8 bg-primary" : "w-2 bg-white/50 hover:bg-white"
-                            }`}
-                    />
+                        className="relative h-1 md:h-1.5 w-12 md:w-16 bg-white/20 rounded-full overflow-hidden"
+                    >
+                        {index === current && (
+                            <motion.div
+                                initial={{ width: "0%" }}
+                                animate={{ width: "100%" }}
+                                transition={{ duration: SLIDE_DURATION / 1000, ease: "linear" }}
+                                className="absolute top-0 left-0 h-full bg-primary"
+                            />
+                        )}
+                        {index < current && (
+                            <div className="absolute top-0 left-0 h-full w-full bg-white/60" />
+                        )}
+                    </button>
                 ))}
             </div>
         </section>

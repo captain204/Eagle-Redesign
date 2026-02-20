@@ -25,9 +25,11 @@ export function ProductCard({ product }: { product: Product }) {
             <Link href={`/product/${product.id}`} className="block h-full">
                 <motion.div
                     className="bg-white rounded-xl p-4 cursor-pointer hover:shadow-2xl transition-all duration-300 relative h-full flex flex-col border border-transparent hover:border-gray-100"
-                    initial={{ opacity: 0, y: 20 }}
+                    initial={{ opacity: 0, y: 30 }}
                     whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
+                    viewport={{ once: true, margin: "-50px" }}
+                    transition={{ duration: 0.4 }}
+                    whileHover={{ scale: 1.02 }}
                 >
                     {/* Discount Badge */}
                     {discount > 0 && (
@@ -43,11 +45,11 @@ export function ProductCard({ product }: { product: Product }) {
                         </span>
                     )}
 
-                    <div className="aspect-square bg-gray-50 rounded-lg mb-4 flex items-center justify-center relative overflow-hidden group-hover:bg-gray-100 transition-colors">
+                    <div className="w-full h-[150px] md:h-[220px] bg-white rounded-lg mb-4 flex items-center justify-center relative overflow-hidden group-hover:bg-gray-50 transition-colors">
                         <img
                             src={product.image}
                             alt={product.name}
-                            className="w-full h-full object-contain mix-blend-multiply group-hover:scale-110 transition-transform duration-500"
+                            className="w-full h-full object-contain p-4 mix-blend-multiply group-hover:scale-110 transition-transform duration-500"
                         />
 
                         {/* Quick View Button (Desktop) */}

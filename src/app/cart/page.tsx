@@ -7,8 +7,8 @@ import Link from "next/link";
 
 export default function CartPage() {
     const [cartItems, setCartItems] = useState([
-        { id: 1, name: "FreePods 4 Active Noise Cancelling Earbuds", price: 21900, image: "p1.jpg", quantity: 1, color: "#1a1a1a" },
-        { id: 2, name: "20000mAh Massive Power Bank", price: 12500, image: "p3.jpg", quantity: 2, color: "black" }
+        { id: 1, name: "FreePods 4 Active Noise Cancelling Earbuds", price: 21900, image: "/images/1steagle/earbuds_blue.jpg", quantity: 1, color: "#1a1a1a" },
+        { id: 2, name: "20000mAh Massive Power Bank", price: 12500, image: "/images/1steagle/powerbank_orange.jpg", quantity: 2, color: "black" }
     ]);
 
     const updateQuantity = (id: number, delta: number) => {
@@ -52,9 +52,8 @@ export default function CartPage() {
                     <div className="flex-1 space-y-4">
                         {cartItems.map((item) => (
                             <div key={item.id} className="bg-white p-4 rounded-lg shadow-sm flex gap-4 items-center">
-                                <div className="w-24 h-24 bg-gray-50 rounded-md border border-gray-100 flex items-center justify-center flex-shrink-0">
-                                    <span className="text-4xl">🎧</span>
-                                    {/* <img src={item.image} alt={item.name} className="w-full h-full object-cover" /> */}
+                                <div className="w-24 h-24 bg-gray-50 rounded-md border border-gray-100 flex items-center justify-center flex-shrink-0 overflow-hidden">
+                                    <img src={item.image} alt={item.name} className="w-full h-full object-contain mix-blend-multiply p-2" />
                                 </div>
                                 <div className="flex-1">
                                     <h3 className="font-bold text-gray-900 line-clamp-2 md:line-clamp-1">{item.name}</h3>

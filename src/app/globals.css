@@ -76,7 +76,21 @@
   body {
     @apply bg-background text-foreground;
     font-family: 'Outfit', sans-serif;
+    overscroll-behavior-y: none;
+    /* Prevent pull-to-refresh to feel more native */
+    -webkit-tap-highlight-color: transparent;
+    /* Remove blue tap highlight on mobile iOS */
   }
+
+  /* Safe Area Insets for PWA and Notch Devices */
+  .pb-safe {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+
+  .pt-safe {
+    padding-top: env(safe-area-inset-top);
+  }
+
 
   /* Custom scrollbar to match premium feel */
   ::-webkit-scrollbar {
@@ -89,5 +103,17 @@
 
   ::-webkit-scrollbar-thumb {
     @apply bg-muted-foreground/30 rounded-full hover:bg-muted-foreground/50;
+  }
+
+  /* Utility to hide scrollbar but keep functionality (for carousels) */
+  .hide-scrollbar {
+    -ms-overflow-style: none;
+    /* IE and Edge */
+    scrollbar-width: none;
+    /* Firefox */
+  }
+
+  .hide-scrollbar::-webkit-scrollbar {
+    display: none;
   }
 }

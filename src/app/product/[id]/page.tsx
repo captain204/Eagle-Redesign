@@ -15,10 +15,10 @@ const PRODUCT = {
     rating: 4.8,
     reviews: 1245,
     images: [
-        "https://ng.oraimo.com/cdn/shop/files/FreePods_4_PC_1_1200x.jpg?v=1685088880", // using external placeholders for now
-        "/images/p1-2.jpg",
-        "/images/p1-3.jpg",
-        "/images/p1-4.jpg"
+        "/images/1steagle/earbuds_blue.jpg",
+        "/images/1steagle/powerbank_orange.jpg",
+        "/images/1steagle/uploaded_media_1_1771516262315.jpg",
+        "/images/1steagle/uploaded_media_2_1771516262315.jpg"
     ],
     colors: ["#1a1a1a", "#ffffff", "#82E600"],
     specs: [
@@ -49,20 +49,19 @@ export default function ProductDetailPage({ params }: { params: { id: string } }
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-0">
                         {/* Image Gallery */}
                         <div className="p-6 md:p-10 border-b md:border-b-0 md:border-r border-gray-100">
-                            <div className="aspect-square bg-gray-50 rounded-lg mb-4 flex items-center justify-center overflow-hidden border border-gray-100">
+                            <div className="aspect-square md:h-[500px] md:aspect-auto bg-white rounded-lg mb-4 flex items-center justify-center overflow-hidden border border-gray-100">
                                 {/* Main Image */}
-                                <div className="text-9xl text-gray-200">🎧</div>
-                                {/* <img src={PRODUCT.images[selectedImage]} alt={PRODUCT.name} className="w-full h-full object-cover" /> */}
+                                <img src={PRODUCT.images[selectedImage]} alt={PRODUCT.name} className="w-full h-full object-contain p-4 mix-blend-multiply" />
                             </div>
                             <div className="flex gap-4 overflow-x-auto pb-2">
                                 {PRODUCT.images.map((img, i) => (
                                     <button
                                         key={i}
                                         onClick={() => setSelectedImage(i)}
-                                        className={`w-20 h-20 flex-shrink-0 rounded-md border-2 flex items-center justify-center bg-gray-50 ${selectedImage === i ? "border-primary" : "border-transparent hover:border-gray-200"
+                                        className={`w-20 h-20 flex-shrink-0 rounded-md border-2 flex items-center justify-center bg-white ${selectedImage === i ? "border-primary" : "border-transparent hover:border-gray-200"
                                             }`}
                                     >
-                                        <span className="text-2xl text-gray-300">🎧</span>
+                                        <img src={img} alt={`Thumbnail ${i}`} className="w-full h-full object-contain p-2 mix-blend-multiply" />
                                     </button>
                                 ))}
                             </div>
