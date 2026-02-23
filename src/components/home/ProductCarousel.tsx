@@ -65,10 +65,10 @@ export function ProductCarousel({ title }: { title: string }) {
                         </motion.div>
                     </motion.div>
 
-                    {/* Mobile Grid */}
-                    <div className="grid grid-cols-2 gap-3 pb-8 pt-4 -mt-4 md:hidden">
+                    {/* Mobile Carousel (Native Scroll) */}
+                    <div className="flex overflow-x-auto snap-x snap-mandatory gap-3 pb-8 pt-4 -mt-4 md:hidden hide-scrollbar">
                         {DUMMY_PRODUCTS.map((product) => (
-                            <div key={product.id} className="w-full">
+                            <div key={product.id} className="w-[calc(50%-0.375rem)] shrink-0 snap-start">
                                 <ProductCard product={product} />
                             </div>
                         ))}
