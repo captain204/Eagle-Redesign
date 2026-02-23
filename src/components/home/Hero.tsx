@@ -10,21 +10,21 @@ const SLIDE_DURATION = 6000; // 6 seconds per slide
 const slides = [
     {
         id: 1,
-        title: "Power Your World",
-        subtitle: "1stEagle High Capacity Generators",
-        image: "/images/1steagle/hero_1.jpg",
+        title: "E300 Power Bank",
+        subtitle: "50000mAh Fast Charging",
+        image: "/images/1steagle/slide_powerbank.jpg",
     },
     {
         id: 2,
-        title: "Stay Connected",
-        subtitle: "Premium Power Banks",
-        image: "/images/1steagle/powerbank_orange.jpg",
+        title: "Air 33 Earbuds",
+        subtitle: "True Wireless Bluetooth",
+        image: "/images/1steagle/slide_earbuds.jpg",
     },
     {
         id: 3,
-        title: "Pure Sound",
-        subtitle: "True Wireless Earbuds",
-        image: "/images/1steagle/earbuds_blue.jpg",
+        title: "OTG Flash drive",
+        subtitle: "Media 4GB Storage",
+        image: "/images/1steagle/slide_otg.jpg",
     }
 ];
 
@@ -66,7 +66,7 @@ export function Hero() {
     const prevSlide = () => setCurrent((prev) => (prev - 1 + slides.length) % slides.length);
 
     return (
-        <section className="relative w-full h-[400px] md:h-[600px] overflow-hidden bg-black group">
+        <section className="relative w-full h-[400px] md:h-[600px] overflow-hidden bg-white group">
             <AnimatePresence mode="wait">
                 <motion.div
                     key={current}
@@ -74,7 +74,7 @@ export function Hero() {
                     animate={{ opacity: 1 }}
                     exit={{ opacity: 0 }}
                     transition={{ duration: 0.8 }}
-                    className="absolute inset-0 flex items-center justify-center bg-black"
+                    className="absolute inset-0 flex items-center justify-center bg-white"
                 >
                     {/* Background Image with Ken Burns Zoom Effect */}
                     <motion.div
@@ -86,13 +86,13 @@ export function Hero() {
                         <img
                             src={slides[current].image}
                             alt={slides[current].title}
-                            className="w-full h-full object-cover opacity-70 mix-blend-screen"
+                            className="w-full h-full object-cover opacity-90 mix-blend-multiply"
                         />
                     </motion.div>
 
                     {/* Premium Gradient Overlay for Text Legibility */}
-                    <div className="absolute inset-0 bg-gradient-to-r from-black/90 via-black/50 to-transparent z-10 pointer-events-none" />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent z-10 pointer-events-none md:hidden" />
+                    <div className="absolute inset-0 bg-gradient-to-r from-white/90 via-white/50 to-transparent z-10 pointer-events-none" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-white/80 via-transparent to-transparent z-10 pointer-events-none md:hidden" />
 
                     {/* Content Container */}
                     <div className="container relative h-full flex flex-col justify-center px-6 md:px-12 z-20">
@@ -113,13 +113,13 @@ export function Hero() {
 
                             <motion.h1
                                 variants={textVariants}
-                                className="text-4xl md:text-6xl lg:text-7xl font-black text-white leading-[1.1] tracking-tight"
+                                className="text-4xl md:text-6xl lg:text-7xl font-black text-slate-900 leading-[1.1] tracking-tight"
                             >
                                 {slides[current].title}
                             </motion.h1>
 
                             <motion.div variants={textVariants}>
-                                <Button className="mt-4 bg-primary text-black hover:bg-white hover:text-black font-extrabold rounded-full px-8 py-6 text-base md:text-lg transition-all transform hover:scale-105 shadow-[0_0_20px_rgba(255,102,0,0.3)]">
+                                <Button className="mt-4 bg-primary text-white hover:bg-slate-900 hover:text-white font-extrabold rounded-full px-8 py-6 text-base md:text-lg transition-all transform hover:scale-105 shadow-[0_0_20px_rgba(255,102,0,0.3)]">
                                     Shop Collection
                                 </Button>
                             </motion.div>
@@ -131,13 +131,13 @@ export function Hero() {
             {/* Navigation Arrows (Visible on Hover for desktop, always on for mobile) */}
             <button
                 onClick={prevSlide}
-                className="absolute left-4 top-1/2 -translate-y-1/2 p-3 bg-black/20 backdrop-blur-md border border-white/10 text-white rounded-full hover:bg-white hover:text-black transition-all opacity-0 md:group-hover:opacity-100 z-30"
+                className="absolute left-4 top-1/2 -translate-y-1/2 p-3 bg-white/80 backdrop-blur-md border border-slate-200 text-slate-900 rounded-full hover:bg-slate-100 transition-all opacity-0 md:group-hover:opacity-100 z-30 shadow-md"
             >
                 <ChevronLeft size={24} strokeWidth={2.5} />
             </button>
             <button
                 onClick={nextSlide}
-                className="absolute right-4 top-1/2 -translate-y-1/2 p-3 bg-black/20 backdrop-blur-md border border-white/10 text-white rounded-full hover:bg-white hover:text-black transition-all opacity-0 md:group-hover:opacity-100 z-30"
+                className="absolute right-4 top-1/2 -translate-y-1/2 p-3 bg-white/80 backdrop-blur-md border border-slate-200 text-slate-900 rounded-full hover:bg-slate-100 transition-all opacity-0 md:group-hover:opacity-100 z-30 shadow-md"
             >
                 <ChevronRight size={24} strokeWidth={2.5} />
             </button>
@@ -148,7 +148,7 @@ export function Hero() {
                     <button
                         key={index}
                         onClick={() => setCurrent(index)}
-                        className="relative h-1 md:h-1.5 w-12 md:w-16 bg-white/20 rounded-full overflow-hidden"
+                        className="relative h-1 md:h-1.5 w-12 md:w-16 bg-slate-200 rounded-full overflow-hidden"
                     >
                         {index === current && (
                             <motion.div
@@ -159,7 +159,7 @@ export function Hero() {
                             />
                         )}
                         {index < current && (
-                            <div className="absolute top-0 left-0 h-full w-full bg-white/60" />
+                            <div className="absolute top-0 left-0 h-full w-full bg-slate-300" />
                         )}
                     </button>
                 ))}

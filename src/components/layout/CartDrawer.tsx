@@ -21,14 +21,14 @@ export function CartDrawer() {
     const [items, setItems] = useState<CartItem[]>([
         {
             id: 1,
-            name: "1stEagle Power Bank 10000mAh (E10 Plus)",
+            name: "Power Bank 10000mAh (E10 Plus)",
             price: 15900,
             image: "/images/1steagle/uploaded_media_3_1771516262315.jpg",
             quantity: 1,
         },
         {
             id: 2,
-            name: "1stEagle Mobile Power (Black)",
+            name: "Mobile Power (Black)",
             price: 12500,
             image: "/images/1steagle/uploaded_media_1_1771516262315.jpg",
             quantity: 2,

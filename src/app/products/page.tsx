@@ -10,10 +10,10 @@ const PRODUCTS = [
     { id: 2, name: "Watch 2 Pro Bluetooth Calling Smart Watch", price: 28500, originalPrice: 45000, image: "/images/1steagle/hero_1.jpg", tag: "New", category: "Wearables" },
     { id: 3, name: "20000mAh Massive Power Bank", price: 12500, originalPrice: 15000, image: "/images/1steagle/powerbank_orange.jpg", category: "Power" },
     { id: 4, name: "AniFast 20W Fast Charger Kit", price: 6500, image: "/images/1steagle/usb_red.jpg", category: "Accessories" },
-    { id: 5, name: "1stEagle Mobile Power (Black)", price: 18900, originalPrice: 24000, image: "/images/1steagle/uploaded_media_1_1771516262315.jpg", category: "Audio" },
-    { id: 6, name: "1stEagle Big Generator 60000mAh", price: 36000, image: "/images/1steagle/uploaded_media_2_1771516262315.jpg", category: "Personal Care" },
-    { id: 7, name: "1stEagle Power Bank 10000mAh", price: 15900, image: "/images/1steagle/uploaded_media_3_1771516262315.jpg", category: "Accessories" },
-    { id: 8, name: "1stEagle Mini Generator 50000mAh", price: 49500, originalPrice: 60000, image: "/images/1steagle/uploaded_media_4_1771516262315.jpg", category: "Audio" },
+    { id: 5, name: "Mobile Power (Black)", price: 18900, originalPrice: 24000, image: "/images/1steagle/uploaded_media_1_1771516262315.jpg", category: "Audio" },
+    { id: 6, name: "Big Generator 60000mAh", price: 36000, image: "/images/1steagle/uploaded_media_2_1771516262315.jpg", category: "Personal Care" },
+    { id: 7, name: "Power Bank 10000mAh", price: 15900, image: "/images/1steagle/uploaded_media_3_1771516262315.jpg", category: "Accessories" },
+    { id: 8, name: "Mini Generator 50000mAh", price: 49500, originalPrice: 60000, image: "/images/1steagle/uploaded_media_4_1771516262315.jpg", category: "Audio" },
 ];
 
 const CATEGORIES = ["All", "Audio", "Power", "Wearables", "Accessories", "Personal Care"];

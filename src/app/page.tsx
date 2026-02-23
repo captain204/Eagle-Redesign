@@ -52,7 +52,7 @@ export default function Home() {
 
       <FlashSales />
 
-      {/* New Arrivals */}
+      {/* Daily Deals */}
       <motion.section
         initial={{ opacity: 0, y: 30 }}
         whileInView={{ opacity: 1, y: 0 }}
@@ -61,7 +61,7 @@ export default function Home() {
         className="py-16 bg-white"
       >
         <div className="container">
-          <h2 className="text-3xl font-extrabold text-center mb-12 uppercase tracking-tight">New Arrivals</h2>
+          <h2 className="text-3xl font-extrabold text-center mb-12 uppercase tracking-tight">Daily Deals</h2>
           <ProductCarousel title="" />
         </div>
       </motion.section>

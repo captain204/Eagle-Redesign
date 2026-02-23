@@ -70,9 +70,9 @@ export function MegaMenu() {
                     {/* Featured Section */}
                     <div className="col-span-4 bg-gray-900 text-white p-6 flex justify-between items-center bg-[url('/images/pattern.png')] bg-cover">
                         <div>
-                            <h4 className="font-bold text-xl mb-2 text-primary">New Arrivals</h4>
+                            <h4 className="font-bold text-xl mb-2 text-primary">Daily Deals</h4>
                             <p className="text-gray-400 text-sm mb-4">Check out the latest tech gear dropping this week.</p>
-                            <Link href="/new-arrivals" className="text-sm border-b border-primary pb-1 hover:text-primary transition-colors">Shop Now &rarr;</Link>
+                            <Link href="/daily-deals" className="text-sm border-b border-primary pb-1 hover:text-primary transition-colors">Shop Now &rarr;</Link>
                         </div>
                         {/* We would put a featured image here */}
                     </div>
