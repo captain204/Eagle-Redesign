@@ -1,0 +1,10 @@
+node_modules
+.next
+.git
+.env
+payload.db
+public/media/*
+*.md
+Dockerfile
+docker-compose.yml
+.dockerignore

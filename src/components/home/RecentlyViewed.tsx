@@ -4,15 +4,18 @@ import { motion } from "framer-motion";
 import { ProductCard } from "@/components/products/ProductCard";
 import { History } from "lucide-react";
 
-// Mock Data reusing the structure
-const RECENT_PRODUCTS = [
-    { id: 101, name: "Power Bank 10000mAh (E10 Plus)", price: 15900, originalPrice: 20000, image: "/images/1steagle/uploaded_media_3_1771516262315.jpg", tag: "Best Seller" },
-    { id: 102, name: "Big Generator 60000mAh (E600)", price: 36000, image: "/images/1steagle/uploaded_media_2_1771516262315.jpg" },
-    { id: 103, name: "Mini Generator 50000mAh (E500)", price: 49500, originalPrice: 60000, image: "/images/1steagle/uploaded_media_4_1771516262315.jpg" },
-    { id: 104, name: "Mobile Power (Black)", price: 12500, image: "/images/1steagle/uploaded_media_1_1771516262315.jpg" },
-];
+interface Product {
+    id: string | number;
+    title: string;
+    price: number;
+    salePrice?: number;
+    mainImage?: any;
+    productTags?: any[];
+}
 
-export function RecentlyViewed() {
+export function RecentlyViewed({ products = [] }: { products?: Product[] }) {
+    if (products.length === 0) return null;
+
     return (
         <section className="py-12 bg-gray-50 border-t border-gray-200">
             <div className="container">
@@ -22,7 +25,7 @@ export function RecentlyViewed() {
                 </div>
 
                 <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
-                    {RECENT_PRODUCTS.map((product) => (
+                    {products.map((product) => (
                         <motion.div key={product.id} className="min-w-0" whileHover={{ y: -5 }}>
                             <ProductCard product={product} />
                         </motion.div>

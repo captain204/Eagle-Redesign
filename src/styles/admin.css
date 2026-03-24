@@ -1,0 +1,54 @@
+/* Custom Admin UI Overrides */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+    --theme-bg: #f8fafc;
+    --theme-card-bg: #ffffff;
+    --theme-primary: #F97316;
+    /* 1steagle Orange */
+    --theme-secondary: #1E3A8A;
+    /* 1steagle Blue */
+    --theme-text: #1e293b;
+    --theme-text-muted: #64748b;
+    --theme-border: #e2e8f0;
+}
+
+body.payload-admin {
+    @apply bg-[var(--theme-bg)] font-outfit text-[var(--theme-text)];
+}
+
+.payload-admin .app-header {
+    @apply border-b border-[var(--theme-border)] bg-white shadow-sm;
+}
+
+.payload-admin .nav {
+    @apply border-r border-[var(--theme-border)] bg-[#0f172a] text-white;
+}
+
+.payload-admin .nav a {
+    @apply transition-colors hover:text-[var(--theme-primary)];
+}
+
+.payload-admin .nav a.active {
+    @apply bg-[var(--theme-primary)] text-white font-semibold;
+}
+
+.payload-admin .card {
+    @apply rounded-xl border border-[var(--theme-border)] bg-white shadow-md transition-all hover:shadow-lg;
+}
+
+.payload-admin .btn--style-primary {
+    @apply bg-[var(--theme-primary)] text-white hover:brightness-110 active:scale-95 transition-all;
+}
+
+/* Premium Typography */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    @apply font-semibold tracking-tight text-[#0f172a];
+}

@@ -4,7 +4,9 @@ const config: Config = {
   content: [
     "./src/pages/**/*.{js,ts,jsx,tsx,mdx}",
     "./src/components/**/*.{js,ts,jsx,tsx,mdx}",
-    "./src/app/**/*.{js,ts,jsx,tsx,mdx}",
+    "./src/app/(app)/**/*.{js,ts,jsx,tsx,mdx}",
+    "./src/app/(payload)/**/*.{js,ts,jsx,tsx,mdx}",
+    "./src/components/admin/**/*.{js,ts,jsx,tsx,mdx}",
   ],
   theme: {
     container: {

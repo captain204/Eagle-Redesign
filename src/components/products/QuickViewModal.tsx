@@ -7,17 +7,25 @@ import { ShoppingCart, Star } from "lucide-react";
 import React, { useState } from "react";
 
 interface Product {
-    id: number;
-    name: string;
+    id: string | number;
+    title: string;
     price: number;
-    originalPrice?: number;
-    image: string;
-    tag?: string;
-    description?: string;
+    salePrice?: number;
+    mainImage?: any;
+    productTags?: any[];
+    description?: any;
 }
 
 export function QuickViewModal({ product, children }: { product: Product, children: React.ReactNode }) {
     const [quantity, setQuantity] = useState(1);
+
+    const imageUrl = typeof product.mainImage === 'object'
+        ? product.mainImage.url
+        : product.mainImage || '/images/placeholder.jpg';
+
+    const tag = product.productTags && product.productTags.length > 0
+        ? (typeof product.productTags[0] === 'object' ? product.productTags[0].name : null)
+        : null;
 
     return (
         <Dialog>
@@ -28,16 +36,16 @@ export function QuickViewModal({ product, children }: { product: Product, childr
                 <div className="grid md:grid-cols-2 gap-0">
                     <div className="bg-gray-100 p-8 flex items-center justify-center relative aspect-square md:aspect-auto">
                         <img
-                            src={product.image}
-                            alt={product.name}
+                            src={imageUrl}
+                            alt={product.title}
                             className="w-full h-full object-contain mix-blend-multiply"
                         />
                     </div>
                     <div className="p-8 flex flex-col h-full">
                         <div className="flex justify-between items-start mb-2">
-                            {product.tag && (
+                            {tag && (
                                 <span className="bg-primary text-black text-xs font-bold px-2 py-1 rounded-sm uppercase tracking-wide">
-                                    {product.tag}
+                                    {tag}
                                 </span>
                             )}
                             <div className="flex items-center gap-1 text-yellow-500 text-sm">
@@ -47,11 +55,15 @@ export function QuickViewModal({ product, children }: { product: Product, childr
                             </div>
                         </div>
 
-                        <h2 className="text-2xl font-bold mb-2 text-gray-900">{product.name}</h2>
+                        <h2 className="text-2xl font-bold mb-2 text-gray-900">{product.title}</h2>
                         <div className="flex items-end gap-3 mb-6">
-                            <span className="text-3xl font-extrabold text-primary">₦{product.price.toLocaleString()}</span>
-                            {product.originalPrice && (
-                                <span className="text-lg text-gray-400 line-through mb-1">₦{product.originalPrice.toLocaleString()}</span>
+                            <span className="text-3xl font-extrabold text-primary">
+                                ₦{(product.salePrice || product.price).toLocaleString()}
+                            </span>
+                            {product.salePrice && product.price && (
+                                <span className="text-lg text-gray-400 line-through mb-1">
+                                    ₦{product.price.toLocaleString()}
+                                </span>
                             )}
                         </div>
 
@@ -74,7 +86,7 @@ export function QuickViewModal({ product, children }: { product: Product, childr
                                 </div>
                                 <Button
                                     className="flex-1 h-11 text-base font-bold shadow-lg bg-black hover:bg-gray-900 text-white"
-                                    onClick={() => toast.success("Added to cart: " + product.name)}
+                                    onClick={() => toast.success("Added to cart: " + product.title)}
                                 >
                                     <ShoppingCart className="w-4 h-4 mr-2" /> Add to Cart
                                 </Button>

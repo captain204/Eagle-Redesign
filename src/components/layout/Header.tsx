@@ -10,7 +10,15 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { MegaMenu } from "@/components/layout/MegaMenu";
 import { CartDrawer } from "@/components/layout/CartDrawer";
 
-export function Header() {
+interface Category {
+    id: string | number;
+    title: string;
+    slug: string;
+    image?: any;
+    parent?: any;
+}
+
+export function Header({ categories = [] }: { categories?: Category[] }) {
     const [isScrolled, setIsScrolled] = useState(false);
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
@@ -55,9 +63,9 @@ export function Header() {
                         </SelectTrigger>
                         <SelectContent>
                             <SelectItem value="all">All Categories</SelectItem>
-                            <SelectItem value="audio">Audio</SelectItem>
-                            <SelectItem value="power">Power</SelectItem>
-                            <SelectItem value="wearables">Smart Watches</SelectItem>
+                            {categories.filter(c => !c.parent).map((c) => (
+                                <SelectItem key={c.id} value={c.slug}>{c.title}</SelectItem>
+                            ))}
                         </SelectContent>
                     </Select>
                     <div className="flex-1 relative">
@@ -76,7 +84,7 @@ export function Header() {
                 <div className="flex items-center gap-2 lg:gap-6">
                     {/* Desktop Menu Links */}
                     <nav className="hidden lg:flex items-center gap-6">
-                        <MegaMenu />
+                        <MegaMenu categories={categories} />
                         {navLinks.map((link) => (
                             <Link
                                 key={link.name}

@@ -4,7 +4,7 @@ import Link from "next/link";
 import { ProductCarousel } from "@/components/home/ProductCarousel";
 import { Timer, Zap } from "lucide-react";
 
-export function FlashSales() {
+export function FlashSales({ products = [] }: { products?: any[] }) {
     return (
         <section className="py-16 container">
             <div className="flex flex-col md:flex-row md:items-end justify-between mb-8 gap-4">
@@ -45,7 +45,7 @@ export function FlashSales() {
                     <Zap className="w-40 h-40 text-primary rotate-12" />
                 </div>
                 <div className="relative z-10">
-                    <ProductCarousel title="" />
+                    <ProductCarousel title="" products={products} />
                 </div>
             </div>
         </section>

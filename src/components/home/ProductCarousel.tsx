@@ -6,23 +6,15 @@ import { Button } from "@/components/ui/button";
 import { ProductCard } from "@/components/products/ProductCard";
 
 interface Product {
-    id: number;
-    name: string;
+    id: string | number;
+    title: string;
     price: number;
-    originalPrice?: number;
-    image: string;
-    tag?: string;
+    salePrice?: number;
+    mainImage?: any;
+    productTags?: any[];
 }
 
-const DUMMY_PRODUCTS: Product[] = [
-    { id: 1, name: "Power Bank 10000mAh (E10 Plus)", price: 15900, originalPrice: 20000, image: "/images/1steagle/uploaded_media_3_1771516262315.jpg", tag: "Best Seller" },
-    { id: 2, name: "Big Generator 60000mAh (E600)", price: 36000, originalPrice: 45000, image: "/images/1steagle/uploaded_media_2_1771516262315.jpg", tag: "New Arrival" },
-    { id: 3, name: "Mini Generator 50000mAh (E500)", price: 49500, originalPrice: 60000, image: "/images/1steagle/uploaded_media_4_1771516262315.jpg", tag: "Hot Deal" },
-    { id: 4, name: "Mobile Power (Black)", price: 12500, originalPrice: 15000, image: "/images/1steagle/uploaded_media_1_1771516262315.jpg" },
-    { id: 5, name: "Power Bank 10000mAh (White)", price: 15900, originalPrice: 20000, image: "/images/1steagle/uploaded_media_3_1771516262315.jpg" },
-];
-
-export function ProductCarousel({ title }: { title: string }) {
+export function ProductCarousel({ title, products = [] }: { title: string, products?: Product[] }) {
     const [width, setWidth] = useState(0);
     const carousel = useRef<HTMLDivElement>(null);
 
@@ -57,7 +49,7 @@ export function ProductCarousel({ title }: { title: string }) {
                             dragTransition={{ bounceStiffness: 400, bounceDamping: 25 }}
                             className="flex gap-6"
                         >
-                            {DUMMY_PRODUCTS.map((product) => (
+                            {products.map((product) => (
                                 <div key={product.id} className="min-w-[240px] shrink-0">
                                     <ProductCard product={product} />
                                 </div>
@@ -67,7 +59,7 @@ export function ProductCarousel({ title }: { title: string }) {
 
                     {/* Mobile Carousel (Native Scroll) */}
                     <div className="flex overflow-x-auto snap-x snap-mandatory gap-3 pb-8 pt-4 -mt-4 md:hidden hide-scrollbar">
-                        {DUMMY_PRODUCTS.map((product) => (
+                        {products.map((product) => (
                             <div key={product.id} className="w-[calc(50%-0.375rem)] shrink-0 snap-start">
                                 <ProductCard product={product} />
                             </div>

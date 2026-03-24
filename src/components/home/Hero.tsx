@@ -4,29 +4,10 @@ import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { ChevronRight, ChevronLeft } from "lucide-react";
+import Image from "next/image";
+import Link from "next/link";
 
 const SLIDE_DURATION = 6000; // 6 seconds per slide
-
-const slides = [
-    {
-        id: 1,
-        title: "E300 Power Bank",
-        subtitle: "50000mAh Fast Charging",
-        image: "/images/1steagle/slide_powerbank.jpg",
-    },
-    {
-        id: 2,
-        title: "Air 33 Earbuds",
-        subtitle: "True Wireless Bluetooth",
-        image: "/images/1steagle/slide_earbuds.jpg",
-    },
-    {
-        id: 3,
-        title: "OTG Flash drive",
-        subtitle: "Media 4GB Storage",
-        image: "/images/1steagle/slide_otg.jpg",
-    }
-];
 
 // Animation variants for staggered text reveal
 const containerVariants = {
@@ -52,18 +33,29 @@ const textVariants = {
     }
 };
 
-export function Hero() {
+export function Hero({ slides = [] }: { slides?: any[] }) {
     const [current, setCurrent] = useState(0);
+
+    // Default fallback if no slides provided
+    const displaySlides = slides.length > 0 ? slides : [
+        {
+            id: 'fallback-1',
+            title: "Premium Home Electronics",
+            subtitle: "1stEagle Solutions",
+            image: "/images/1steagle/slide_powerbank.jpg",
+            link: "/products"
+        }
+    ];
 
     useEffect(() => {
         const timer = setInterval(() => {
-            setCurrent((prev) => (prev + 1) % slides.length);
+            setCurrent((prev) => (prev + 1) % displaySlides.length);
         }, SLIDE_DURATION);
         return () => clearInterval(timer);
-    }, [current]); // reset timer when manually changing slides
+    }, [current, displaySlides.length]); // reset timer when manually changing slides
 
-    const nextSlide = () => setCurrent((prev) => (prev + 1) % slides.length);
-    const prevSlide = () => setCurrent((prev) => (prev - 1 + slides.length) % slides.length);
+    const nextSlide = () => setCurrent((prev) => (prev + 1) % displaySlides.length);
+    const prevSlide = () => setCurrent((prev) => (prev - 1 + displaySlides.length) % displaySlides.length);
 
     return (
         <section className="relative w-full h-[400px] md:h-[600px] overflow-hidden bg-white group">
@@ -80,13 +72,16 @@ export function Hero() {
                     <motion.div
                         className="absolute inset-0 z-0 origin-center"
                         initial={{ scale: 1 }}
-                        animate={{ scale: 1.08 }} // Continuous slow zoom
+                        animate={{ scale: 1.05 }} // Reduced zoom scale for better performance
                         transition={{ duration: SLIDE_DURATION / 1000, ease: "linear" }}
                     >
-                        <img
-                            src={slides[current].image}
-                            alt={slides[current].title}
-                            className="w-full h-full object-cover opacity-90 mix-blend-multiply"
+                        <Image
+                            src={displaySlides[current].image}
+                            alt={displaySlides[current].title}
+                            fill
+                            priority={current === 0} // Prioritize first slide
+                            className="object-cover opacity-90 mix-blend-multiply"
+                            sizes="100vw"
                         />
                     </motion.div>
 
@@ -108,20 +103,22 @@ export function Hero() {
                                 className="text-primary font-bold tracking-[0.2em] uppercase text-xs md:text-sm flex items-center gap-4"
                             >
                                 <span className="w-8 h-[2px] bg-primary"></span>
-                                {slides[current].subtitle}
+                                {displaySlides[current].subtitle}
                             </motion.h2>
 
                             <motion.h1
                                 variants={textVariants}
                                 className="text-4xl md:text-6xl lg:text-7xl font-black text-slate-900 leading-[1.1] tracking-tight"
                             >
-                                {slides[current].title}
+                                {displaySlides[current].title}
                             </motion.h1>
 
                             <motion.div variants={textVariants}>
-                                <Button className="mt-4 bg-primary text-white hover:bg-slate-900 hover:text-white font-extrabold rounded-full px-8 py-6 text-base md:text-lg transition-all transform hover:scale-105 shadow-[0_0_20px_rgba(255,102,0,0.3)]">
-                                    Shop Collection
-                                </Button>
+                                <Link href={displaySlides[current].link || "/products"}>
+                                    <Button className="mt-4 bg-primary text-white hover:bg-slate-900 hover:text-white font-extrabold rounded-full px-8 py-6 text-base md:text-lg transition-all transform hover:scale-105 shadow-[0_0_20px_rgba(255,102,0,0.3)]">
+                                        Shop Collection
+                                    </Button>
+                                </Link>
                             </motion.div>
                         </motion.div>
                     </div>
@@ -144,7 +141,7 @@ export function Hero() {
 
             {/* Animated Progress Bar Pagination */}
             <div className="absolute bottom-6 md:bottom-12 left-6 md:left-12 flex space-x-3 z-30">
-                {slides.map((_, index) => (
+                {displaySlides.map((_, index) => (
                     <button
                         key={index}
                         onClick={() => setCurrent(index)}

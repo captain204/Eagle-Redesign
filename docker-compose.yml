@@ -1,0 +1,13 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: always
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./payload.db:/app/payload.db
+      - ./public/media:/app/public/media
+    env_file:
+      - .env

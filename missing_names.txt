@@ -1,0 +1,589 @@
+--- src/collections/AbandonedCarts.ts ---
+            type: 'relationship',
+            relationTo: 'users',
+--
+            type: 'array',
+            fields: [
+            ],
+--
+            type: 'number',
+        },
+--
+            type: 'date',
+            admin: {
+--
+            type: 'checkbox',
+            defaultValue: false,
+--- src/collections/Ambassadors.ts ---
+            type: 'relationship',
+            relationTo: 'users',
+--
+            type: 'text',
+--
+            type: 'email',
+--
+            type: 'text',
+--
+            type: 'select',
+--
+            type: 'select',
+--
+            type: 'text',
+--
+            type: 'textarea',
+        },
+--
+            type: 'relationship',
+            relationTo: 'media',
+--- src/collections/AuditLogs.ts ---
+            type: 'relationship',
+            relationTo: 'users',
+--
+            type: 'select',
+--
+            type: 'text',
+        },
+--
+            type: 'text',
+        },
+--
+            type: 'json',
+        },
+--
+            type: 'text',
+        }
+--- src/collections/Categories.ts ---
+            type: 'text',
+--
+            type: 'text',
+--
+            type: 'textarea',
+        },
+--
+            type: 'relationship',
+            relationTo: 'media',
+--
+            type: 'relationship',
+            relationTo: 'categories',
+--- src/collections/Comments.ts ---
+            type: 'relationship',
+            relationTo: 'users',
+--
+            type: 'relationship',
+            relationTo: 'posts',
+--
+            type: 'textarea',
+--
+            type: 'select',
+            defaultValue: 'pending',
+--
+            type: 'relationship',
+            relationTo: 'comments',
+--- src/collections/Coupons.ts ---
+            type: 'text',
+--
+            type: 'select',
+            defaultValue: 'percentage',
+--
+            type: 'number',
+--
+            type: 'date',
+        },
+--
+            type: 'number',
+        },
+--
+            type: 'number',
+            defaultValue: 0,
+--- src/collections/Distributors.ts ---
+            type: 'text',
+--
+            type: 'text',
+--
+            type: 'text',
+--
+            type: 'email',
+--
+            type: 'select',
+--
+            type: 'select',
+--
+            type: 'text',
+--
+            type: 'textarea',
+--
+            type: 'text',
+--
+            type: 'textarea',
+--
+            type: 'select',
+            defaultValue: 'pending',
+--- src/collections/Media.ts ---
+            type: 'text',
+--- src/collections/Menus.ts ---
+            type: 'text',
+--
+            type: 'text',
+--
+            type: 'array',
+            fields: [
+--
+                    type: 'text',
+--
+                    type: 'select',
+                    options: [
+--
+                    type: 'relationship',
+                    relationTo: 'pages',
+--
+                    type: 'relationship',
+                    relationTo: 'posts',
+--
+                    type: 'relationship',
+                    relationTo: 'categories',
+--
+                    type: 'text',
+                    admin: {
+--
+                    type: 'array',
+                    fields: [
+--
+                            type: 'text',
+--
+                            type: 'select',
+                            options: [
+--
+                            type: 'relationship',
+                            relationTo: 'pages',
+--
+                            type: 'relationship',
+                            relationTo: 'posts',
+--
+                            type: 'relationship',
+                            relationTo: 'categories',
+--
+                            type: 'text',
+                            admin: {
+--- src/collections/Orders.ts ---
+            type: 'relationship',
+            relationTo: 'users',
+--
+            type: 'array',
+--
+                    type: 'relationship',
+                    relationTo: 'products',
+--
+                    type: 'number',
+--
+                    type: 'number',
+--
+            type: 'number',
+--
+            type: 'select',
+            defaultValue: 'pending',
+--
+            type: 'select',
+            defaultValue: 'unpaid',
+--
+            type: 'group',
+            fields: [
+                {
+--
+                    type: 'select',
+                    options: stateOptions,
+--
+            ]
+--
+            type: 'group',
+            fields: [
+                {
+--
+                    type: 'select',
+                    options: stateOptions,
+--
+            ]
+--
+            type: 'textarea',
+        }
+--- src/collections/Pages.ts ---
+--
+                            type: 'text',
+--
+                            type: 'blocks',
+                            blocks: [
+--
+                                    ],
+--
+                                    ],
+--
+                    ],
+--
+            type: 'text',
+--
+            type: 'relationship',
+            relationTo: 'media',
+--
+            type: 'relationship',
+            relationTo: 'pages',
+--
+            type: 'select',
+            options: [
+--
+            type: 'number',
+            defaultValue: 0,
+--- src/collections/Posts.ts ---
+            type: 'text',
+--
+            type: 'text',
+            unique: true,
+--
+            type: 'richText',
+--
+            type: 'textarea',
+        },
+--
+            type: 'relationship',
+            relationTo: 'media',
+--
+            type: 'relationship',
+            relationTo: 'users',
+--
+            type: 'relationship',
+            relationTo: 'categories',
+--
+            type: 'relationship',
+            relationTo: 'tags',
+--
+            type: 'date',
+            admin: {
+--
+            type: 'select',
+            defaultValue: 'draft',
+--- src/collections/ProductReviews.ts ---
+            type: 'relationship',
+            relationTo: 'products',
+--
+            type: 'relationship',
+            relationTo: 'users',
+--
+            type: 'number',
+--
+            type: 'text',
+--
+            type: 'textarea',
+        },
+--
+            type: 'select',
+            defaultValue: 'pending',
+--- src/collections/Products.ts ---
+--
+                            type: 'text',
+--
+                            type: 'text',
+--
+                            type: 'textarea',
+                            label: 'Short Description',
+--
+                            type: 'richText',
+                            label: 'Main Description',
+--
+                            type: 'select',
+                            defaultValue: 'simple',
+--
+                            fields: [
+--
+                                    type: 'number',
+--
+                                    type: 'number',
+                                    min: 0,
+--
+                            type: 'array',
+                            label: 'Product Variations',
+--
+                                    fields: [
+                                    ],
+--
+                                    fields: [
+                                    ],
+--
+                                    type: 'number',
+                                },
+--
+                                    type: 'relationship',
+                                    relationTo: 'media',
+--
+                            type: 'text',
+                            label: 'External URL',
+--
+                            fields: [
+--
+                                    type: 'text',
+                                    label: 'SKU',
+--
+                                    type: 'select',
+                                    defaultValue: 'instock',
+--
+                            type: 'checkbox',
+                            defaultValue: false,
+--
+                            type: 'number',
+                            admin: {
+--
+                            fields: [
+                            ],
+--
+                    ],
+--
+                            admin: {
+--
+            type: 'upload',
+            relationTo: 'media',
+--
+            type: 'array',
+            label: 'Product Gallery Images',
+--
+                    type: 'upload',
+                    relationTo: 'media',
+--
+            type: 'relationship',
+            relationTo: 'categories',
+--
+            type: 'relationship',
+            relationTo: 'tags',
+--
+            type: 'select',
+            defaultValue: 'visible',
+--
+            type: 'select',
+            defaultValue: 'draft',
+--- src/collections/Submissions.ts ---
+                                mimetype: 'application/pdf',
+                                size: pdfBuffer.length,
+--
+            type: 'relationship',
+            relationTo: 'ambassadors',
+--
+            type: 'relationship',
+            relationTo: 'distributors',
+--
+            type: 'select',
+            defaultValue: 'submitted',
+--
+            type: 'array',
+--
+                    fields: [
+--
+                            type: 'relationship',
+                            relationTo: 'products',
+--
+                            type: 'number',
+--
+                    fields: [
+--
+                            type: 'number',
+                            admin: { width: '50%' },
+--
+                            type: 'text',
+                            admin: { width: '50%' },
+--
+                    fields: [
+--
+                            type: 'select',
+                            defaultValue: 'pending',
+--
+                            type: 'select',
+                            defaultValue: 'unpaid',
+--
+            type: 'textarea',
+            access: {
+--
+            type: 'relationship',
+            relationTo: 'media',
+--- src/collections/Tags.ts ---
+            type: 'text',
+--
+            type: 'text',
+--- src/collections/Users.ts ---
+            type: 'text',
+        },
+--
+            type: 'select',
+            defaultValue: 'viewer',
+--
+            type: 'relationship',
+            relationTo: 'media',
+--
+            type: 'checkbox',
+            defaultValue: false,
+--- src/globals/Appearance.ts ---
+--
+                        {
+                            fields: [
+                            ]
+--
+                    ]
+--
+                            type: 'select',
+                            options: [
+--
+                            type: 'select',
+                            options: [
+--
+                            type: 'select',
+                            options: [
+--
+                            type: 'checkbox',
+                            defaultValue: true,
+--
+                            type: 'array',
+                            fields: [
+                            ]
+--- src/globals/EcommerceDashboard.ts ---
+            type: 'group',
+            fields: [
+--
+                    fields: [
+                    ]
+--
+                    fields: [
+                    ]
+--
+            type: 'array',
+            fields: [
+            ],
+--
+            type: 'relationship',
+            relationTo: 'orders',
+--- src/globals/Menus.ts ---
+            type: 'array',
+            fields: [
+--
+                    type: 'text',
+--
+                    type: 'select',
+                    options: [
+--
+                    type: 'relationship',
+                    relationTo: 'pages',
+--
+                    type: 'relationship',
+                    relationTo: 'posts',
+--
+                    type: 'relationship',
+                    relationTo: 'categories',
+--
+                    type: 'text',
+                    admin: {
+--
+                    type: 'array',
+                    fields: [
+--
+                            type: 'text',
+--
+                            type: 'select',
+                            options: [
+--
+                            type: 'relationship',
+                            relationTo: 'pages',
+--
+                            type: 'relationship',
+                            relationTo: 'posts',
+--
+                            type: 'relationship',
+                            relationTo: 'categories',
+--
+                            type: 'text',
+                            admin: {
+--
+            type: 'array',
+            fields: [
+--
+                    type: 'select',
+                    options: [
+--
+                    type: 'relationship',
+                    relationTo: 'menus', // This might need a different approach for multiple menus, but for now we can have one global with multiple locations
+--- src/globals/Navigation.ts ---
+            type: 'array',
+            fields: [
+--
+                    type: 'select',
+                    options: [
+--
+                    type: 'relationship',
+                    relationTo: 'menus',
+--- src/globals/Notifications.ts ---
+            type: 'array',
+            fields: [
+--
+                    type: 'select',
+                    options: [
+--
+            ],
+--- src/globals/QRGenerator.ts ---
+            admin: {
+--- src/globals/SalesReports.ts ---
+            type: 'array',
+            fields: [
+                {
+--
+                    type: 'select',
+                    options: [
+--
+                    ]
+--
+            ],
+--- src/globals/ShippingSettings.ts ---
+            type: 'array',
+            fields: [
+--
+                    type: 'text',
+--
+                    type: 'array',
+                    fields: [
+                    ],
+--
+                    type: 'array',
+                    fields: [
+--
+                            type: 'select',
+                            options: [
+--
+                    ],
+--- src/globals/SiteHealth.ts ---
+            type: 'select',
+            defaultValue: 'healthy',
+--
+            type: 'array',
+            fields: [
+            ],
+--
+            type: 'date',
+            admin: {
+--- src/globals/SiteSettings.ts ---
+--
+                    ],
+--
+                        {
+--
+                            type: 'array',
+                            fields: [
+                            ],
+--
+                    ],
+--
+                        {
+--
+                            type: 'array',
+                            fields: [
+                            ],
+--- src/globals/TaxSettings.ts ---
+            type: 'checkbox',
+            defaultValue: false,
+--
+            type: 'checkbox',
+            label: 'Prices include tax',
+--
+            type: 'array',
+            fields: [
+            ],
