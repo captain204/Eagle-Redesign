@@ -16,7 +16,7 @@ This guide provides every single step required to deploy your project to a \$6/m
 ## 2. Initial Server Configuration
 Once the droplet is ready, copy its IP address and connect via terminal:
 ```bash
-ssh root@your_droplet_ip
+ssh root@198.199.120.186
 ```
 
 ### Enable Swap (CRITICAL for \$6 plan)
@@ -61,18 +61,20 @@ cd /app
 
 ---
 
-## 4. Configure Environment Variables
+### 4. Configure Environment Variables
 Copy the example environment file and fill in your real keys:
 ```bash
 cp .env.example .env
 nano .env
 ```
+> [!TIP]
+> Use arrow keys to move, type your changes, then press **CTRL+O**, **Enter**, and **CTRL+X** to save and exit nano.
 **Required Variables:**
 - `PAYLOAD_SECRET`: A long random string.
 - `DATABASE_URI`: `file:./payload.db`
 - `RESEND_API_KEY`: Your real Resend key.
 - `PAYSTACK_SECRET_KEY`: Your real Paystack key.
-- `NEXT_PUBLIC_SERVER_URL`: `http://your_droplet_ip:3000` (or `https://yourdomain.com` later)
+- `NEXT_PUBLIC_SERVER_URL`: `http://198.199.120.186:3000` (or `https://yourdomain.com` later)
 
 ---
 
@@ -84,8 +86,11 @@ docker compose up -d --build
 
 ### Access via IP (Quick Start)
 To access the app immediately without a domain:
-1.  **Open Port 3000**: Run `ufw allow 3000`.
-2.  **Visit**: `http://your_droplet_ip:3000` in your browser.
+1.  **Get your IP**: Run `curl -4 icanhazip.com`.
+2.  **Update .env**: In Step 4, set `NEXT_PUBLIC_SERVER_URL=http://198.199.120.186:3000`.
+3.  **Open Port 3000**: Run `sudo ufw allow 3000`.
+4.  **Re-deploy**: Run `docker compose up -d --build`.
+5.  **Visit**: `http://198.199.120.186:3000` in your browser.
 
 ---
 
