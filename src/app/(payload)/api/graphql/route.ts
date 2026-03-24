@@ -1,3 +1,4 @@
+export const dynamic = 'force-dynamic'
 import { GRAPHQL_POST, GRAPHQL_PLAYGROUND_GET } from '@payloadcms/next/routes'
 import config from '@payload-config'
 
