@@ -31,12 +31,24 @@ echo '/swapfile none swap sw 0 0' | sudo tee -a /etc/fstab
 
 ### Install Docker
 ```bash
-# Update and install Docker
+# Update and install Docker & Docker Compose Plugin
 sudo apt update
-sudo apt install -y docker.io docker-compose
-sudo systemctl start docker
-sudo systemctl enable docker
+sudo apt install -y ca-certificates curl gnupg
+sudo install -m 0755 -d /etc/apt/keyrings
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
+sudo chmod a+r /etc/apt/keyrings/docker.gpg
+
+echo \
+  "deb [arch="$(dpkg --print-architecture)" signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu \
+  "$(. /etc/os-release && echo "$VERSION_CODENAME")" stable" | \
+  sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+
+sudo apt update
+sudo apt install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
 ```
+
+> [!TIP]
+> Modern Docker uses `docker compose` (with a space) instead of `docker-compose` (with a hyphen). If you get a "command not found" error, use the space version!
 
 ---
 
@@ -60,20 +72,24 @@ nano .env
 - `DATABASE_URI`: `file:./payload.db`
 - `RESEND_API_KEY`: Your real Resend key.
 - `PAYSTACK_SECRET_KEY`: Your real Paystack key.
-- `NEXT_PUBLIC_SERVER_URL`: `https://yourdomain.com`
+- `NEXT_PUBLIC_SERVER_URL`: `http://your_droplet_ip:3000` (or `https://yourdomain.com` later)
 
 ---
 
 ## 5. Launch the Application
 Start the containerized app in detached mode:
 ```bash
-docker-compose up -d --build
+docker compose up -d --build
 ```
-Your app is now running on `http://localhost:3000` inside the server.
+
+### Access via IP (Quick Start)
+To access the app immediately without a domain:
+1.  **Open Port 3000**: Run `ufw allow 3000`.
+2.  **Visit**: `http://your_droplet_ip:3000` in your browser.
 
 ---
 
-## 6. Domain & SSL Setup (Nginx)
+## 6. Domain & SSL Setup (Optional)
 To make it accessible via your domain with HTTPS:
 
 ### Install Nginx & Certbot
@@ -117,12 +133,12 @@ sudo certbot --nginx -d yourdomain.com -d www.yourdomain.com
 ## 7. How to Update
 Whenever you make changes to the code:
 1. `git pull` on the server.
-2. `docker-compose up -d --build`.
+2. `docker compose up -d --build`.
 
 ---
 
 ## Common Commands
-- **View Logs**: `docker-compose logs -f`
-- **Stop App**: `docker-compose down`
+- **View Logs**: `docker compose logs -f`
+- **Stop App**: `docker compose down`
 - **Check Memory**: `free -m`
 - **Check Status**: `docker ps`
