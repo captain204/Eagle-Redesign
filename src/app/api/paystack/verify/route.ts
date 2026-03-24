@@ -1,3 +1,4 @@
+export const dynamic = 'force-dynamic'
 import { NextRequest, NextResponse } from 'next/server';
 import { verifyPaystackTransaction } from '@/lib/paystack';
 import { getPayload } from 'payload';
