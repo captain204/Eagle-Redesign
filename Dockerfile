@@ -14,7 +14,7 @@ COPY . .
 ENV NEXT_TELEMETRY_DISABLED=1
 ENV NODE_ENV=production
 ENV PAYLOAD_CONFIG_PATH=src/payload.config.ts
-ENV NODE_OPTIONS="--max-old-space-size=2048"
+ENV NODE_OPTIONS="--max-old-space-size=1536"
 
 # Build the project
 RUN npm run build
