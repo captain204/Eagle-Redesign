@@ -37,13 +37,18 @@ const Newsletter = dynamic(() => import("@/components/home/Newsletter").then(mod
 const getFeaturedProducts = unstable_cache(
   async () => {
     const payload = await getPayload({ config: configPromise });
-    const productsResult = await payload.find({
-      collection: "products",
-      sort: "-createdAt",
-      limit: 10,
-      depth: 1,
-    });
-    return productsResult.docs as any[];
+    try {
+      const productsResult = await payload.find({
+        collection: "products",
+        sort: "-createdAt",
+        limit: 10,
+        depth: 1,
+      });
+      return productsResult.docs as any[];
+    } catch (err) {
+      console.warn("Failed to fetch products:", err);
+      return [];
+    }
   },
   ['featured-products'],
   { revalidate: 3600, tags: ['products'] }
@@ -52,13 +57,18 @@ const getFeaturedProducts = unstable_cache(
 const getCategories = unstable_cache(
   async () => {
     const payload = await getPayload({ config: configPromise });
-    const categoriesResult = await payload.find({
-      collection: "categories",
-      sort: "-createdAt",
-      limit: 6,
-      depth: 1,
-    });
-    return categoriesResult.docs as any[];
+    try {
+      const categoriesResult = await payload.find({
+        collection: "categories",
+        sort: "-createdAt",
+        limit: 6,
+        depth: 1,
+      });
+      return categoriesResult.docs as any[];
+    } catch (err) {
+      console.warn("Failed to fetch categories:", err);
+      return [];
+    }
   },
   ['homepage-categories'],
   { revalidate: 3600, tags: ['categories'] }
@@ -67,21 +77,26 @@ const getCategories = unstable_cache(
 const getSliders = unstable_cache(
   async () => {
     const payload = await getPayload({ config: configPromise });
-    const slidersResult = await payload.find({
-      collection: "sliders",
-      where: {
-        active: { equals: true }
-      },
-      sort: "order",
-      depth: 1,
-    });
-    return (slidersResult.docs as any[]).map(s => ({
-      id: s.id,
-      title: s.title,
-      subtitle: s.subtitle,
-      image: s.image?.url || "/images/placeholder.jpg",
-      link: s.link
-    }));
+    try {
+      const slidersResult = await payload.find({
+        collection: "sliders",
+        where: {
+          active: { equals: true }
+        },
+        sort: "order",
+        depth: 1,
+      });
+      return (slidersResult.docs as any[]).map((s: any) => ({
+        id: s.id,
+        title: s.title,
+        subtitle: s.subtitle,
+        image: s.image?.url || "/images/placeholder.jpg",
+        link: s.link
+      }));
+    } catch (err) {
+      console.warn("Failed to fetch sliders:", err);
+      return [];
+    }
   },
   ['homepage-sliders'],
   { revalidate: 3600, tags: ['sliders'] }

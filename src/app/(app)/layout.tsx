@@ -43,13 +43,18 @@ export default async function RootLayout({
   children: React.ReactNode;
 }>) {
   const payload = await getPayload({ config: configPromise });
-  const categoriesResult = await payload.find({
-    collection: "categories",
-    sort: "-createdAt",
-    depth: 1,
-    limit: 100, // retrieve a sufficient amount of categories
-  });
-  const categories = categoriesResult.docs as any;
+  let categories: any[] = [];
+  try {
+    const categoriesResult = await payload.find({
+      collection: "categories",
+      sort: "-createdAt",
+      depth: 1,
+      limit: 100, // retrieve a sufficient amount of categories
+    });
+    categories = categoriesResult.docs as any;
+  } catch (err) {
+    console.warn("Could not fetch categories (DB might be initializing):", err);
+  }
 
   return (
     <html lang="en">
