@@ -3,7 +3,6 @@ import { sqliteAdapter } from '@payloadcms/db-sqlite'
 import { lexicalEditor } from '@payloadcms/richtext-lexical'
 import path from 'path'
 import { fileURLToPath } from 'url'
-import sharp from 'sharp'
 
 import { Users } from './collections/Users'
 import { Media } from './collections/Media'
@@ -107,5 +106,4 @@ export default buildConfig({
         outputFile: path.resolve(dirname, 'payload-types.ts'),
     },
     telemetry: false,
-    sharp,
 })
