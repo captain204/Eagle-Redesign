@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { ShoppingCart, Eye } from "lucide-react";
 import { toast } from "sonner";
 import Link from "next/link";
+import Image from "next/image";
 import { QuickViewModal } from "@/components/products/QuickViewModal";
 import { useCart } from "@/providers/CartProvider";
 
@@ -59,10 +60,13 @@ export function ProductCard({ product }: { product: Product }) {
                     )}
 
                     <div className="w-full h-[150px] md:h-[220px] bg-white rounded-lg mb-4 flex items-center justify-center relative overflow-hidden group-hover:bg-gray-50 transition-colors">
-                        <img
+                        <Image
                             src={imageUrl}
                             alt={product.title}
-                            className="w-full h-full object-contain p-4 bg-white group-hover:scale-110 transition-transform duration-500"
+                            width={500}
+                            height={500}
+                            unoptimized
+                            className="w-full h-full object-contain p-4 group-hover:scale-110 transition-transform duration-500"
                         />
 
                         {/* Quick View Button (Desktop) */}

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { Star, Minus, Plus, Heart, Truck, ShieldCheck } from "lucide-react";
 import { ProductCarousel } from "@/components/home/ProductCarousel";
@@ -41,19 +42,32 @@ export default function ProductDetailClient({ product, relatedProducts }: { prod
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-0">
                         {/* Image Gallery */}
                         <div className="p-6 md:p-10 border-b md:border-b-0 md:border-r border-gray-100">
-                            <div className="aspect-square md:h-[500px] md:aspect-auto bg-white rounded-lg mb-4 flex items-center justify-center overflow-hidden border border-gray-100">
-                                {/* Main Image */}
-                                <img src={allImages[selectedImage]} alt={product.title} className="w-full h-full object-contain p-4" />
+                            <div className="relative aspect-square bg-white rounded-2xl overflow-hidden border">
+                                <Image
+                                    src={allImages[selectedImage]}
+                                    alt={product.title}
+                                    width={800}
+                                    height={800}
+                                    unoptimized
+                                    className="w-full h-full object-contain p-4"
+                                    priority
+                                />
                             </div>
                             <div className="flex gap-4 overflow-x-auto pb-2">
                                 {allImages.map((img, i) => (
                                     <button
                                         key={i}
                                         onClick={() => setSelectedImage(i)}
-                                        className={`w-20 h-20 flex-shrink-0 rounded-md border-2 flex items-center justify-center bg-white ${selectedImage === i ? "border-primary" : "border-transparent hover:border-gray-200"
-                                            }`}
+                                        className={`relative aspect-square rounded-lg overflow-hidden border-2 transition-all ${selectedImage === i ? 'border-primary shadow-md' : 'border-transparent hover:border-gray-200'}`}
                                     >
-                                        <img src={img} alt={`Thumbnail ${i}`} className="w-full h-full object-contain p-2" />
+                                        <Image
+                                            src={img}
+                                            alt={`${product.title} view ${i + 1}`}
+                                            width={100}
+                                            height={100}
+                                            unoptimized
+                                            className="w-full h-full object-contain p-1"
+                                        />
                                     </button>
                                 ))}
                             </div>
