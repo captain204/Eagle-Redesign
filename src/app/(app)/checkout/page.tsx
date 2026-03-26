@@ -317,7 +317,7 @@ export default function CheckoutPage() {
                                     <div key={item.id} className="flex gap-3">
                                         <div className="w-16 h-16 bg-white border rounded-md flex items-center justify-center relative overflow-hidden">
                                             <span className="absolute -top-1 -right-1 bg-gray-500 text-white text-[10px] w-4 h-4 rounded-full flex items-center justify-center font-bold z-10">{item.quantity}</span>
-                                            <img src={imageUrl} alt={item.title} className="w-full h-full object-contain mix-blend-multiply p-1" />
+                                            <img src={imageUrl} alt={item.title} className="w-full h-full object-contain p-1" />
                                         </div>
                                         <div className="flex-1">
                                             <p className="text-sm font-medium line-clamp-2">{item.title}</p>

@@ -38,7 +38,7 @@ export function QuickViewModal({ product, children }: { product: Product, childr
                         <img
                             src={imageUrl}
                             alt={product.title}
-                            className="w-full h-full object-contain mix-blend-multiply"
+                            className="w-full h-full object-contain"
                         />
                     </div>
                     <div className="p-8 flex flex-col h-full">

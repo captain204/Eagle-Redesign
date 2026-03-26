@@ -62,7 +62,7 @@ export function ProductCard({ product }: { product: Product }) {
                         <img
                             src={imageUrl}
                             alt={product.title}
-                            className="w-full h-full object-contain p-4 mix-blend-multiply group-hover:scale-110 transition-transform duration-500"
+                            className="w-full h-full object-contain p-4 bg-white group-hover:scale-110 transition-transform duration-500"
                         />
 
                         {/* Quick View Button (Desktop) */}

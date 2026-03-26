@@ -43,7 +43,7 @@ export default function ProductDetailClient({ product, relatedProducts }: { prod
                         <div className="p-6 md:p-10 border-b md:border-b-0 md:border-r border-gray-100">
                             <div className="aspect-square md:h-[500px] md:aspect-auto bg-white rounded-lg mb-4 flex items-center justify-center overflow-hidden border border-gray-100">
                                 {/* Main Image */}
-                                <img src={allImages[selectedImage]} alt={product.title} className="w-full h-full object-contain p-4 mix-blend-multiply" />
+                                <img src={allImages[selectedImage]} alt={product.title} className="w-full h-full object-contain p-4" />
                             </div>
                             <div className="flex gap-4 overflow-x-auto pb-2">
                                 {allImages.map((img, i) => (
@@ -53,7 +53,7 @@ export default function ProductDetailClient({ product, relatedProducts }: { prod
                                         className={`w-20 h-20 flex-shrink-0 rounded-md border-2 flex items-center justify-center bg-white ${selectedImage === i ? "border-primary" : "border-transparent hover:border-gray-200"
                                             }`}
                                     >
-                                        <img src={img} alt={`Thumbnail ${i}`} className="w-full h-full object-contain p-2 mix-blend-multiply" />
+                                        <img src={img} alt={`Thumbnail ${i}`} className="w-full h-full object-contain p-2" />
                                     </button>
                                 ))}
                             </div>

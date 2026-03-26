@@ -43,7 +43,7 @@ export default function CartPage() {
                             return (
                                 <div key={item.id} className="bg-white p-4 rounded-lg shadow-sm flex gap-4 items-center">
                                     <div className="w-24 h-24 bg-gray-50 rounded-md border border-gray-100 flex items-center justify-center flex-shrink-0 overflow-hidden">
-                                        <img src={imageUrl} alt={item.title} className="w-full h-full object-contain mix-blend-multiply p-2" />
+                                        <img src={imageUrl} alt={item.title} className="w-full h-full object-contain p-2" />
                                     </div>
                                     <div className="flex-1">
                                         <h3 className="font-bold text-gray-900 line-clamp-2 md:line-clamp-1">{item.title}</h3>
