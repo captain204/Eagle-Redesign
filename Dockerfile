@@ -34,8 +34,9 @@ COPY --from=builder /app/public ./public
 COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
 COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
 
-# Ensure media directory exists and has correct permissions
-RUN mkdir -p public/media && chown -R nextjs:nodejs public/media
+# Ensure media directory exists and give nextjs ownership of the entire /app directory 
+# so SQLite can create temporary -wal and -shm journal files alongside payload.db
+RUN mkdir -p public/media && chown -R nextjs:nodejs /app
 
 USER nextjs
 
