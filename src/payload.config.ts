@@ -99,6 +99,7 @@ export default buildConfig({
         client: {
             url: process.env.DATABASE_URI || 'file:./payload.db',
         },
+        push: true, // Auto-create tables in production so the app doesn't crash on an empty DB
     }),
     secret: process.env.PAYLOAD_SECRET || 'secret-key-for-development-only',
     typescript: {
