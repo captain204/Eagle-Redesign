@@ -35,6 +35,8 @@ export const viewport = {
 import { getPayload } from "payload";
 import configPromise from "@/payload.config";
 
+export const dynamic = "force-dynamic";
+
 export default async function RootLayout({
   children,
 }: Readonly<{
