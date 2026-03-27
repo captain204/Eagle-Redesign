@@ -33,6 +33,8 @@ import { Distributors } from './collections/Distributors'
 import { Submissions } from './collections/Submissions'
 import { Sliders } from './collections/Sliders'
 import { QRCodes } from './collections/QRCodes'
+import { ContactSubmissions } from './collections/ContactSubmissions'
+import { Support } from './globals/Support'
 
 
 
@@ -75,6 +77,7 @@ export default buildConfig({
         Submissions,
         Sliders,
         QRCodes,
+        ContactSubmissions,
     ],
 
 
@@ -89,6 +92,7 @@ export default buildConfig({
         EcommerceDashboard,
         SalesReports,
         QRGenerator,
+        Support,
     ],
 
 

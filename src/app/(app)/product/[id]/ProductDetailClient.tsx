@@ -7,6 +7,7 @@ import { Star, Minus, Plus, Heart, Truck, ShieldCheck } from "lucide-react";
 import { ProductCarousel } from "@/components/home/ProductCarousel";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
+import { RichText } from "@/components/ui/RichText";
 
 export default function ProductDetailClient({ product, relatedProducts }: { product: any, relatedProducts: any[] }) {
     const defaultImage = typeof product.mainImage === 'object' ? product.mainImage.url : (product.mainImage || "/images/placeholder.jpg");
@@ -159,7 +160,7 @@ export default function ProductDetailClient({ product, relatedProducts }: { prod
                         <div className="prose max-w-none text-gray-600">
                             {product.shortDescription && <p className="mb-4 text-lg font-medium">{product.shortDescription}</p>}
                             {product.description && (
-                                <div dangerouslySetInnerHTML={{ __html: product.description }} className="mt-4" />
+                                <RichText content={product.description} className="mt-4" />
                             )}
                             {!product.description && !product.shortDescription && (
                                 <p>No detailed description available for this product.</p>

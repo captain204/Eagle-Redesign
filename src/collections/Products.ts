@@ -115,6 +115,25 @@ export const Products: CollectionConfig = {
                             ],
                         },
                         {
+                            type: 'row',
+                            fields: [
+                                {
+                                    name: 'isDailyDeal',
+                                    type: 'checkbox',
+                                    label: 'Is Daily Deal',
+                                    defaultValue: false,
+                                    admin: { width: '50%' },
+                                },
+                                {
+                                    name: 'isHotNew',
+                                    type: 'checkbox',
+                                    label: 'Is Hot New',
+                                    defaultValue: false,
+                                    admin: { width: '50%' },
+                                },
+                            ],
+                        },
+                        {
                             name: 'externalUrl',
                             type: 'text',
                             label: 'External URL',

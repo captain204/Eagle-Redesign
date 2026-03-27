@@ -34,6 +34,44 @@ const Newsletter = dynamic(() => import("@/components/home/Newsletter").then(mod
 });
 
 // Cache Payload fetch
+const getDailyDeals = unstable_cache(
+  async () => {
+    const payload = await getPayload({ config: configPromise });
+    try {
+      const deals = await payload.find({
+        collection: "products",
+        where: { isDailyDeal: { equals: true } },
+        limit: 10,
+        depth: 1,
+      });
+      return deals.docs as any[];
+    } catch (err) {
+      return [];
+    }
+  },
+  ['daily-deals'],
+  { revalidate: 3600, tags: ['products'] }
+);
+
+const getHotNewProducts = unstable_cache(
+  async () => {
+    const payload = await getPayload({ config: configPromise });
+    try {
+      const hotNew = await payload.find({
+        collection: "products",
+        where: { isHotNew: { equals: true } },
+        limit: 10,
+        depth: 1,
+      });
+      return hotNew.docs as any[];
+    } catch (err) {
+      return [];
+    }
+  },
+  ['hot-new-products'],
+  { revalidate: 3600, tags: ['products'] }
+);
+
 const getFeaturedProducts = unstable_cache(
   async () => {
     const payload = await getPayload({ config: configPromise });
@@ -74,6 +112,25 @@ const getCategories = unstable_cache(
   { revalidate: 3600, tags: ['categories'] }
 );
 
+const getWelcomeCoupon = unstable_cache(
+  async () => {
+    const payload = await getPayload({ config: configPromise });
+    try {
+      const coupons = await payload.find({
+        collection: "coupons",
+        where: { code: { contains: "WELCOME" } },
+        sort: "-createdAt",
+        limit: 1,
+      });
+      return coupons.docs[0] as any;
+    } catch (err) {
+      return null;
+    }
+  },
+  ['welcome-coupon'],
+  { revalidate: 3600, tags: ['coupons'] }
+);
+
 const getSliders = unstable_cache(
   async () => {
     const payload = await getPayload({ config: configPromise });
@@ -103,16 +160,23 @@ const getSliders = unstable_cache(
 );
 
 export default async function Home() {
-  const [featuredProducts, categories, sliders] = await Promise.all([
+  const [featuredProducts, categories, sliders, dailyDeals, hotNewProducts, welcomeCoupon] = await Promise.all([
     getFeaturedProducts(),
     getCategories(),
     getSliders(),
+    getDailyDeals(),
+    getHotNewProducts(),
+    getWelcomeCoupon(),
   ]);
 
   return (
     <div className="min-h-screen bg-[#f5f5f5]">
       <Hero slides={sliders} />
-      <NewUserZone />
+      <NewUserZone
+        couponCode={welcomeCoupon?.code}
+        discountAmount={welcomeCoupon?.amount ? `₦${welcomeCoupon.amount.toLocaleString()} OFF` : undefined}
+        expiryDate={welcomeCoupon?.expiresAt ? new Date(welcomeCoupon.expiresAt).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }) : undefined}
+      />
 
       {/* Category Section */}
       <motion.section
@@ -145,21 +209,41 @@ export default async function Home() {
         <FlashSales products={featuredProducts.slice(0, 5)} />
       </Suspense>
 
-      {/* Daily Deals */}
-      <motion.section
-        initial={{ opacity: 0, y: 30 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true }}
-        transition={{ delay: 0.1 }}
-        className="py-16 bg-white"
-      >
-        <div className="container">
-          <h2 className="text-3xl font-extrabold text-center mb-12 uppercase tracking-tight">Daily Deals</h2>
-          <Suspense fallback={<div className="h-96" />}>
-            <ProductCarousel title="" products={featuredProducts} />
-          </Suspense>
-        </div>
-      </motion.section>
+      {/* Daily Deals Section (Dynamic) */}
+      {dailyDeals.length > 0 && (
+        <motion.section
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ delay: 0.1 }}
+          className="py-16 bg-white"
+        >
+          <div className="container">
+            <h2 className="text-3xl font-extrabold text-center mb-12 uppercase tracking-tight">Daily Deals</h2>
+            <Suspense fallback={<div className="h-96" />}>
+              <ProductCarousel title="" products={dailyDeals} />
+            </Suspense>
+          </div>
+        </motion.section>
+      )}
+
+      {/* Hot New Section (Dynamic) */}
+      {hotNewProducts.length > 0 && (
+        <motion.section
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ delay: 0.15 }}
+          className="py-16 bg-gray-50"
+        >
+          <div className="container">
+            <h2 className="text-3xl font-extrabold text-center mb-12 uppercase tracking-tight">Hot New Items</h2>
+            <Suspense fallback={<div className="h-96" />}>
+              <ProductCarousel title="" products={hotNewProducts} />
+            </Suspense>
+          </div>
+        </motion.section>
+      )}
 
       {/* Recommended */}
       <motion.section
@@ -186,13 +270,15 @@ export default async function Home() {
         <div className="container relative z-10">
           <h2 className="text-3xl font-bold mb-4">Corporate Procurement</h2>
           <p className="mb-8 text-gray-400 max-w-2xl mx-auto">Get the best deals for your business. Bulk orders, custom branding, and priority support available.</p>
-          <motion.button
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            className="border-2 border-primary text-primary px-8 py-3 rounded-full hover:bg-primary hover:text-black transition-colors font-bold text-lg"
-          >
-            Contact Sales
-          </motion.button>
+          <Link href="/contact?source=corporate">
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              className="border-2 border-primary text-primary px-8 py-3 rounded-full hover:bg-primary hover:text-black transition-colors font-bold text-lg"
+            >
+              Contact Sales
+            </motion.button>
+          </Link>
         </div>
       </motion.section>
 
