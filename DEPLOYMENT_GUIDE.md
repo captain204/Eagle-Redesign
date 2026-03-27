@@ -1,4 +1,4 @@
-# Deployment Guide: 1stEagle on DigitalOcean
+# Deployment Guide: 1st𝓔agle on DigitalOcean
 
 This guide provides every single step required to deploy your project to a \$6/month DigitalOcean Droplet.
 

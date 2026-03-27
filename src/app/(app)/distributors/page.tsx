@@ -41,7 +41,7 @@ export default function PublicDistributorsPage() {
             <div className="max-w-6xl mx-auto">
                 <h1 className="text-4xl font-bold mb-4 text-center">Authorized Distributors</h1>
                 <p className="text-gray-600 mb-12 text-center max-w-2xl mx-auto">
-                    Find approved 1stEagle distributors near you. Quality and reliability guaranteed.
+                    Find approved 1st𝓔agle distributors near you. Quality and reliability guaranteed.
                 </p>
 
                 {isLoading ? (

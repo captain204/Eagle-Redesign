@@ -102,7 +102,7 @@ export default function AmbassadorRegisterPage() {
         <div className="min-h-screen bg-[#f5f5f5] pt-32 pb-20 flex items-center justify-center px-4">
             <div className="bg-white p-8 md:p-12 rounded-xl shadow-lg w-full max-w-2xl">
                 <h1 className="text-2xl font-bold mb-6 text-center text-primary">Ambassador Registration</h1>
-                <p className="text-gray-600 mb-8 text-center italic">Join the 1stEagle Ambassador Program</p>
+                <p className="text-gray-600 mb-8 text-center italic">Join the 1st𝓔agle Ambassador Program</p>
 
                 <form onSubmit={handleSubmit} className="space-y-6">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">

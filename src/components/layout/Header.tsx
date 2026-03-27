@@ -47,7 +47,7 @@ export function Header({ categories = [] }: { categories?: Category[] }) {
                     <div className="relative w-20 h-8 md:w-32 md:h-12"> {/* Further reduced size for mobile */}
                         <Image
                             src="/images/1steagle/logo.jpg"
-                            alt="1stEagle"
+                            alt="1st𝓔agle"
                             fill
                             className="object-contain"
                             priority

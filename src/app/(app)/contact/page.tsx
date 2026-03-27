@@ -227,13 +227,13 @@ export default function Contact() {
                                     </div>
                                     <div>
                                         <h4 className="font-bold text-gray-400 text-xs uppercase tracking-widest mb-1">Email Us</h4>
-                                        <p className="text-gray-900 font-bold">care@1stEagle.com</p>
+                                        <p className="text-gray-900 font-bold">care@1st𝓔agle.com</p>
                                     </div>
                                 </div>
                             </div>
 
                             <div className="pt-8 border-t border-gray-100">
-                                <h3 className="font-black text-xl mb-4">Why choose 1stEagle?</h3>
+                                <h3 className="font-black text-xl mb-4">Why choose 1st𝓔agle?</h3>
                                 <ul className="space-y-3">
                                     {["Premium Quality Products", "24/7 Dedicated Support", "Fast Island-wide Delivery", "Corporate B2B Solutions"].map((item, i) => (
                                         <li key={i} className="flex items-center gap-3 text-gray-600 font-medium text-sm">

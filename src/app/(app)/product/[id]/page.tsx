@@ -16,7 +16,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     try {
         const product = await payload.findByID({ collection: "products", id, depth: 0 });
         return {
-            title: `${product.title} | 1stEagle`,
+            title: `${product.title} | 1st𝓔agle`,
             description: product.shortDescription as string || "Product details",
         }
     } catch (e) {

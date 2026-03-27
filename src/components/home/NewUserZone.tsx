@@ -33,7 +33,7 @@ export function NewUserZone({
                             Get <span className="text-yellow-300">{discountAmount}</span> Your First Order
                         </h2>
                         <p className="text-white/90 text-lg max-w-xl mb-6 font-medium">
-                            Join the Eagle family today and enjoy exclusive perks, early access to sales, and premium support.
+                            Join the 1st𝓔agle family today and enjoy exclusive perks, early access to sales, and premium support.
                         </p>
                         <div className="flex flex-col sm:flex-row gap-4 justify-center md:justify-start">
                             <Button size="lg" className="bg-white text-orange-600 hover:bg-gray-100 font-bold px-8 text-lg h-12 rounded-full shadow-lg transition-transform hover:scale-105">

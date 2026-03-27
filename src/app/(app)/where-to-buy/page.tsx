@@ -1,8 +1,8 @@
 import { MapPin, Search } from "lucide-react";
 
 export const metadata = {
-    title: "Where to Buy | 1stEagle Technology",
-    description: "Find an authorized 1stEagle retailer near you.",
+    title: "Where to Buy | 1st𝓔agle Technology",
+    description: "Find an authorized 1st𝓔agle retailer near you.",
 };
 
 export default function WhereToBuyPage() {
@@ -12,7 +12,7 @@ export default function WhereToBuyPage() {
                 <MapPin className="w-16 h-16 text-primary mx-auto mb-6" />
                 <h1 className="text-3xl font-bold mb-4">Store Locator</h1>
                 <p className="text-gray-500 mb-8 max-w-xl mx-auto">
-                    1stEagle products are available nationwide through our authorized
+                    1st𝓔agle products are available nationwide through our authorized
                     distributors and flagship stores. Enter your location to find a store near you.
                     (Demo content only)
                 </p>
@@ -29,7 +29,7 @@ export default function WhereToBuyPage() {
                 </div>
 
                 <div className="text-left border rounded-lg p-6 bg-gray-50 mb-4">
-                    <h3 className="font-bold text-lg mb-2">1stEagle Flagship Store</h3>
+                    <h3 className="font-bold text-lg mb-2">1st𝓔agle Flagship Store</h3>
                     <p className="text-gray-600 mb-2">123 Ikeja GRA, Lagos State, Nigeria.</p>
                     <p className="text-primary font-semibold">Open: Mon-Sat, 9AM - 6PM</p>
                 </div>

@@ -8,7 +8,7 @@ export function Footer() {
                 {/* Newsletter Section */}
                 <div className="mb-12 flex flex-col md:flex-row items-center justify-between gap-6 border-b border-white/10 pb-12">
                     <div className="text-center md:text-left">
-                        <h3 className="text-xl font-bold mb-2">Join 1stEagle Family</h3>
+                        <h3 className="text-xl font-bold mb-2">Join 1st𝓔agle Family</h3>
                         <p className="text-gray-400 text-sm">Subscribe to our newsletter to get more offers.</p>
                     </div>
                     <div className="flex w-full md:w-auto max-w-md gap-2">
@@ -74,14 +74,14 @@ export function Footer() {
                             </a>
                         </div>
                         <div className="text-gray-400 text-sm">
-                            <p className="flex items-center gap-2 mb-2"><Mail className="w-4 h-4 text-primary" /> care@1stEagle.com</p>
+                            <p className="flex items-center gap-2 mb-2"><Mail className="w-4 h-4 text-primary" /> care@1st𝓔agle.com</p>
                         </div>
                     </div>
                 </div>
 
                 {/* Copyright */}
                 <div className="border-t border-white/10 pt-8 text-center text-gray-500 text-sm">
-                    <p>&copy; {new Date().getFullYear()} 1stEagle Technology. All Rights Reserved.</p>
+                    <p>&copy; {new Date().getFullYear()} 1st𝓔agle Technology. All Rights Reserved.</p>
                 </div>
             </div>
         </footer>

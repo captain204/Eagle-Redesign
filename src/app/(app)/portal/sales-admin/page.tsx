@@ -105,7 +105,7 @@ export default function SalesAdminDashboard() {
                         <div className="z-10">
                             <h3 className="text-2xl font-black mb-4">Ambassador<br />Growth Plan</h3>
                             <p className="text-sm text-gray-400 leading-relaxed mb-8">
-                                Your ambassador network has grown by 12% this month. Keep approving quality partners to scale the 1stEagle distribution.
+                                Your ambassador network has grown by 12% this month. Keep approving quality partners to scale the 1st𝓔agle distribution.
                             </p>
                         </div>
                         <button className="bg-white text-black py-4 px-6 rounded-2xl font-black text-sm z-10 hover:bg-primary transition-colors">

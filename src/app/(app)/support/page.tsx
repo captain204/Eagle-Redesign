@@ -17,7 +17,7 @@ export default async function SupportPage() {
     }
 
     const phoneNumbers = supportInfo.phoneNumbers?.map((p: any) => p.number) || ["+234 703 120 0507", "+234 7067653476"];
-    const email = supportInfo.email || "care@1stEagle.com";
+    const email = supportInfo.email || "care@1st𝓔agle.com";
     const address = supportInfo.address || "123 Tech Plaza, Ikeja, Lagos, Nigeria";
     const hours = supportInfo.workingHours || "Mon - Fri: 9am - 6pm";
 
@@ -31,7 +31,7 @@ export default async function SupportPage() {
                             <RichText content={supportInfo.supportDescription} />
                         ) : (
                             <p className="text-xl">
-                                At 1stEagle, we are committed to providing you with the best experience.
+                                At 1st𝓔agle, we are committed to providing you with the best experience.
                                 Reach out to us through any of our channels.
                             </p>
                         )}

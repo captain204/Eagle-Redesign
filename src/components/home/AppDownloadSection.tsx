@@ -12,7 +12,7 @@ export function AppDownloadSection() {
                 <div className="flex flex-col lg:flex-row items-center justify-between gap-12">
                     <div className="text-center lg:text-left max-w-2xl">
                         <h2 className="text-4xl md:text-5xl font-extrabold mb-6 tracking-tight text-gray-900">
-                            Get the <span className="text-primary">1stEagle</span> App
+                            Get the <span className="text-primary">1st𝓔agle</span> App
                         </h2>
                         <p className="text-lg md:text-xl text-gray-600 mb-10 leading-relaxed font-medium">
                             Experience the world-class shopping experience on your mobile. Download our app for exclusive deals, faster checkouts, and real-time tracking.
@@ -47,7 +47,7 @@ export function AppDownloadSection() {
                             {/* Screen Content Simulation */}
                             <div className="absolute inset-0 bg-white">
                                 <div className="w-full h-48 bg-orange-100 flex items-center justify-center">
-                                    <div className="text-primary font-bold text-2xl tracking-tighter">1stEagle</div>
+                                    <div className="text-primary font-bold text-2xl tracking-tighter">1st𝓔agle</div>
                                 </div>
                                 <div className="p-4 space-y-4">
                                     <div className="h-4 bg-gray-200 rounded w-1/2"></div>

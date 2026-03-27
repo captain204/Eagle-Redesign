@@ -39,7 +39,7 @@ export default function PublicAmbassadorsPage() {
             <div className="max-w-4xl mx-auto">
                 <h1 className="text-4xl font-bold mb-4 text-center">Our Ambassadors</h1>
                 <p className="text-gray-600 mb-12 text-center max-w-2xl mx-auto">
-                    Meet the 1stEagle ambassadors bringing quality products to your local community.
+                    Meet the 1st𝓔agle ambassadors bringing quality products to your local community.
                 </p>
 
                 {isLoading ? (

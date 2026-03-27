@@ -1,8 +1,8 @@
 import { ShieldCheck } from "lucide-react";
 
 export const metadata = {
-    title: "Security Policy | 1stEagle Technology",
-    description: "Learn how we protect your data at 1stEagle.",
+    title: "Security Policy | 1st𝓔agle Technology",
+    description: "Learn how we protect your data at 1st𝓔agle.",
 };
 
 export default function SecurityPage() {
@@ -21,7 +21,7 @@ export default function SecurityPage() {
                     <section>
                         <h2 className="text-xl font-bold text-black mb-4">1. Data Protection & Encryption</h2>
                         <p>
-                            At 1stEagle Technology, we prioritize the security of your personal data and financial information. All traffic to and from our servers is encrypted using industry-standard SSL/TLS connections (AES-256). We ensure that your browsing experience is completely private and secure against interception.
+                            At 1st𝓔agle Technology, we prioritize the security of your personal data and financial information. All traffic to and from our servers is encrypted using industry-standard SSL/TLS connections (AES-256). We ensure that your browsing experience is completely private and secure against interception.
                         </p>
                     </section>
 
@@ -35,7 +35,7 @@ export default function SecurityPage() {
                     <section>
                         <h2 className="text-xl font-bold text-black mb-4">3. Account Safety</h2>
                         <p>
-                            We strongly advise users to employ unique and complex passwords. In the event of unauthorized access, 1stEagle retains the right to temporarily freeze account privileges and will promptly notify the impacted user to reset their credentials.
+                            We strongly advise users to employ unique and complex passwords. In the event of unauthorized access, 1st𝓔agle retains the right to temporarily freeze account privileges and will promptly notify the impacted user to reset their credentials.
                         </p>
                     </section>
 

@@ -1,8 +1,8 @@
 import { PackageSearch } from "lucide-react";
 
 export const metadata = {
-    title: "Track Order | 1stEagle Technology",
-    description: "Track the status of your 1stEagle shipment.",
+    title: "Track Order | 1st𝓔agle Technology",
+    description: "Track the status of your 1st𝓔agle shipment.",
 };
 
 export default function TrackOrderPage() {

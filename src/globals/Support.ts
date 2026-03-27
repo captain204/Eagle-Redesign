@@ -27,7 +27,7 @@ export const Support: GlobalConfig = {
             name: 'email',
             type: 'email',
             required: true,
-            defaultValue: 'care@1stEagle.com',
+            defaultValue: 'care@1st𝓔agle.com',
         },
         {
             name: 'address',

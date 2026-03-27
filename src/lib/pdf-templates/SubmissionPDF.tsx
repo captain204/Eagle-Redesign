@@ -109,7 +109,7 @@ export const SubmissionPDF = ({ submission, ambassador, distributor }: any) => (
             </View>
 
             <Text style={{ position: 'absolute', bottom: 30, right: 30, fontSize: 10, color: '#aaa' }}>
-                Generated on {new Date().toLocaleDateString()} - 1stEagle Portal
+                Generated on {new Date().toLocaleDateString()} - 1st𝓔agle Portal
             </Text>
         </Page>
     </Document>

@@ -41,7 +41,7 @@ export function Hero({ slides = [] }: { slides?: any[] }) {
         {
             id: 'fallback-1',
             title: "Premium Home Electronics",
-            subtitle: "1stEagle Solutions",
+            subtitle: "1st𝓔agle Solutions",
             image: "/images/1steagle/slide_powerbank.jpg",
             link: "/products"
         }

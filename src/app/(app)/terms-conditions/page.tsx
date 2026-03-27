@@ -8,7 +8,7 @@ export default function TermsConditions() {
                 <section>
                     <h2 className="text-xl font-bold text-black mb-3">1. Introduction</h2>
                     <p>
-                        Welcome to 1stEagle Technology. These Terms and Conditions govern your use of our website and purchase of our products.
+                        Welcome to 1st𝓔agle Technology. These Terms and Conditions govern your use of our website and purchase of our products.
                         By accessing or using our services, you agree to be bound by these terms.
                     </p>
                 </section>
@@ -32,7 +32,7 @@ export default function TermsConditions() {
                 <section>
                     <h2 className="text-xl font-bold text-black mb-3">4. Warranty</h2>
                     <p>
-                        1stEagle offers a standard 12-month warranty on most electronic products. This warranty covers manufacturing defects
+                        1st𝓔agle offers a standard 12-month warranty on most electronic products. This warranty covers manufacturing defects
                         only and does not cover physical damage, water damage, or misuse. Please refer to our Warranty Policy for full details.
                     </p>
                 </section>
@@ -48,7 +48,7 @@ export default function TermsConditions() {
                 <section>
                     <h2 className="text-xl font-bold text-black mb-3">6. Limitation of Liability</h2>
                     <p>
-                        1stEagle Technology shall not be liable for any indirect, incidental, or consequential damages arising from the use
+                        1st𝓔agle Technology shall not be liable for any indirect, incidental, or consequential damages arising from the use
                         of our products or website.
                     </p>
                 </section>

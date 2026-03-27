@@ -1,6 +1,6 @@
 export const metadata = {
-    title: "News | 1stEagle Technology",
-    description: "Stay updated with the latest news, product launches, and events from 1stEagle.",
+    title: "News | 1st𝓔agle Technology",
+    description: "Stay updated with the latest news, product launches, and events from 1st𝓔agle.",
 };
 
 export default function NewsPage() {
@@ -18,7 +18,7 @@ export default function NewsPage() {
                         <div className="w-full md:w-1/3 h-48 bg-gray-200 animate-pulse"></div>
                         <div className="p-6 flex-1 flex flex-col justify-center">
                             <span className="text-xs font-bold text-primary uppercase mb-2">Press Release</span>
-                            <h2 className="text-xl font-bold mb-2">1stEagle Announces Next-Gen Active Noise Cancelling Earbuds</h2>
+                            <h2 className="text-xl font-bold mb-2">1st𝓔agle Announces Next-Gen Active Noise Cancelling Earbuds</h2>
                             <p className="text-gray-600 mb-4 line-clamp-2">
                                 We are thrilled to introduce the upcoming line of our flagship audio devices featuring industry-leading noise cancellation capabilities.
                             </p>
@@ -32,7 +32,7 @@ export default function NewsPage() {
                             <span className="text-xs font-bold text-primary uppercase mb-2">Company Update</span>
                             <h2 className="text-xl font-bold mb-2">Expanding Our Power Solutions Across West Africa</h2>
                             <p className="text-gray-600 mb-4 line-clamp-2">
-                                In line with our commitment to accessible energy, 1stEagle opens 50 new partner retail stores across major cities.
+                                In line with our commitment to accessible energy, 1st𝓔agle opens 50 new partner retail stores across major cities.
                             </p>
                             <span className="text-sm text-gray-400 font-medium">February 10, 2026</span>
                         </div>

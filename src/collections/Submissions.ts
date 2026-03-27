@@ -89,7 +89,7 @@ export const Submissions: CollectionConfig = {
                             <p><strong>Distributor:</strong> ${distributor?.businessName || 'Not Found'}</p>
                             <p><strong>Status:</strong> ${doc.status}</p>
                             <p>You can view your submission summary here: <a href="${process.env.NEXT_PUBLIC_SERVER_URL || ''}${mediaDoc.url}">Download PDF</a></p>
-                            <p>Thank you for being a 1stEagle Ambassador!</p>
+                            <p>Thank you for being a 1st𝓔agle Ambassador!</p>
                             `
                         )
 

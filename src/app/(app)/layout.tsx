@@ -14,13 +14,13 @@ const inter = Inter({ subsets: ["latin"], variable: "--font-sans" });
 const outfit = Outfit({ subsets: ["latin"], variable: "--font-outfit" });
 
 export const metadata: Metadata = {
-  title: "1stEagle Technology Official Store",
+  title: "1st𝓔agle Technology Official Store",
   description: "Explore the best of smart accessories and power solutions.",
   manifest: "/manifest.json",
   appleWebApp: {
     capable: true,
     statusBarStyle: "default",
-    title: "1stEagle",
+    title: "1st𝓔agle",
   },
 };
 

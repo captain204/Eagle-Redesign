@@ -6,14 +6,14 @@ export default function Warranty() {
             <div className="container max-w-4xl">
                 <h1 className="text-3xl md:text-4xl font-extrabold mb-4 text-center">Warranty Policy</h1>
                 <p className="text-gray-500 text-center mb-12 max-w-2xl mx-auto">
-                    At 1stEagle, we stand behind the quality of our products. All our products come with a comprehensive warranty
+                    At 1st𝓔agle, we stand behind the quality of our products. All our products come with a comprehensive warranty
                     to ensure your peace of mind.
                 </p>
 
                 <div className="bg-primary/5 border border-primary/20 rounded-2xl p-8 mb-12">
                     <h2 className="text-2xl font-bold mb-4 text-center">365-Day Warranty Coverage</h2>
                     <p className="text-center text-gray-700">
-                        Most 1stEagle electronic products (Power Banks, Earbuds, Watches) are covered by a 12-month limited warranty
+                        Most 1st𝓔agle electronic products (Power Banks, Earbuds, Watches) are covered by a 12-month limited warranty
                         starting from the date of purchase.
                     </p>
                 </div>
