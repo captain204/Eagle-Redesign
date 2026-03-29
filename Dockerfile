@@ -16,10 +16,9 @@ ENV NEXT_TELEMETRY_DISABLED=1
 ENV NODE_ENV=production
 ENV PAYLOAD_CONFIG_PATH=src/payload.config.ts
 ENV NODE_OPTIONS="--max-old-space-size=1024"
-ENV DISABLE_DB_PUSH=1
 
-# Build the project with Next.js Cache
-RUN --mount=type=cache,target=/app/.next/cache npm run build
+# Build the project with Next.js Cache (Disable DB push to prevent schema lock deadlocks)
+RUN --mount=type=cache,target=/app/.next/cache DISABLE_DB_PUSH=1 npm run build
 
 # Stage 2: Run
 FROM node:20-alpine AS runner
