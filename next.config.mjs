@@ -6,12 +6,6 @@ const nextConfig = {
     typescript: {
         ignoreBuildErrors: true,
     },
-    eslint: {
-        ignoreDuringBuilds: true,
-    },
-    experimental: {
-        webpackBuildWorker: false,
-    },
 };
 
 export default withPayload(nextConfig);
