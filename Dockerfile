@@ -4,8 +4,9 @@ RUN apk add --no-cache libc6-compat
 WORKDIR /app
 
 # Install dependencies based on the preferred package manager
+# Install dependencies with NPM BuildKit Cache
 COPY package.json package-lock.json* ./
-RUN npm ci --legacy-peer-deps
+RUN --mount=type=cache,target=/root/.npm npm ci --legacy-peer-deps
 
 # Copy all source files
 COPY . .
@@ -17,8 +18,8 @@ ENV PAYLOAD_CONFIG_PATH=src/payload.config.ts
 ENV NODE_OPTIONS="--max-old-space-size=768"
 ENV DISABLE_DB_PUSH=1
 
-# Build the project
-RUN npm run build
+# Build the project with Next.js Cache
+RUN --mount=type=cache,target=/app/.next/cache npm run build
 
 # Stage 2: Run
 FROM node:20-alpine AS runner

@@ -6,6 +6,9 @@ const nextConfig = {
     typescript: {
         ignoreBuildErrors: true,
     },
+    experimental: {
+        memoryBasedWorkersCount: true,
+    },
 };
 
 export default withPayload(nextConfig);
