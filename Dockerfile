@@ -15,7 +15,7 @@ COPY . .
 ENV NEXT_TELEMETRY_DISABLED=1
 ENV NODE_ENV=production
 ENV PAYLOAD_CONFIG_PATH=src/payload.config.ts
-ENV NODE_OPTIONS="--max-old-space-size=768"
+ENV NODE_OPTIONS="--max-old-space-size=1024"
 ENV DISABLE_DB_PUSH=1
 
 # Build the project with Next.js Cache
@@ -31,10 +31,8 @@ ENV NEXT_TELEMETRY_DISABLED=1
 RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nextjs
 
-# Copy standalone build and static files
-COPY --from=builder /app/public ./public
-COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
-COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
+# Copy entire built application instead of memory-heavy standalone traced files
+COPY --from=builder --chown=nextjs:nodejs /app ./
 
 # Ensure media directory exists and give nextjs ownership of the entire /app directory 
 # so SQLite can create temporary -wal and -shm journal files alongside payload.db
@@ -47,5 +45,4 @@ EXPOSE 3000
 ENV PORT=3000
 ENV HOSTNAME="0.0.0.0"
 
-# Note: server.js is created by Next.js in standalone mode
-CMD ["node", "server.js"]
+CMD ["npm", "start"]
