@@ -37,6 +37,9 @@ COPY --from=builder --chown=nextjs:nodejs /app ./
 # so SQLite can create temporary -wal and -shm journal files alongside payload.db
 RUN mkdir -p public/media && chown -R nextjs:nodejs /app
 
+# Install Python for the database schema recovery script
+RUN apk add --no-cache python3
+
 USER nextjs
 
 EXPOSE 3000
@@ -44,4 +47,5 @@ EXPOSE 3000
 ENV PORT=3000
 ENV HOSTNAME="0.0.0.0"
 
-CMD ["npm", "start"]
+# Intercept container startup to force SQLite table creation safely before Next.js accepts requests
+CMD ["sh", "-c", "python3 scripts/fix_missing_tables.py && npm start"]

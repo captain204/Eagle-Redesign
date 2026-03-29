@@ -3,8 +3,8 @@ import os
 
 db_path = 'payload.db'
 if not os.path.exists(db_path):
-    print(f"Database {db_path} does not exist in this directory. Ensure you're running this where payload.db is attached.")
-    exit(1)
+    print(f"Database {db_path} does not exist yet. Letting Next.js/Payload create it natively.")
+    exit(0)
 
 db = sqlite3.connect(db_path)
 cursor = db.cursor()
