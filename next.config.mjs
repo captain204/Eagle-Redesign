@@ -11,6 +11,7 @@ const nextConfig = {
     },
     experimental: {
         webpackBuildWorker: false,
+        instrumentationHook: true,
     },
 };
 
