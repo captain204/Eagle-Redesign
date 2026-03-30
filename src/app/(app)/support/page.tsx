@@ -18,7 +18,7 @@ export default async function SupportPage() {
 
     const phoneNumbers = supportInfo.phoneNumbers?.map((p: any) => p.number) || ["+234 703 120 0507", "+234 7067653476"];
     const email = supportInfo.email || "care@1st𝓔agle.com";
-    const address = supportInfo.address || "123 Tech Plaza, Ikeja, Lagos, Nigeria";
+    const address = supportInfo.address || "21 Obafemi Awolowo way, B67 asset corp plaza ikeja, close to ikeja club";
     const hours = supportInfo.workingHours || "Mon - Fri: 9am - 6pm";
 
     return (

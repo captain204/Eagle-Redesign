@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Facebook, Twitter, Instagram, Youtube, Mail } from "lucide-react";
+import { Facebook, Twitter, Instagram, Youtube, Mail, MapPin, Smartphone } from "lucide-react";
 
 export function Footer() {
     return (
@@ -74,7 +74,30 @@ export function Footer() {
                             </a>
                         </div>
                         <div className="text-gray-400 text-sm">
-                            <p className="flex items-center gap-2 mb-2"><Mail className="w-4 h-4 text-primary" /> care@1st𝓔agle.com</p>
+                            <p className="flex items-center gap-2 mb-2"><Mail className="w-4 h-4 text-primary shrink-0" /> care@1st𝓔agle.com</p>
+                            <p className="flex items-start gap-2 mb-4 leading-relaxed">
+                                <MapPin className="w-4 h-4 text-primary shrink-0 mt-1" />
+                                <span>21 Obafemi Awolowo way, B67 asset corp plaza ikeja,<br />close to ikeja club</span>
+                            </p>
+                        </div>
+                        <div className="flex flex-col gap-3 mt-6">
+                            <h4 className="font-bold text-white mb-2">DOWNLOAD APP</h4>
+                            <div className="flex flex-col xl:flex-row gap-3">
+                                <a href="https://apps.apple.com/ng/app/1st-eagle-store/id6755090747" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 bg-white/10 hover:bg-primary transition-colors px-4 py-2 rounded-lg text-white flex-1">
+                                    <Smartphone className="w-6 h-6 shrink-0" />
+                                    <div className="flex flex-col">
+                                        <span className="text-[10px] leading-none text-gray-300">Download on the</span>
+                                        <span className="text-sm font-bold leading-none mt-1">App Store</span>
+                                    </div>
+                                </a>
+                                <a href="https://play.google.com/store/apps/details?id=com.eagle.dmi" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 bg-white/10 hover:bg-primary transition-colors px-4 py-2 rounded-lg text-white flex-1">
+                                    <Smartphone className="w-6 h-6 shrink-0" />
+                                    <div className="flex flex-col">
+                                        <span className="text-[10px] leading-none text-gray-300">GET IT ON</span>
+                                        <span className="text-sm font-bold leading-none mt-1">Google Play</span>
+                                    </div>
+                                </a>
+                            </div>
                         </div>
                     </div>
                 </div>

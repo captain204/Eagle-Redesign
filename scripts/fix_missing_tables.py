@@ -42,6 +42,26 @@ try:
 except sqlite3.OperationalError:
     pass # Column exists
 
+# Add missing columns to users table
+user_columns_to_add = [
+    ("login_attempts", "numeric DEFAULT 0"),
+    ("lock_until", "text"),
+    ("avatar_id", "integer"),
+    ("deactivated", "integer DEFAULT 0"),
+    ("reset_password_token", "text"),
+    ("reset_password_expiration", "text"),
+    ("salt", "text"),
+    ("hash", "text"),
+    ("role", "text DEFAULT 'viewer'")
+]
+
+for col_name, col_type in user_columns_to_add:
+    try:
+        cursor.execute(f'ALTER TABLE "users" ADD COLUMN "{col_name}" {col_type};')
+        print(f"Added '{col_name}' column to users")
+    except sqlite3.OperationalError:
+        pass # Column exists
+
 # Create qr_codes table
 try:
     cursor.execute('''
