@@ -29,6 +29,19 @@ try:
 except Exception as e:
     print(f"Error checking sliders: {e}")
 
+# Try to add active and order columns in case the table already existed but without them
+try:
+    cursor.execute('ALTER TABLE "sliders" ADD COLUMN "active" numeric DEFAULT 1;')
+    print("Added 'active' column to sliders")
+except sqlite3.OperationalError:
+    pass # Column exists
+
+try:
+    cursor.execute('ALTER TABLE "sliders" ADD COLUMN "order" numeric;')
+    print("Added 'order' column to sliders")
+except sqlite3.OperationalError:
+    pass # Column exists
+
 # Create qr_codes table
 try:
     cursor.execute('''
