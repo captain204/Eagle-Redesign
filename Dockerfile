@@ -1,6 +1,6 @@
 # Stage 1: Build
 FROM node:20-alpine AS builder
-RUN apk add --no-cache libc6-compat
+RUN apk add --no-cache libc6-compat python3
 WORKDIR /app
 
 # Install dependencies based on the preferred package manager
@@ -18,7 +18,7 @@ ENV PAYLOAD_CONFIG_PATH=src/payload.config.ts
 ENV NODE_OPTIONS="--max-old-space-size=1024"
 
 # Build the project with Next.js Cache (Disable DB push to prevent schema lock deadlocks)
-RUN --mount=type=cache,target=/app/.next/cache DISABLE_DB_PUSH=1 npm run build
+RUN --mount=type=cache,target=/app/.next/cache python3 scripts/fix_missing_tables.py && DISABLE_DB_PUSH=1 npm run build
 
 # Stage 2: Run
 FROM node:20-alpine AS runner
