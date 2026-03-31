@@ -2,6 +2,37 @@
 
 **Target:** DigitalOcean Droplet ($6/mo - 1GB RAM / 1 vCPU / 25GB NVMe)
 
+> **💡 Low-Traffic Optimization:** For sites with <100 orders/month, build locally and deploy pre-built images to save costs. Build times on $6 droplet are 19+ minutes due to swap usage.
+
+---
+
+## 🚀 Quick Deploy Options
+
+### Option A: Build Locally (RECOMMENDED for $6 droplet)
+```bash
+# On your LOCAL machine
+cd /home/nuru/Eagle
+docker build -t eagle-app:latest .
+docker save eagle-app:latest | gzip > eagle-app.tar.gz
+
+# Transfer to droplet (your app is in ~/Eagle-Redesign)
+scp eagle-app.tar.gz root@198.199.120.186:~/Eagle-Redesign/
+
+# On your DROPLET (via SSH)
+ssh root@198.199.120.186
+cd ~/Eagle-Redesign
+docker load < eagle-app.tar.gz
+docker compose up -d
+```
+**Time: 2-5 minutes** (vs 19 minutes building on droplet)
+
+### Option B: GitHub Actions (AUTOMATED)
+Push to `main` branch → auto-deploys in 3 minutes
+See: `.github/workflows/deploy.yml`
+
+### Option C: Build on Droplet (NOT RECOMMENDED)
+Only if you have no other option (19+ minute build time)
+
 ---
 
 ## 📋 Table of Contents

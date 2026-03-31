@@ -1,10 +1,15 @@
 services:
   app:
-    build:
-      context: .
-      dockerfile: Dockerfile
-      args:
-        NODE_ENV: production
+    # Use pre-built image from Docker Hub (replace with your username)
+    image: yourusername/eagle-app:latest
+    
+    # Uncomment build section only when building locally
+    # build:
+    #   context: .
+    #   dockerfile: Dockerfile
+    #   args:
+    #     NODE_ENV: production
+    
     container_name: eagle-app
     restart: unless-stopped
     ports:

@@ -1,7 +1,18 @@
 {
   "permissions": {
     "allow": [
-      "Bash(chmod *)"
+      "Bash(chmod *)",
+      "Bash(rm *)",
+      "Bash(npm install)",
+      "Bash(timeout *)",
+      "Bash(git checkout *)",
+      "Bash(ls *)",
+      "Bash(npm run *)",
+      "Bash(docker build *)",
+      "Bash(sudo *)",
+      "Bash(newgrp *)",
+      "Bash(docker *)"
     ]
-  }
+  },
+  "$version": 3
 }

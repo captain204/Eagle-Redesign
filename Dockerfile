@@ -11,9 +11,9 @@ WORKDIR /app
 COPY package.json package-lock.json* ./
 
 # Install dependencies with NPM BuildKit Cache
-# Use --omit=dev to exclude devDependencies in production build
+# Use --legacy-peer-deps to resolve Payload CMS peer dependency conflicts
 RUN --mount=type=cache,target=/root/.npm \
-    npm ci --legacy-peer-deps --omit=dev
+    npm ci --legacy-peer-deps
 
 # Copy only necessary source files (exclude unnecessary files)
 COPY . .
@@ -71,4 +71,5 @@ HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
     CMD wget --no-verbose --tries=1 --spider http://localhost:3000/health || exit 1
 
 # Initialize database and start application
-CMD ["sh", "-c", "python3 scripts/fix_missing_tables.py && npm start"]
+# Run fix script from the correct working directory
+CMD ["sh", "-c", "cd /app && python3 scripts/fix_missing_tables.py && npm start"]
