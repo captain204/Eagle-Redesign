@@ -3,11 +3,84 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    restart: always
+      # Build arguments for optimization
+      args:
+        - NODE_ENV=production
+    
+    # Container name for easy reference
+    container_name: eagle-app
+    
+    # Restart policy
+    restart: unless-stopped
+    
+    # Port mapping
     ports:
       - "3000:3000"
+    
+    # Volumes for data persistence
     volumes:
+      # SQLite database - CRITICAL: Keep this for data persistence
       - ./payload.db:/app/payload.db
+      # Media uploads
       - ./public/media:/app/public/media
+      # Backup directory
+      - ./backups:/app/backups
+      # Log directory
+      - ./logs:/app/logs
+    
+    # Environment variables
     env_file:
       - .env
+    
+    # Environment overrides for production
+    environment:
+      - NODE_ENV=production
+      - NEXT_TELEMETRY_DISABLED=1
+      # Memory limits for 1GB RAM server
+      - NODE_OPTIONS=--max-old-space-size=512
+    
+    # Resource limits (important for 1GB RAM servers)
+    deploy:
+      resources:
+        limits:
+          # Limit container memory to prevent OOM
+          memory: 768M
+          # Limit CPU to prevent 100% CPU usage
+          cpus: '0.75'
+        reservations:
+          memory: 256M
+          cpus: '0.25'
+    
+    # Health check
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:3000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    
+    # Logging configuration
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+    
+    # Security options
+    security_opt:
+      - no-new-privileges:true
+    
+    # Network mode
+    networks:
+      - eagle-network
+
+# Network configuration
+networks:
+  eagle-network:
+    driver: bridge
+
+# Volume definitions (optional named volumes)
+volumes:
+  # If you prefer named volumes over bind mounts
+  # db_data:
+  # media_data:

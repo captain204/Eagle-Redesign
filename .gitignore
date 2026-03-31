@@ -40,3 +40,16 @@ payload.db
 payload.db-shm
 payload.db-wal
 /public/media
+
+# backups
+/backups/
+*.backup
+*.sql.gz
+
+# logs
+/logs/
+*.log
+
+# deployment
+deploy/
+.env.production

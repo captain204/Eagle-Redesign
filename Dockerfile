@@ -1,51 +1,74 @@
 # Stage 1: Build
 FROM node:20-alpine AS builder
-RUN apk add --no-cache libc6-compat python3
+
+# Install only essential build dependencies
+RUN apk add --no-cache libc6-compat python3 && \
+    rm -rf /var/cache/apk/*
+
 WORKDIR /app
 
-# Install dependencies based on the preferred package manager
-# Install dependencies with NPM BuildKit Cache
+# Copy package files first for better layer caching
 COPY package.json package-lock.json* ./
-RUN --mount=type=cache,target=/root/.npm npm ci --legacy-peer-deps
 
-# Copy all source files
+# Install dependencies with NPM BuildKit Cache
+# Use --omit=dev to exclude devDependencies in production build
+RUN --mount=type=cache,target=/root/.npm \
+    npm ci --legacy-peer-deps --omit=dev
+
+# Copy only necessary source files (exclude unnecessary files)
 COPY . .
 
 # Set environment variables for build
 ENV NEXT_TELEMETRY_DISABLED=1
 ENV NODE_ENV=production
 ENV PAYLOAD_CONFIG_PATH=src/payload.config.ts
-ENV NODE_OPTIONS="--max-old-space-size=1024"
+# Limit memory usage during build for 1GB RAM servers
+ENV NODE_OPTIONS="--max-old-space-size=768"
 
 # Build the project with Next.js Cache (Disable DB push to prevent schema lock deadlocks)
-RUN --mount=type=cache,target=/app/.next/cache python3 scripts/fix_missing_tables.py && DISABLE_DB_PUSH=1 npm run build
+RUN --mount=type=cache,target=/app/.next/cache \
+    python3 scripts/fix_missing_tables.py && \
+    DISABLE_DB_PUSH=1 npm run build
 
-# Stage 2: Run
+# Stage 2: Production Runner (Minimal Image)
 FROM node:20-alpine AS runner
 WORKDIR /app
 
+# Production environment
 ENV NODE_ENV=production
 ENV NEXT_TELEMETRY_DISABLED=1
+# Limit runtime memory for 1GB RAM servers (leave room for OS and SQLite)
+ENV NODE_OPTIONS="--max-old-space-size=512"
 
-RUN addgroup --system --gid 1001 nodejs
-RUN adduser --system --uid 1001 nextjs
+# Create non-root user for security
+RUN addgroup --system --gid 1001 nodejs && \
+    adduser --system --uid 1001 nextjs
 
-# Copy entire built application instead of memory-heavy standalone traced files
+# Copy built application from builder stage
 COPY --from=builder --chown=nextjs:nodejs /app ./
 
-# Ensure media directory exists and give nextjs ownership of the entire /app directory 
-# so SQLite can create temporary -wal and -shm journal files alongside payload.db
-RUN mkdir -p public/media && chown -R nextjs:nodejs /app
+# Ensure media directory exists and set proper permissions
+# SQLite needs write access to create -wal and -shm journal files
+RUN mkdir -p public/media && \
+    mkdir -p backups && \
+    chown -R nextjs:nodejs /app
 
-# Install Python for the database schema recovery script
-RUN apk add --no-cache python3
+# Install Python runtime only (not full python3 package) for DB scripts
+RUN apk add --no-cache python3 && \
+    rm -rf /var/cache/apk/*
 
+# Switch to non-root user
 USER nextjs
 
+# Expose application port
 EXPOSE 3000
 
 ENV PORT=3000
 ENV HOSTNAME="0.0.0.0"
 
-# Intercept container startup to force SQLite table creation safely before Next.js accepts requests
+# Health check for container orchestration
+HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
+    CMD wget --no-verbose --tries=1 --spider http://localhost:3000/health || exit 1
+
+# Initialize database and start application
 CMD ["sh", "-c", "python3 scripts/fix_missing_tables.py && npm start"]
