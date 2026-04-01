@@ -3,8 +3,34 @@ node_modules
 .git
 .env
 payload.db
+payload.db-*
+*.db
+*.db-*
 public/media/*
 *.md
 Dockerfile
 docker-compose.yml
 .dockerignore
+
+# Docker images
+eagle-app.tar.gz
+*.tar.gz
+*.tar
+*.zip
+
+# Backups and logs
+backups/
+logs/
+*.log
+
+# Build artifacts
+*.backup
+*.old
+*.corrupted
+*.sql.gz
+*.sql
+
+# Data files
+join_usages.txt
+payload_join_usages.txt
+missing_names.txt
