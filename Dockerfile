@@ -25,9 +25,9 @@ ENV PAYLOAD_CONFIG_PATH=src/payload.config.ts
 # Limit memory usage during build for 1GB RAM servers
 ENV NODE_OPTIONS="--max-old-space-size=768"
 
-# Build the project with Next.js Cache (Disable DB push to prevent schema lock deadlocks)
+# Build the project with Next.js Cache
+# Disable DB push during build to prevent schema lock issues
 RUN --mount=type=cache,target=/app/.next/cache \
-    python3 scripts/fix_missing_tables.py && \
     DISABLE_DB_PUSH=1 npm run build
 
 # Stage 2: Production Runner (Minimal Image)
@@ -54,6 +54,10 @@ RUN mkdir -p public/media && \
 RUN apk add --no-cache python3 && \
     rm -rf /var/cache/apk/*
 
+# Copy entrypoint script
+COPY scripts/entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
+
 # Expose application port
 EXPOSE 3000
 
@@ -64,6 +68,5 @@ ENV HOSTNAME="0.0.0.0"
 HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
     CMD wget --no-verbose --tries=1 --spider http://localhost:3000/health || exit 1
 
-# Initialize database and start application
-# Ensure db file exists with correct permissions before running fix script
-CMD ["sh", "-c", "cd /app && touch payload.db && chmod 666 payload.db && python3 /app/scripts/fix_missing_tables.py && npm start"]
+# Use entrypoint script for proper initialization
+ENTRYPOINT ["/entrypoint.sh"]

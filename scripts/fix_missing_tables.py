@@ -1,7 +1,9 @@
 import sqlite3
 import os
 
-db_path = 'payload.db'
+# Use absolute path for container, relative for local
+db_path = '/app/payload.db' if os.path.exists('/app/payload.db') else 'payload.db'
+
 if not os.path.exists(db_path):
     print(f"Database {db_path} does not exist yet. Letting Next.js/Payload create it natively.")
     exit(0)
