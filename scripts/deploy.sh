@@ -75,11 +75,19 @@ fi
 echo -e "${GREEN}✅ Disk space: ${DISK_AVAILABLE}MB available${NC}"
 
 # Check memory
+MEM_TOTAL=$(free -g | awk 'NR==2 {print $2}')
 MEM_AVAILABLE=$(free -m | awk 'NR==2 {print $7}')
-if [ "$MEM_AVAILABLE" -lt 256 ]; then
-    echo -e "${RED}❌ Warning: Less than 256MB RAM available${NC}"
+
+if [ "$MEM_TOTAL" -ge 8 ]; then
+    echo -e "${GREEN}✅ Memory: ${MEM_AVAILABLE}MB available (Production tier ${MEM_TOTAL}GB RAM)${NC}"
+elif [ "$MEM_TOTAL" -ge 4 ]; then
+    echo -e "${GREEN}✅ Memory: ${MEM_AVAILABLE}MB available (Standard tier ${MEM_TOTAL}GB RAM)${NC}"
+else
+    echo -e "${YELLOW}⚠️  Memory: ${MEM_AVAILABLE}MB available (Low-memory tier ${MEM_TOTAL}GB RAM)${NC}"
+    if [ "$MEM_AVAILABLE" -lt 256 ]; then
+        echo -e "${RED}❌ Warning: Less than 256MB RAM available${NC}"
+    fi
 fi
-echo -e "${GREEN}✅ Memory: ${MEM_AVAILABLE}MB available${NC}"
 
 # Stop current application
 echo -e "\n${YELLOW}🛑 Stopping current application...${NC}"
@@ -90,7 +98,15 @@ echo -e "\n${YELLOW}🧹 Cleaning up old Docker images...${NC}"
 docker image prune -f
 
 # Build and start
-echo -e "\n${YELLOW}🔨 Building application (this may take 5-10 minutes)...${NC}"
+echo -e "\n${YELLOW}🔨 Building application...${NC}"
+if [ "$MEM_TOTAL" -ge 8 ]; then
+    echo -e "   ${BLUE}Production server detected (${MEM_TOTAL}GB RAM) - Fast build expected (3-5 min)${NC}"
+elif [ "$MEM_TOTAL" -ge 4 ]; then
+    echo -e "   ${BLUE}Standard server detected (${MEM_TOTAL}GB RAM) - Moderate build expected (5-8 min)${NC}"
+else
+    echo -e "   ${YELLOW}Low-memory server detected (${MEM_TOTAL}GB RAM) - Build may take 10-20 min${NC}"
+fi
+
 docker compose up -d --build
 
 # Wait for application to be ready

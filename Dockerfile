@@ -57,8 +57,8 @@ RUN mkdir -p public/media && \
 RUN apk add --no-cache python3 && \
     rm -rf /var/cache/apk/*
 
-# Switch to non-root user
-USER nextjs
+# Keep as root user for SQLite file access
+# USER nextjs
 
 # Expose application port
 EXPOSE 3000

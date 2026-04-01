@@ -11,7 +11,8 @@
       "Bash(docker build *)",
       "Bash(sudo *)",
       "Bash(newgrp *)",
-      "Bash(docker *)"
+      "Bash(docker *)",
+      "Bash(ssh *)"
     ]
   },
   "$version": 3

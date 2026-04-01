@@ -1,13 +1,14 @@
-name: Build and Deploy to Droplet
+name: Build and Deploy to Production
 
 on:
   push:
     branches: [main]
+  workflow_dispatch: # Allow manual trigger
 
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
-    
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -26,19 +27,50 @@ jobs:
         with:
           context: .
           push: true
-          tags: ${{ secrets.DOCKER_HUB_USERNAME }}/eagle-app:latest
+          tags: |
+            ${{ secrets.DOCKER_HUB_USERNAME }}/eagle-app:latest
+            ${{ secrets.DOCKER_HUB_USERNAME }}/eagle-app:${{ github.sha }}
           cache-from: type=registry,ref=${{ secrets.DOCKER_HUB_USERNAME }}/eagle-app:buildcache
           cache-to: type=registry,ref=${{ secrets.DOCKER_HUB_USERNAME }}/eagle-app:buildcache,mode=max
+          platforms: linux/amd64
 
-      - name: Deploy to DigitalOcean Droplet
+      - name: Deploy to DigitalOcean Droplet ($24/mo - 8GB RAM)
         uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.DROPLET_IP }}
           username: root
           key: ${{ secrets.DROPLET_SSH_KEY }}
           script: |
+            echo "🚀 Starting deployment to production server..."
             cd /app
+            
+            # Pull latest image
             docker pull ${{ secrets.DOCKER_HUB_USERNAME }}/eagle-app:latest
+            
+            # Stop current application
             docker compose down
+            
+            # Start new version
             docker compose up -d
-            docker image prune -f
+            
+            # Wait for health check
+            echo "⏳ Waiting for application to be healthy..."
+            sleep 15
+            
+            # Check health
+            if docker compose ps | grep -q "Up"; then
+              echo "✅ Deployment successful!"
+              # Clean up old images
+              docker image prune -f
+            else
+              echo "❌ Application may have issues. Rolling back..."
+              docker compose logs
+              exit 1
+            fi
+
+      - name: Deployment Notification
+        if: always()
+        run: |
+          echo "Deployment completed at $(date)"
+          echo "Commit: ${{ github.sha }}"
+          echo "Author: ${{ github.actor }}"

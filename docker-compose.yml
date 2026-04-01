@@ -1,15 +1,19 @@
 services:
   app:
     # Use pre-built image from Docker Hub (replace with your username)
+    # Build locally: docker build -t yourusername/eagle-app:latest .
+    # Push to registry: docker push yourusername/eagle-app:latest
     image: yourusername/eagle-app:latest
-    
-    # Uncomment build section only when building locally
+
+    # Uncomment build section to build on server
+    # NOTE: Only build on $24/mo droplet (8GB RAM). 
+    # Building on $6/mo (1GB RAM) will fail or take 19+ minutes.
     # build:
     #   context: .
     #   dockerfile: Dockerfile
     #   args:
     #     NODE_ENV: production
-    
+
     container_name: eagle-app
     restart: unless-stopped
     ports:
@@ -24,13 +28,24 @@ services:
     environment:
       - NODE_ENV=production
       - NEXT_TELEMETRY_DISABLED=1
+      # === MEMORY CONFIGURATION ===
+      # For $24/mo (8GB RAM): --max-old-space-size=4096
+      # For $6/mo (1GB RAM): --max-old-space-size=512
+      # Run: ./resize-config.sh after changing droplet size
       - NODE_OPTIONS=--max-old-space-size=512
     deploy:
       resources:
         limits:
+          # === MEMORY LIMITS ===
+          # For $24/mo (8GB RAM): 6G
+          # For $6/mo (1GB RAM): 768M
           memory: 768M
+          # === CPU LIMITS ===
+          # For $24/mo (4 vCPU): 2.0
+          # For $6/mo (1 vCPU): 0.75
           cpus: '0.75'
         reservations:
+          # Guaranteed minimum resources
           memory: 256M
           cpus: '0.25'
     healthcheck:
@@ -42,13 +57,17 @@ services:
     logging:
       driver: "json-file"
       options:
-        max-size: "10m"
-        max-file: "3"
+        # Log rotation to prevent disk fill
+        max-size: "50m"
+        max-file: "5"
     security_opt:
       - no-new-privileges:true
     networks:
       - eagle-network
+    # Run as root for SQLite file access
+    # SQLite needs write access to create -wal and -shm journal files
 
+# Network configuration
 networks:
   eagle-network:
     driver: bridge

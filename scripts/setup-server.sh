@@ -31,22 +31,52 @@ apt update && apt upgrade -y
 echo -e "${GREEN}✓ System updated${NC}"
 
 # ============================================
-# Step 2: Enable Swap (CRITICAL for 1GB RAM)
+# Step 2: Enable Swap (Optional for 8GB RAM)
 # ============================================
-echo -e "\n${YELLOW}[2/8] Configuring swap memory...${NC}"
-if [ -f /swapfile ]; then
-    echo -e "${GREEN}✓ Swap already configured${NC}"
+echo -e "\n${YELLOW}[2/8] Checking memory configuration...${NC}"
+TOTAL_RAM=$(free -g | awk 'NR==2 {print $2}')
+
+if [ "$TOTAL_RAM" -lt 2 ]; then
+    # Less than 2GB RAM - swap is critical
+    if [ -f /swapfile ]; then
+        echo -e "${GREEN}✓ Swap already configured${NC}"
+    else
+        fallocate -l 2G /swapfile
+        chmod 600 /swapfile
+        mkswap /swapfile
+        swapon /swapfile
+        echo '/swapfile none swap sw 0 0' >> /etc/fstab
+        echo -e "${GREEN}✓ Swap created (2GB) - CRITICAL for 1GB RAM${NC}"
+    fi
+elif [ "$TOTAL_RAM" -lt 4 ]; then
+    # 2-4GB RAM - small swap as safety net
+    if [ -f /swapfile ]; then
+        echo -e "${GREEN}✓ Swap already configured${NC}"
+    else
+        fallocate -l 1G /swapfile
+        chmod 600 /swapfile
+        mkswap /swapfile
+        swapon /swapfile
+        echo '/swapfile none swap sw 0 0' >> /etc/fstab
+        echo -e "${GREEN}✓ Swap created (1GB) - Safety net${NC}"
+    fi
 else
-    fallocate -l 2G /swapfile
-    chmod 600 /swapfile
-    mkswap /swapfile
-    swapon /swapfile
-    echo '/swapfile none swap sw 0 0' >> /etc/fstab
-    echo -e "${GREEN}✓ Swap created (2GB)${NC}"
+    # 4GB+ RAM - minimal swap for edge cases
+    if [ -f /swapfile ]; then
+        echo -e "${GREEN}✓ Swap already configured${NC}"
+    else
+        fallocate -l 512M /swapfile
+        chmod 600 /swapfile
+        mkswap /swapfile
+        swapon /swapfile
+        echo '/swapfile none swap sw 0 0' >> /etc/fstab
+        echo -e "${GREEN}✓ Swap created (512MB) - Emergency only${NC}"
+    fi
 fi
 
 # Verify swap
 SWAP=$(free -m | awk 'NR==2 {print $3}')
+echo -e "   Total RAM: ${TOTAL_RAM}GB"
 echo -e "   Swap available: ${SWAP}MB"
 
 # ============================================
