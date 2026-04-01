@@ -12,7 +12,10 @@
       "Bash(sudo *)",
       "Bash(newgrp *)",
       "Bash(docker *)",
-      "Bash(ssh *)"
+      "Bash(ssh *)",
+      "Bash(git *)",
+      "Bash(find *)",
+      "Bash(du *)"
     ]
   },
   "$version": 3

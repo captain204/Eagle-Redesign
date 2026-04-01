@@ -53,3 +53,26 @@ payload.db-wal
 # deployment
 deploy/
 .env.production
+
+# Docker images
+*.tar.gz
+*.tar
+*.zip
+
+# Database files (SQLite)
+payload.db
+payload.db-*
+*.db
+*.db-*
+
+# Large data files
+*.sql.gz
+*.sql
+join_usages.txt
+payload_join_usages.txt
+missing_names.txt
+
+# Corrupted/backup files
+*.corrupted
+*.old
+*.backup
