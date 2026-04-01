@@ -37,28 +37,22 @@ WORKDIR /app
 # Production environment
 ENV NODE_ENV=production
 ENV NEXT_TELEMETRY_DISABLED=1
-# Limit runtime memory for 1GB RAM servers (leave room for OS and SQLite)
-ENV NODE_OPTIONS="--max-old-space-size=512"
-
-# Create non-root user for security
-RUN addgroup --system --gid 1001 nodejs && \
-    adduser --system --uid 1001 nextjs
+# Memory for runtime (set via docker-compose.yml)
+ENV NODE_OPTIONS="--max-old-space-size=4096"
 
 # Copy built application from builder stage
-COPY --from=builder --chown=nextjs:nodejs /app ./
+COPY --from=builder --chown=1001:1001 /app ./
 
 # Ensure media directory exists and set proper permissions
 # SQLite needs write access to create -wal and -shm journal files
 RUN mkdir -p public/media && \
     mkdir -p backups && \
-    chown -R nextjs:nodejs /app
+    mkdir -p logs && \
+    chmod -R 777 public/media backups logs
 
 # Install Python runtime only (not full python3 package) for DB scripts
 RUN apk add --no-cache python3 && \
     rm -rf /var/cache/apk/*
-
-# Keep as root user for SQLite file access
-# USER nextjs
 
 # Expose application port
 EXPOSE 3000
@@ -71,5 +65,4 @@ HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
     CMD wget --no-verbose --tries=1 --spider http://localhost:3000/health || exit 1
 
 # Initialize database and start application
-# Run fix script from the correct working directory
-CMD ["sh", "-c", "cd /app && python3 scripts/fix_missing_tables.py && npm start"]
+CMD ["sh", "-c", "touch /app/payload.db && chmod 666 /app/payload.db && python3 scripts/fix_missing_tables.py && npm start"]
