@@ -65,4 +65,5 @@ HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
     CMD wget --no-verbose --tries=1 --spider http://localhost:3000/health || exit 1
 
 # Initialize database and start application
-CMD ["sh", "-c", "touch /app/payload.db && chmod 666 /app/payload.db && python3 scripts/fix_missing_tables.py && npm start"]
+# Ensure db file exists with correct permissions before running fix script
+CMD ["sh", "-c", "cd /app && touch payload.db && chmod 666 payload.db && python3 /app/scripts/fix_missing_tables.py && npm start"]
