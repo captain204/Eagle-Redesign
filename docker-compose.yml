@@ -1,18 +1,15 @@
 services:
   app:
-    # Use pre-built image from Docker Hub (replace with your username)
-    # Build locally: docker build -t yourusername/eagle-app:latest .
-    # Push to registry: docker push yourusername/eagle-app:latest
-    image: yourusername/eagle-app:latest
+    # Build on server (recommended for $24/mo droplet with 8GB RAM)
+    # Or build locally and comment out build section, use image instead
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        NODE_ENV: production
 
-    # Uncomment build section to build on server
-    # NOTE: Only build on $24/mo droplet (8GB RAM). 
-    # Building on $6/mo (1GB RAM) will fail or take 19+ minutes.
-    # build:
-    #   context: .
-    #   dockerfile: Dockerfile
-    #   args:
-    #     NODE_ENV: production
+    # Uncomment below only if using pre-built image from Docker Hub
+    # image: yourusername/eagle-app:latest
 
     container_name: eagle-app
     restart: unless-stopped
