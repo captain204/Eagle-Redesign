@@ -24,7 +24,8 @@
       "Bash(iptables *)",
       "Bash(sleep *)",
       "Bash(nft *)",
-      "Bash(ufw *)"
+      "Bash(ufw *)",
+      "Bash(docker exec *)"
     ]
   },
   "$version": 3
