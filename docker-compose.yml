@@ -59,10 +59,9 @@ services:
         max-file: "5"
     security_opt:
       - no-new-privileges:true
+    user: "0:0"
     networks:
       - eagle-network
-    # Run as root for SQLite file access
-    # SQLite needs write access to create -wal and -shm journal files
 
 # Network configuration
 networks:
