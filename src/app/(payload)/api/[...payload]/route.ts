@@ -3,10 +3,9 @@ import { REST_DELETE, REST_GET, REST_OPTIONS, REST_PATCH, REST_POST, REST_PUT } 
 import config from '@payload-config'
 
 // Next.js 16 + Payload CMS route handlers
-// Using type assertions to resolve Turbopack type conflicts
-export const GET = REST_GET(config) as any
-export const POST = REST_POST(config) as any
-export const DELETE = REST_DELETE(config) as any
-export const PATCH = REST_PATCH(config) as any
-export const PUT = REST_PUT(config) as any
-export const OPTIONS = REST_OPTIONS(config) as any
+export const GET = async (req: Request, { params }: { params: Promise<any> }) => REST_GET(config)(req, { params: await params })
+export const POST = async (req: Request, { params }: { params: Promise<any> }) => REST_POST(config)(req, { params: await params })
+export const DELETE = async (req: Request, { params }: { params: Promise<any> }) => REST_DELETE(config)(req, { params: await params })
+export const PATCH = async (req: Request, { params }: { params: Promise<any> }) => REST_PATCH(config)(req, { params: await params })
+export const PUT = async (req: Request, { params }: { params: Promise<any> }) => REST_PUT(config)(req, { params: await params })
+export const OPTIONS = async (req: Request, { params }: { params: Promise<any> }) => REST_OPTIONS(config)(req, { params: await params })

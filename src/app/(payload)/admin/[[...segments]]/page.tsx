@@ -12,12 +12,12 @@ type Args = {
     }>
 }
 
-export const generateMetadata = ({ params, searchParams }: Args): Promise<Metadata> => {
-    return generatePageMetadata({ config, params, searchParams })
+export const generateMetadata = async ({ params, searchParams }: Args): Promise<Metadata> => {
+    return generatePageMetadata({ config, params: (await params) as any, searchParams: (await searchParams) as any })
 }
 
-const Page = ({ params, searchParams }: Args) => {
-    return RootPage({ config, importMap, params, searchParams })
+const Page = async ({ params, searchParams }: Args) => {
+    return RootPage({ config, importMap, params: (await params) as any, searchParams: (await searchParams) as any })
 }
 
 export default Page
