@@ -8,10 +8,10 @@ export async function sendOrderConfirmationEmail(order: any, customerEmail: stri
         const total = order.total;
         const items = order.items || [];
 
-        const itemsList = items.map((item: any) => {
+        const itemsList = Array.isArray(items) ? items.map((item: any) => {
             const productTitle = typeof item.product === 'object' ? item.product.title : 'Product';
             return `<li>${productTitle} x ${item.quantity} - ₦${item.price.toLocaleString()}</li>`;
-        }).join('');
+        }).join('') : '<li>Items details unavailable</li>';
 
         const html = `
             <h1>Order Confirmation</h1>
