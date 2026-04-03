@@ -13,11 +13,13 @@ type Args = {
 }
 
 export const generateMetadata = async ({ params, searchParams }: Args): Promise<Metadata> => {
-    return generatePageMetadata({ config, params: (await params) as any, searchParams: (await searchParams) as any })
+    const { segments = [] } = await params
+    return generatePageMetadata({ config, params: { ...(await params), segments } as any, searchParams: (await searchParams) as any })
 }
 
 const Page = async ({ params, searchParams }: Args) => {
-    return RootPage({ config, importMap, params: (await params) as any, searchParams: (await searchParams) as any })
+    const { segments = [] } = await params
+    return RootPage({ config, importMap, params: { ...(await params), segments } as any, searchParams: (await searchParams) as any })
 }
 
 export default Page
