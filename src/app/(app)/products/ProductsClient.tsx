@@ -10,7 +10,7 @@ interface Category {
     slug: string;
 }
 
-export default function ProductsClient({ initialProducts, categories }: { initialProducts: any[], categories: Category[] }) {
+export default function ProductsClient({ initialProducts, categories, pageTitle = "All Products" }: { initialProducts: any[], categories: Category[], pageTitle?: string }) {
     const [selectedCategory, setSelectedCategory] = useState("All");
     const [priceRange, setPriceRange] = useState(100000); // Increased default range
 
@@ -36,8 +36,8 @@ export default function ProductsClient({ initialProducts, categories }: { initia
             <div className="container mx-auto px-4">
                 {/* Breadcrumb / Title */}
                 <div className="mb-8">
-                    <h1 className="text-3xl font-bold uppercase">All Products</h1>
-                    <p className="text-gray-500 text-sm mt-2">Home / Products</p>
+                    <h1 className="text-3xl font-bold uppercase">{pageTitle}</h1>
+                    <p className="text-gray-500 text-sm mt-2">Home / {pageTitle}</p>
                 </div>
 
                 <div className="flex flex-col md:flex-row gap-8">
