@@ -1,0 +1,11 @@
+export const dynamic = 'force-dynamic'
+import { REST_DELETE, REST_GET, REST_OPTIONS, REST_PATCH, REST_POST, REST_PUT } from '@payloadcms/next/routes'
+import config from '@payload-config'
+
+// Standard Next.js 15+ support is handled internally by Payload 3.77+
+export const GET = REST_GET(config)
+export const POST = REST_POST(config)
+export const DELETE = REST_DELETE(config)
+export const PATCH = REST_PATCH(config)
+export const PUT = REST_PUT(config)
+export const OPTIONS = REST_OPTIONS(config)
