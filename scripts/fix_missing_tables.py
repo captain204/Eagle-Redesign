@@ -92,7 +92,8 @@ except Exception as e:
 db.commit()
 
 # Also run fix_sqlite for payload_locked_documents_rels just in case
-collections = ["sliders_id", "qr_codes_id"]
+# Add any collection relation columns that might be missing (keep short)
+collections = ["sliders_id", "qr_codes_id", "contact_submissions_id"]
 for col in collections:
     try:
         cursor.execute(f'ALTER TABLE "payload_locked_documents_rels" ADD COLUMN "{col}" integer;')
