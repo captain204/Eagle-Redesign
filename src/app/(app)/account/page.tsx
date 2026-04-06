@@ -119,8 +119,7 @@ export default function AccountPage() {
                                         <button className="text-red-500 text-sm font-bold hover:underline">Delete</button>
                                     </div>
                                     <p className="font-bold mb-1">User Name</p>
-                                    <p className="text-gray-600 text-sm">123 Lagos Street, Ikeja</p>
-                                    <p className="text-gray-600 text-sm">Lagos, Nigeria</p>
+                                    <p className="text-gray-600 text-sm">21 Obafemi Awolowo way B67 asset corp plaza ikeja, close to ikeja club</p>
                                     <p className="text-gray-600 text-sm mt-2">+234 800 000 0000</p>
                                 </div>
                                 <Button className="mt-6 bg-primary text-black hover:bg-black hover:text-white border border-primary font-bold">

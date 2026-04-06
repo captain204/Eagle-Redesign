@@ -30,7 +30,7 @@ export default function WhereToBuyPage() {
 
                 <div className="text-left border rounded-lg p-6 bg-gray-50 mb-4">
                     <h3 className="font-bold text-lg mb-2">1st𝓔agle Flagship Store</h3>
-                    <p className="text-gray-600 mb-2">123 Ikeja GRA, Lagos State, Nigeria.</p>
+                    <p className="text-gray-600 mb-2">21 Obafemi Awolowo way B67 asset corp plaza ikeja, close to ikeja club</p>
                     <p className="text-primary font-semibold">Open: Mon-Sat, 9AM - 6PM</p>
                 </div>
             </div>

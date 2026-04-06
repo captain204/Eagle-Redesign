@@ -77,7 +77,7 @@ export function Footer() {
                             <p className="flex items-center gap-2 mb-2"><Mail className="w-4 h-4 text-primary shrink-0" /> care@1st𝓔agle.com</p>
                             <p className="flex items-start gap-2 mb-4 leading-relaxed">
                                 <MapPin className="w-4 h-4 text-primary shrink-0 mt-1" />
-                                <span>21 Obafemi Awolowo way, B67 asset corp plaza ikeja,<br />close to ikeja club</span>
+                                <span>21 Obafemi Awolowo way B67 asset corp plaza ikeja, close to ikeja club</span>
                             </p>
                         </div>
                         <div className="flex flex-col gap-3 mt-6">

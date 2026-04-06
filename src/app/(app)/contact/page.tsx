@@ -207,7 +207,7 @@ export default function Contact() {
                                     </div>
                                     <div>
                                         <h4 className="font-bold text-gray-400 text-xs uppercase tracking-widest mb-1">Our Studio</h4>
-                                        <p className="text-gray-900 font-bold">123 Tech Plaza, Ikeja, Lagos</p>
+                                        <p className="text-gray-900 font-bold">21 Obafemi Awolowo way B67 asset corp plaza ikeja, close to ikeja club</p>
                                     </div>
                                 </div>
 
