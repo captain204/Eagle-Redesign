@@ -3,6 +3,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { Search, User, Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -21,6 +22,10 @@ interface Category {
 export function Header({ categories = [] }: { categories?: Category[] }) {
     const [isScrolled, setIsScrolled] = useState(false);
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+    const router = useRouter();
+
+    const [selectedCategoryValue, setSelectedCategoryValue] = useState<string | null>("all");
+    const [searchTerm, setSearchTerm] = useState("");
 
     useEffect(() => {
         const handleScroll = () => {
@@ -35,6 +40,14 @@ export function Header({ categories = [] }: { categories?: Category[] }) {
         { name: "Hot & New", href: "/hot-new" },
         { name: "Support", href: "/support" },
     ];
+
+    const handleSearch = () => {
+        const params = new URLSearchParams();
+        if (searchTerm && searchTerm.trim().length > 0) params.set('q', searchTerm.trim());
+        if (selectedCategoryValue && selectedCategoryValue !== 'all') params.set('category', selectedCategoryValue);
+        const qs = params.toString();
+        router.push(`/products${qs ? `?${qs}` : ''}`);
+    }
 
     return (
         <header
@@ -57,7 +70,7 @@ export function Header({ categories = [] }: { categories?: Category[] }) {
 
                 {/* Central Search Bar - Desktop */}
                 <div className="hidden md:flex flex-1 max-w-2xl items-stretch h-10 shadow-sm relative group/search">
-                    <Select defaultValue="all">
+                    <Select defaultValue="all" onValueChange={(v) => setSelectedCategoryValue(v)}>
                         <SelectTrigger className="w-[160px] rounded-r-none bg-gray-100 border-r border-gray-300 focus:ring-0 text-gray-700 h-full font-medium">
                             <SelectValue placeholder="All Categories" />
                         </SelectTrigger>
@@ -71,11 +84,14 @@ export function Header({ categories = [] }: { categories?: Category[] }) {
                     <div className="flex-1 relative">
                         <Input
                             type="search"
+                            value={searchTerm}
+                            onChange={(e) => setSearchTerm(e.target.value)}
+                            onKeyDown={(e) => { if (e.key === 'Enter') handleSearch(); }}
                             placeholder="Search products, brands and categories..."
                             className="w-full h-full rounded-none border-0 focus-visible:ring-0 focus-visible:ring-offset-0 bg-white text-black px-4"
                         />
                     </div>
-                    <Button className="rounded-l-none bg-primary hover:bg-primary/90 text-black h-full px-6 font-bold">
+                    <Button onClick={handleSearch} className="rounded-l-none bg-primary hover:bg-primary/90 text-black h-full px-6 font-bold">
                         <Search className="w-5 h-5" />
                     </Button>
                 </div>
@@ -99,7 +115,7 @@ export function Header({ categories = [] }: { categories?: Category[] }) {
 
                     {/* Icons */}
                     <div className="flex items-center gap-3 lg:gap-4 text-white">
-                        <button className="md:hidden hover:text-primary transition-colors p-2">
+                        <button className="md:hidden hover:text-primary transition-colors p-2" onClick={() => { if (typeof window !== 'undefined') { const q = (document.querySelector('.lg\:hidden input[placeholder="Search..."]') as HTMLInputElement | null)?.value || ''; router.push(`/products${q ? `?q=${encodeURIComponent(q)}` : ''}`) } }}>
                             <Search className="w-5 h-5" />
                         </button>
 

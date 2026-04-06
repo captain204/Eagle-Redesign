@@ -8,7 +8,7 @@ export default async function HotNewPage() {
     const [productsResult, categoriesResult] = await Promise.all([
         payload.find({
             collection: "products",
-            where: { isHotNew: { equals: true } },
+            where: { isHotNew: { equals: true }, status: { equals: 'published' }, visibility: { equals: 'visible' } },
             depth: 1,
             limit: 200,
             sort: "-createdAt",

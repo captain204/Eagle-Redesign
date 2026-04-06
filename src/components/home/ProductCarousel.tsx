@@ -2,6 +2,7 @@
 
 import { motion } from "framer-motion";
 import { useRef, useState, useEffect } from "react";
+import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { ProductCard } from "@/components/products/ProductCard";
 
@@ -14,7 +15,7 @@ interface Product {
     productTags?: any[];
 }
 
-export function ProductCarousel({ title, products = [] }: { title: string, products?: Product[] }) {
+export function ProductCarousel({ title, products = [], viewAllHref = '/products' }: { title: string, products?: Product[], viewAllHref?: string }) {
     const [width, setWidth] = useState(0);
     const carousel = useRef<HTMLDivElement>(null);
 
@@ -28,7 +29,13 @@ export function ProductCarousel({ title, products = [] }: { title: string, produ
         <div className="py-12">
             <div className="container mb-6 flex justify-between items-end">
                 <h2 className="text-2xl font-bold">{title}</h2>
-                <Button variant="link" className="text-primary p-0">View All</Button>
+                {viewAllHref ? (
+                    <Link href={viewAllHref}>
+                        <Button variant="link" className="text-primary p-0">View All</Button>
+                    </Link>
+                ) : (
+                    <Button variant="link" className="text-primary p-0">View All</Button>
+                )}
             </div>
 
             <div className="relative w-full overflow-hidden">

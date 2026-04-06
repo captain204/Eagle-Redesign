@@ -40,7 +40,7 @@ const getDailyDeals = unstable_cache(
     try {
       const deals = await payload.find({
         collection: "products",
-        where: { isDailyDeal: { equals: true } },
+        where: { isDailyDeal: { equals: true }, status: { equals: 'published' }, visibility: { equals: 'visible' } },
         limit: 10,
         depth: 1,
       });
@@ -59,7 +59,7 @@ const getHotNewProducts = unstable_cache(
     try {
       const hotNew = await payload.find({
         collection: "products",
-        where: { isHotNew: { equals: true } },
+        where: { isHotNew: { equals: true }, status: { equals: 'published' }, visibility: { equals: 'visible' } },
         limit: 10,
         depth: 1,
       });
@@ -78,6 +78,7 @@ const getFeaturedProducts = unstable_cache(
     try {
       const productsResult = await payload.find({
         collection: "products",
+        where: { status: { equals: 'published' }, visibility: { equals: 'visible' } },
         sort: "-createdAt",
         limit: 10,
         depth: 1,
@@ -220,8 +221,8 @@ export default async function Home() {
         >
           <div className="container">
             <h2 className="text-3xl font-extrabold text-center mb-12 uppercase tracking-tight">Daily Deals</h2>
-            <Suspense fallback={<div className="h-96" />}>
-              <ProductCarousel title="" products={dailyDeals} />
+              <Suspense fallback={<div className="h-96" />}>
+              <ProductCarousel title="" products={dailyDeals} viewAllHref="/daily-deals" />
             </Suspense>
           </div>
         </motion.section>
@@ -238,8 +239,8 @@ export default async function Home() {
         >
           <div className="container">
             <h2 className="text-3xl font-extrabold text-center mb-12 uppercase tracking-tight">Hot New Items</h2>
-            <Suspense fallback={<div className="h-96" />}>
-              <ProductCarousel title="" products={hotNewProducts} />
+              <Suspense fallback={<div className="h-96" />}>
+              <ProductCarousel title="" products={hotNewProducts} viewAllHref="/hot-new" />
             </Suspense>
           </div>
         </motion.section>
@@ -254,8 +255,8 @@ export default async function Home() {
         className="py-16 container"
       >
         <h2 className="text-3xl font-extrabold mb-8 uppercase text-left tracking-tight">Recommended For You</h2>
-        <Suspense fallback={<div className="h-96" />}>
-          <ProductCarousel title="" products={featuredProducts} />
+          <Suspense fallback={<div className="h-96" />}>
+          <ProductCarousel title="" products={featuredProducts} viewAllHref="/products" />
         </Suspense>
       </motion.section>
 

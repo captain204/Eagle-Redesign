@@ -9,6 +9,7 @@ export default async function ProductsPage() {
     const [productsResult, categoriesResult] = await Promise.all([
         payload.find({
             collection: "products",
+            where: { status: { equals: 'published' }, visibility: { equals: 'visible' } },
             depth: 1,
             limit: 200,
             sort: "-createdAt"
