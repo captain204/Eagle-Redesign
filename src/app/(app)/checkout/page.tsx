@@ -8,6 +8,7 @@ import { toast } from "sonner";
 import { useCart } from "@/providers/CartProvider";
 import { ProductCarousel } from "@/components/home/ProductCarousel";
 import { usePaystackPayment } from "react-paystack";
+import { nigeriaData } from "@/lib/nigeriaData";
 
 export default function CheckoutPage() {
     const [step, setStep] = useState(1);
@@ -121,8 +122,7 @@ export default function CheckoutPage() {
                 shippingAddress: {
                     name: `${firstName} ${lastName}`,
                     street: address,
-                    city: city, // Wait, Orders.ts has group 'shippingAddress' with field 'lga' but maybe city was renamed?
-                    lga: city,  // Let's use both if available or whatever is in the schema
+                    lga: city,
                     state: state,
                     country: 'Nigeria',
                 }
@@ -151,6 +151,7 @@ export default function CheckoutPage() {
                 // Trigger Paystack
                 // @ts-ignore
                 initializePayment({
+                    config: paystackConfig,
                     onSuccess: (ref: any) => onSuccess(ref, orderId),
                     onClose: onClose
                 });
@@ -229,13 +230,16 @@ export default function CheckoutPage() {
                                         onChange={(e) => setCity(e.target.value)}
                                         className="w-full p-3 border rounded-lg bg-gray-50 focus:bg-white focus:ring-1 focus:ring-primary outline-none"
                                     />
-                                    <input
-                                        type="text"
-                                        placeholder="State"
+                                    <select
                                         value={state}
                                         onChange={(e) => setState(e.target.value)}
                                         className="w-full p-3 border rounded-lg bg-gray-50 focus:bg-white focus:ring-1 focus:ring-primary outline-none"
-                                    />
+                                    >
+                                        <option value="" disabled>Select State</option>
+                                        {Object.keys(nigeriaData).map((st) => (
+                                            <option key={st} value={st}>{st}</option>
+                                        ))}
+                                    </select>
                                 </div>
                                 <input
                                     type="tel"
