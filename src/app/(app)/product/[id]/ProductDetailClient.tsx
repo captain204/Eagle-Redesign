@@ -8,6 +8,7 @@ import { ProductCarousel } from "@/components/home/ProductCarousel";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { RichText } from "@/components/ui/RichText";
+import { useCart } from "@/providers/CartProvider";
 
 export default function ProductDetailClient({ product, relatedProducts }: { product: any, relatedProducts: any[] }) {
     const defaultImage = typeof product.mainImage === 'object' ? product.mainImage.url : (product.mainImage || "/images/placeholder.jpg");
@@ -23,12 +24,24 @@ export default function ProductDetailClient({ product, relatedProducts }: { prod
 
     const router = useRouter();
 
-    const price = product.salePrice || product.price || 0;
-    const originalPrice = product.price || 0;
+    const price = product.salePrice || product.price ||
+        (product.productType === 'variable' && product.variations?.length > 0
+            ? (product.variations[0].salePrice || product.variations[0].price)
+            : 0);
+    const originalPrice = product.price ||
+        (product.productType === 'variable' && product.variations?.length > 0
+            ? product.variations[0].price
+            : 0);
+    const { addToCart } = useCart();
 
     const handleAddToCart = () => {
-        toast.success(`Added ${quantity} ${product.title} to cart!`);
-        // Optional logic to actually add to local cart context
+        addToCart({
+            id: product.id,
+            title: product.title,
+            price: price,
+            mainImage: allImages[0],
+            quantity: quantity
+        });
     }
 
     return (
@@ -131,7 +144,16 @@ export default function ProductDetailClient({ product, relatedProducts }: { prod
                                     Add to Cart
                                 </Button>
                                 <Button
-                                    onClick={() => router.push('/checkout')}
+                                    onClick={() => {
+                                        addToCart({
+                                            id: product.id,
+                                            title: product.title,
+                                            price: price,
+                                            mainImage: allImages[0],
+                                            quantity: quantity
+                                        });
+                                        router.push('/checkout');
+                                    }}
                                     className="flex-1 bg-black text-white font-bold text-lg h-auto py-3 hover:bg-gray-800 transition-all shadow-lg">
                                     Buy Now
                                 </Button>

@@ -14,6 +14,7 @@ interface Product {
     salePrice?: number;
     mainImage?: any;
     productTags?: any[];
+    variations?: any[];
 }
 
 export function ProductCard({ product }: { product: Product }) {
@@ -24,15 +25,25 @@ export function ProductCard({ product }: { product: Product }) {
         ? product.mainImage.url
         : product.mainImage || '/images/placeholder.jpg';
 
-    // Calculate discount percentage
-    const discount = product.salePrice && product.price
-        ? Math.round(((product.price - product.salePrice) / product.price) * 100)
-        : 0;
-
     // Get first tag if available
     const tag = product.productTags && product.productTags.length > 0
         ? (typeof product.productTags[0] === 'object' ? product.productTags[0].name : null)
         : null;
+
+    const variationPrice = ((product.variations ?? []).length > 0) ? product.variations![0].price : 0;
+    const variationSalePrice = ((product.variations ?? []).length > 0) ? product.variations![0].salePrice : 0;
+
+    // Safely extract active pricing
+    const finalSalePrice = product.salePrice || variationSalePrice || 0;
+    const finalPrice = product.price || variationPrice || 0;
+    const hasDiscount = !!(finalSalePrice && finalPrice && finalSalePrice < finalPrice);
+
+    // Displayed active price (if has sale price, use it, else generic price)
+    const activePrice = finalSalePrice || finalPrice || 0;
+
+    const discount = hasDiscount
+        ? Math.round(((finalPrice - finalSalePrice) / finalPrice) * 100)
+        : 0;
 
     return (
         <div className="relative group h-full">
@@ -91,11 +102,11 @@ export function ProductCard({ product }: { product: Product }) {
                     <div className="flex items-end justify-between mt-auto">
                         <div className="flex flex-col">
                             <span className="font-extrabold text-lg text-primary">
-                                ₦{(product.salePrice || product.price).toLocaleString()}
+                                ₦{activePrice.toLocaleString()}
                             </span>
-                            {product.salePrice && product.price && (
+                            {hasDiscount && (
                                 <span className="text-xs text-gray-400 line-through decoration-gray-400">
-                                    ₦{product.price.toLocaleString()}
+                                    ₦{finalPrice.toLocaleString()}
                                 </span>
                             )}
                         </div>
@@ -108,7 +119,7 @@ export function ProductCard({ product }: { product: Product }) {
                                 addToCart({
                                     id: product.id,
                                     title: product.title,
-                                    price: product.salePrice || product.price,
+                                    price: activePrice,
                                     mainImage: product.mainImage
                                 });
                             }}

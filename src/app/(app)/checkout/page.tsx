@@ -284,10 +284,6 @@ export default function CheckoutPage() {
                                         <input type="radio" name="payment" defaultChecked className="accent-primary w-5 h-5" />
                                         <span className="font-bold">Paystack (Cards, USSD, Bank Transfer)</span>
                                     </label>
-                                    <label className="flex items-center gap-3 p-4 border rounded-lg cursor-pointer hover:border-primary">
-                                        <input type="radio" name="payment" className="accent-primary w-5 h-5" />
-                                        <span>Pay on Delivery (Lagos Only)</span>
-                                    </label>
                                 </div>
                                 <Button onClick={handleCheckout} disabled={isLoading || cartItems.length === 0} className="w-full mt-6 bg-primary text-black py-6 text-lg font-bold hover:bg-black hover:text-white shadow-lg">
                                     {isLoading ? 'Processing...' : `Pay Now ₦${cartTotal.toLocaleString()}`}
