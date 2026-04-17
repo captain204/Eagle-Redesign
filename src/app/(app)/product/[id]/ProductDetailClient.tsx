@@ -24,17 +24,23 @@ export default function ProductDetailClient({ product, relatedProducts }: { prod
 
     const router = useRouter();
 
-    const price = product.salePrice || product.price ||
-        (product.productType === 'variable' && product.variations?.length > 0
-            ? (product.variations[0].salePrice || product.variations[0].price)
-            : 0);
-    const originalPrice = product.price ||
-        (product.productType === 'variable' && product.variations?.length > 0
-            ? product.variations[0].price
-            : 0);
+    let price = 0;
+    let originalPrice = 0;
+
+    if (product.productType === 'variable' && product.variations?.length > 0) {
+        price = product.variations[0].salePrice || product.variations[0].price || 0;
+        originalPrice = product.variations[0].price || 0;
+    } else {
+        price = product.salePrice || product.price || 0;
+        originalPrice = product.price || 0;
+    }
     const { addToCart } = useCart();
 
     const handleAddToCart = () => {
+        if (price <= 0) {
+            toast.error("This product's price is not configured correctly.");
+            return;
+        }
         addToCart({
             id: product.id,
             title: product.title,
@@ -145,6 +151,10 @@ export default function ProductDetailClient({ product, relatedProducts }: { prod
                                 </Button>
                                 <Button
                                     onClick={() => {
+                                        if (price <= 0) {
+                                            toast.error("This product's price is not configured correctly.");
+                                            return;
+                                        }
                                         addToCart({
                                             id: product.id,
                                             title: product.title,

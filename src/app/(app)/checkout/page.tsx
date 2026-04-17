@@ -103,6 +103,12 @@ export default function CheckoutPage() {
                 return;
             }
 
+            if (cartTotal <= 0) {
+                toast.error("Your cart total is not valid for payment.");
+                setIsLoading(false);
+                return;
+            }
+
             const items = cartItems.map(item => ({
                 product: item.id,
                 quantity: item.quantity,
