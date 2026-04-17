@@ -92,14 +92,10 @@ export default function CheckoutPage() {
                 return;
             }
 
-            // Get user
+            // Get user to associate if logged in
             const userRes = await fetch("/api/users/me");
             const userData = await userRes.json();
-            if (!userData.user) {
-                toast.error("Please login to complete checkout");
-                setTimeout(() => window.location.href = '/login', 2000);
-                return;
-            }
+
 
             if (cartItems.length === 0) {
                 toast.error("Your cart is empty.");
@@ -114,7 +110,8 @@ export default function CheckoutPage() {
             }));
 
             const orderData = {
-                customer: userData.user.id,
+                customer: userData?.user ? userData.user.id : null,
+                email: email,
                 items: items,
                 total: cartTotal,
                 status: 'pending',

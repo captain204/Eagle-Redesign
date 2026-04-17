@@ -28,7 +28,15 @@ export const Orders: CollectionConfig = {
             name: 'customer',
             type: 'relationship',
             relationTo: 'users',
+            required: false,
+        },
+        {
+            name: 'email',
+            type: 'email',
             required: true,
+            admin: {
+                position: 'sidebar'
+            }
         },
         {
             name: 'items',
