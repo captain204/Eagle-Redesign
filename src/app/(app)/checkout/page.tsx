@@ -38,8 +38,13 @@ export default function CheckoutPage() {
         fetchRecs();
     }, []);
 
+    const [reference, setReference] = useState("");
+    useEffect(() => {
+        setReference((new Date()).getTime().toString());
+    }, []);
+
     const config: any = {
-        reference: (new Date()).getTime().toString(),
+        reference: reference, // Hydration safe
         email: email,
         amount: cartTotal * 100, // Paystack amount is in kobo
         publicKey: process.env.NEXT_PUBLIC_PAYSTACK_PUBLIC_KEY || '',
@@ -115,8 +120,7 @@ export default function CheckoutPage() {
                 price: item.price
             }));
 
-            const orderData = {
-                customer: userData?.user ? userData.user.id : null,
+            const orderData: any = {
                 email: email,
                 items: items,
                 total: cartTotal,
@@ -130,6 +134,10 @@ export default function CheckoutPage() {
                     country: 'Nigeria',
                 }
             };
+
+            if (userData?.user?.id) {
+                orderData.customer = userData.user.id;
+            }
 
             const res = await fetch("/api/orders", {
                 method: "POST",

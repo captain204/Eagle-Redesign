@@ -91,6 +91,21 @@ except Exception as e:
 
 db.commit()
 
+# Add missing columns to orders table
+order_columns_to_add = [
+    ("email", "text"),
+    ("emailSent", "integer DEFAULT 0")
+]
+
+for col_name, col_type in order_columns_to_add:
+    try:
+        cursor.execute(f'ALTER TABLE "orders" ADD COLUMN "{col_name}" {col_type};')
+        print(f"Added '{col_name}' column to orders")
+    except sqlite3.OperationalError:
+        pass # Column exists
+
+db.commit()
+
 # Also run fix_sqlite for payload_locked_documents_rels just in case
 # Add any collection relation columns that might be missing (keep short)
 collections = ["sliders_id", "qr_codes_id", "contact_submissions_id"]

@@ -104,7 +104,7 @@ export function Footer() {
 
                 {/* Copyright */}
                 <div className="border-t border-white/10 pt-8 text-center text-gray-500 text-sm">
-                    <p>&copy; {new Date().getFullYear()} 1st𝓔agle Technology. All Rights Reserved.</p>
+                    <p suppressHydrationWarning>&copy; {new Date().getFullYear()} 1st𝓔agle Technology. All Rights Reserved.</p>
                 </div>
             </div>
         </footer>

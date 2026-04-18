@@ -56,7 +56,7 @@ export function NewUserZone({
                             <div className="border-2 border-dashed border-gray-300 p-4 rounded-lg bg-gray-50 w-64 text-center">
                                 <div className="text-gray-400 text-xs font-bold uppercase tracking-widest mb-1">Coupon Code</div>
                                 <div className="text-2xl font-black text-gray-800 tracking-widest uppercase">{couponCode}</div>
-                                <div className="text-xs text-gray-400 mt-2">Valid until {expiryDate}</div>
+                                <div className="text-xs text-gray-400 mt-2" suppressHydrationWarning>Valid until {expiryDate}</div>
                             </div>
                         </motion.div>
                         <div className="absolute -top-4 -right-4 bg-yellow-400 text-black font-bold p-3 rounded-full shadow-lg transform rotate-12">

@@ -16,7 +16,6 @@ const outfit = Outfit({ subsets: ["latin"], variable: "--font-outfit" });
 export const metadata: Metadata = {
   title: "1st𝓔agle Technology Official Store",
   description: "Explore the best of smart accessories and power solutions.",
-  manifest: "/manifest.json",
   appleWebApp: {
     capable: true,
     statusBarStyle: "default",
