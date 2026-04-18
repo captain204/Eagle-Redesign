@@ -22,7 +22,7 @@ export function AppDownloadSection() {
                         Ready to show the world what you’ve got? Join the <span className="text-primary">1st𝓔agle</span> Talent Hunt today.
                     </h2>
                     <p className="text-lg md:text-xl text-gray-600 mb-10 leading-relaxed font-medium">
-                        Download our app from the Play Store or App Store, submit your entry, and take your shot at being discovered. Get direct access to the competition, real-time updates, and a smooth experience built for winners.
+                        Download our app from the Play Store or App Store, submit your entry, and take your shot at being discovered. Get a direct access to the competition, real-time updates, and a smooth experience built for winners.
                     </p>
 
                     <div className="flex flex-col sm:flex-row gap-4 justify-center">
@@ -40,7 +40,7 @@ export function AppDownloadSection() {
                             <Smartphone className="w-8 h-8 group-hover:text-primary transition-colors" />
                             <div className="text-left">
                                 <div className="text-[10px] uppercase font-bold tracking-wider opacity-80 text-gray-500">GET IT ON</div>
-                                <div className="text-xl font-semibold leading-none text-black">Google Play</div>
+                                <div className="text-xl font-semibold leading-none text-black">Google Play Store</div>
                             </div>
                         </a>
                     </div>
