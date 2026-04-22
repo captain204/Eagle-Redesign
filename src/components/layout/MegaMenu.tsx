@@ -55,7 +55,7 @@ export function MegaMenu({ categories = [] }: { categories?: Category[] }) {
                     })}
 
                     {/* Featured Section */}
-                    <div className="col-span-4 bg-gray-900 text-white p-6 flex justify-between items-center bg-[url('/images/pattern.png')] bg-cover">
+                    <div className="col-span-4 bg-gray-900 text-white p-6 flex justify-between items-center bg-cover">
                         <div>
                             <h4 className="font-bold text-xl mb-2 text-primary">Daily Deals</h4>
                             <p className="text-gray-400 text-sm mb-4">Check out the latest tech gear dropping this week.</p>

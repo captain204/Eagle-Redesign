@@ -1,6 +1,6 @@
 "use client";
 
-import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogTrigger, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { ShoppingCart, Star } from "lucide-react";
@@ -33,6 +33,7 @@ export function QuickViewModal({ product, children }: { product: Product, childr
                 {children}
             </DialogTrigger>
             <DialogContent className="sm:max-w-[800px] p-0 overflow-hidden bg-white">
+                <DialogTitle className="sr-only">Quick View Product</DialogTitle>
                 <div className="grid md:grid-cols-2 gap-0">
                     <div className="bg-gray-100 p-8 flex items-center justify-center relative aspect-square md:aspect-auto">
                         <img

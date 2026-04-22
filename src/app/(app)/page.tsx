@@ -221,7 +221,7 @@ export default async function Home() {
         >
           <div className="container">
             <h2 className="text-3xl font-extrabold text-center mb-12 uppercase tracking-tight">Daily Deals</h2>
-              <Suspense fallback={<div className="h-96" />}>
+            <Suspense fallback={<div className="h-96" />}>
               <ProductCarousel title="" products={dailyDeals} viewAllHref="/daily-deals" />
             </Suspense>
           </div>
@@ -239,7 +239,7 @@ export default async function Home() {
         >
           <div className="container">
             <h2 className="text-3xl font-extrabold text-center mb-12 uppercase tracking-tight">Hot New Items</h2>
-              <Suspense fallback={<div className="h-96" />}>
+            <Suspense fallback={<div className="h-96" />}>
               <ProductCarousel title="" products={hotNewProducts} viewAllHref="/hot-new" />
             </Suspense>
           </div>
@@ -255,7 +255,7 @@ export default async function Home() {
         className="py-16 container"
       >
         <h2 className="text-3xl font-extrabold mb-8 uppercase text-left tracking-tight">Recommended For You</h2>
-          <Suspense fallback={<div className="h-96" />}>
+        <Suspense fallback={<div className="h-96" />}>
           <ProductCarousel title="" products={featuredProducts} viewAllHref="/products" />
         </Suspense>
       </motion.section>
@@ -267,7 +267,7 @@ export default async function Home() {
         viewport={{ once: true }}
         className="w-full bg-black py-16 text-white text-center relative overflow-hidden"
       >
-        <div className="absolute inset-0 bg-primary/10 opacity-20 bg-[url('/images/pattern.png')] bg-cover"></div>
+        <div className="absolute inset-0 bg-primary/10 opacity-20 bg-cover"></div>
         <div className="container relative z-10">
           <h2 className="text-3xl font-bold mb-4">Corporate Procurement</h2>
           <p className="mb-8 text-gray-400 max-w-2xl mx-auto">Get the best deals for your business. Bulk orders, custom branding, and priority support available.</p>
