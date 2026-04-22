@@ -10,6 +10,24 @@ import { ProductCarousel } from "@/components/home/ProductCarousel";
 import { usePaystackPayment } from "react-paystack";
 import { nigeriaData } from "@/lib/nigeriaData";
 
+function PaystackInitializer({
+    config,
+    onSuccess,
+    onClose,
+}: {
+    config: any;
+    onSuccess: (ref: any) => void;
+    onClose: () => void;
+}) {
+    const initializePayment = usePaystackPayment(config);
+
+    useEffect(() => {
+        initializePayment({ onSuccess, onClose });
+    }, [initializePayment, onSuccess, onClose]);
+
+    return null;
+}
+
 export default function CheckoutPage() {
     const [mounted, setMounted] = useState(false);
     useEffect(() => setMounted(true), []);
@@ -95,8 +113,6 @@ export default function CheckoutPage() {
         setIsLoading(false);
     }, []);
 
-    const initializePayment = usePaystackPayment(config);
-
     const handleCheckout = async () => {
         if (!email || !firstName || !lastName || !address || !city || !state || !phone) {
             toast.error("Please fill in all shipping details");
@@ -155,13 +171,14 @@ export default function CheckoutPage() {
                     },
                 };
 
-                const initFn = usePaystackPayment(updatedConfig);
-                initFn({ onSuccess, onClose });
+                setPaystackConfig({ config: updatedConfig });
+                setShowPaystack(true);
 
                 setTimeout(() => {
                     if (isLoading) {
                         toast.error("Payment window was blocked. Please allow popups for this site.");
                         setIsLoading(false);
+                        setShowPaystack(false);
                     }
                 }, 3500);
             } else {
@@ -174,6 +191,9 @@ export default function CheckoutPage() {
             setIsLoading(false);
         }
     };
+
+    const [showPaystack, setShowPaystack] = useState(false);
+    const [paystackConfig, setPaystackConfig] = useState<any>(null);
 
     return (
         <div className="min-h-screen bg-[#f5f5f5] pt-24 pb-20">
@@ -245,6 +265,14 @@ export default function CheckoutPage() {
                                 <Button onClick={handleCheckout} disabled={isLoading || cartItems.length === 0} className="w-full mt-6 bg-primary text-black py-6 text-lg font-bold hover:bg-black hover:text-white shadow-lg">
                                     {isLoading ? 'Opening Payment Window...' : `Pay Now ₦${cartTotal.toLocaleString()}`}
                                 </Button>
+
+                                {showPaystack && paystackConfig && (
+                                    <PaystackInitializer
+                                        config={paystackConfig.config}
+                                        onSuccess={onSuccess}
+                                        onClose={onClose}
+                                    />
+                                )}
                             </div>
                         )}
 
