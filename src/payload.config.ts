@@ -103,7 +103,7 @@ export default buildConfig({
         client: {
             url: process.env.DATABASE_URI || 'file:./payload.db',
         },
-        push: true, // Auto-create tables and columns in production so the app doesn't crash on an empty or outdated DB
+        push: true, // Enabled to allow automatic schema synchronization
     }),
     secret: process.env.PAYLOAD_SECRET || 'secret-key-for-development-only',
     typescript: {

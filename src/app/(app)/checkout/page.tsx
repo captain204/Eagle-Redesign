@@ -10,23 +10,6 @@ import { ProductCarousel } from "@/components/home/ProductCarousel";
 import { usePaystackPayment } from "react-paystack";
 import { nigeriaData } from "@/lib/nigeriaData";
 
-function PaystackInitializer({
-    config,
-    onSuccess,
-    onClose,
-}: {
-    config: any;
-    onSuccess: (ref: any) => void;
-    onClose: () => void;
-}) {
-    const initializePayment = usePaystackPayment(config);
-
-    useEffect(() => {
-        initializePayment({ onSuccess, onClose });
-    }, [initializePayment, onSuccess, onClose]);
-
-    return null;
-}
 
 export default function CheckoutPage() {
     const [mounted, setMounted] = useState(false);
@@ -75,6 +58,9 @@ export default function CheckoutPage() {
         }
     }, []);
 
+    const [createdOrderId, setCreatedOrderId] = useState<string | null>(null);
+    const [isOrderCreating, setIsOrderCreating] = useState(false);
+
     const config = useMemo(() => ({
         reference,
         email,
@@ -83,9 +69,14 @@ export default function CheckoutPage() {
         metadata: {
             custom_fields: [
                 { display_name: "Customer Name", variable_name: "customer_name", value: `${firstName} ${lastName}` },
+                ...(createdOrderId ? [{ display_name: "Order ID", variable_name: "order_id", value: createdOrderId }] : []),
+                { display_name: "Customer Phone", variable_name: "customer_phone", value: phone },
             ],
+            orderId: createdOrderId,
         },
-    }), [reference, email, cartTotal, firstName, lastName]);
+    }), [reference, email, cartTotal, firstName, lastName, createdOrderId, phone]);
+
+    const initializePayment = usePaystackPayment(config);
 
     const onSuccess = useCallback(async (reference: any) => {
         setIsLoading(true);
@@ -113,7 +104,7 @@ export default function CheckoutPage() {
         setIsLoading(false);
     }, []);
 
-    const handleCheckout = async () => {
+    const handleCreateOrder = async () => {
         if (!email || !firstName || !lastName || !address || !city || !state || !phone) {
             toast.error("Please fill in all shipping details");
             setStep(1);
@@ -124,7 +115,7 @@ export default function CheckoutPage() {
             return;
         }
 
-        setIsLoading(true);
+        setIsOrderCreating(true);
         try {
             let customerId: string | undefined;
             try {
@@ -158,42 +149,26 @@ export default function CheckoutPage() {
             });
 
             const data = await res.json();
+            const order = data.doc || data;
 
-            if (res.ok && data.doc) {
-                const orderId = data.doc.id;
-
-                const updatedConfig = {
-                    ...config,
-                    metadata: {
-                        ...config.metadata,
-                        orderId,
-                        customer_phone: phone,
-                    },
-                };
-
-                setPaystackConfig({ config: updatedConfig });
-                setShowPaystack(true);
-
-                setTimeout(() => {
-                    if (isLoading) {
-                        toast.error("Payment window was blocked. Please allow popups for this site.");
-                        setIsLoading(false);
-                        setShowPaystack(false);
-                    }
-                }, 3500);
+            if (res.ok && order.id) {
+                setCreatedOrderId(order.id);
+                toast.success("Order placed successfully! Please proceed to payment.");
             } else {
                 toast.error(data.errors?.[0]?.message || "Failed to create order");
-                setIsLoading(false);
             }
         } catch (error) {
-            console.error('Checkout error:', error);
-            toast.error("Network error during checkout. Please try again.");
-            setIsLoading(false);
+            console.error('Order creation error:', error);
+            toast.error("Network error during order creation.");
+        } finally {
+            setIsOrderCreating(false);
         }
     };
 
-    const [showPaystack, setShowPaystack] = useState(false);
-    const [paystackConfig, setPaystackConfig] = useState<any>(null);
+    const handlePayment = () => {
+        setIsLoading(true);
+        initializePayment({ onSuccess, onClose });
+    };
 
     return (
         <div className="min-h-screen bg-[#f5f5f5] pt-24 pb-20">
@@ -255,23 +230,29 @@ export default function CheckoutPage() {
                                     <div className="flex flex-col"><span className="text-gray-500 text-sm">Ship to</span><span className="font-medium">{address}, {city}, {state}</span></div>
                                     <button onClick={() => setStep(1)} className="text-primary text-sm font-bold">Change</button>
                                 </div>
-                                <h2 className="font-bold text-lg mb-4">Payment Method</h2>
                                 <div className="space-y-3">
                                     <label className="flex items-center gap-3 p-4 border rounded-lg cursor-pointer hover:border-primary">
                                         <input type="radio" name="payment" defaultChecked className="accent-primary w-5 h-5" />
                                         <span className="font-bold">Paystack (Cards, USSD, Bank Transfer)</span>
                                     </label>
                                 </div>
-                                <Button onClick={handleCheckout} disabled={isLoading || cartItems.length === 0} className="w-full mt-6 bg-primary text-black py-6 text-lg font-bold hover:bg-black hover:text-white shadow-lg">
-                                    {isLoading ? 'Opening Payment Window...' : `Pay Now ₦${cartTotal.toLocaleString()}`}
-                                </Button>
 
-                                {showPaystack && paystackConfig && (
-                                    <PaystackInitializer
-                                        config={paystackConfig.config}
-                                        onSuccess={onSuccess}
-                                        onClose={onClose}
-                                    />
+                                {!createdOrderId ? (
+                                    <Button
+                                        onClick={handleCreateOrder}
+                                        disabled={isOrderCreating || cartItems.length === 0}
+                                        className="w-full mt-6 bg-primary text-black py-6 text-lg font-bold hover:bg-black hover:text-white shadow-lg"
+                                    >
+                                        {isOrderCreating ? 'Creating Order...' : `Confirm Order ₦${cartTotal.toLocaleString()}`}
+                                    </Button>
+                                ) : (
+                                    <Button
+                                        onClick={handlePayment}
+                                        disabled={isLoading}
+                                        className="w-full mt-6 bg-green-600 text-white py-6 text-lg font-bold hover:bg-green-700 shadow-lg animate-bounce"
+                                    >
+                                        {isLoading ? 'Opening Payment Window...' : 'Pay Now Securely'}
+                                    </Button>
                                 )}
                             </div>
                         )}

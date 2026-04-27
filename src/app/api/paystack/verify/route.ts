@@ -25,6 +25,7 @@ export async function GET(req: NextRequest) {
                 const order = await payload.findByID({
                     collection: 'orders',
                     id: orderId,
+                    overrideAccess: true,
                 });
 
                 // Update order status if not already paid
@@ -37,6 +38,7 @@ export async function GET(req: NextRequest) {
                             status: 'processing',
                             notes: `Paid via Paystack. Reference: ${reference}`
                         },
+                        overrideAccess: true,
                     });
                 }
 
@@ -46,9 +48,10 @@ export async function GET(req: NextRequest) {
                         collection: 'orders',
                         id: orderId,
                         depth: 1, // Populate customer
+                        overrideAccess: true,
                     });
 
-                    const customerEmail = typeof updatedOrder.customer === 'object' ? updatedOrder.customer.email : null;
+                    const customerEmail = (typeof updatedOrder.customer === 'object' ? updatedOrder.customer.email : null) || updatedOrder.email;
 
                     if (customerEmail) {
                         const emailResult = await sendOrderConfirmationEmail(updatedOrder, customerEmail);
@@ -59,6 +62,7 @@ export async function GET(req: NextRequest) {
                                 data: {
                                     emailSent: true
                                 },
+                                overrideAccess: true,
                             });
                         }
                     }

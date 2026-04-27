@@ -23,6 +23,7 @@ import { BoldFeatureClient as BoldFeatureClient_e70f5e05f09f93e00b997edb1ef0c864
 import { ItalicFeatureClient as ItalicFeatureClient_e70f5e05f09f93e00b997edb1ef0c864 } from '@payloadcms/richtext-lexical/client'
 import { ProductQRCode as ProductQRCode_7e3b1d254564b7a3f76dd80301e56a08 } from '../../../components/admin/ProductQRCode'
 import { ImportProductsInline as ImportProductsInline_ae9fc4a3f8086f7b1ad9cfc61ea5abb7 } from '../../../components/admin/ImportProductsInline'
+import { QRCodeRedirectPreview as QRCodeRedirectPreview_806bdafa0252d6456ce73d49e083e783 } from '../../../components/admin/QRCodeRedirectPreview'
 import { QRGeneratorComponent as QRGeneratorComponent_39c4d6bdaae306a023277eb4bb4b6f98 } from '../../../components/admin/QRGeneratorComponent'
 import { Dashboard as Dashboard_16b88e9b8c48e393fa86591406efd08f } from '../../../components/admin/Dashboard'
 import { CollectionCards as CollectionCards_f9c02e79a4aed9a3924487c0cd4cafb1 } from '@payloadcms/next/rsc'
@@ -53,6 +54,7 @@ export const importMap = {
   "@payloadcms/richtext-lexical/client#ItalicFeatureClient": ItalicFeatureClient_e70f5e05f09f93e00b997edb1ef0c864,
   "/components/admin/ProductQRCode#ProductQRCode": ProductQRCode_7e3b1d254564b7a3f76dd80301e56a08,
   "/components/admin/ImportProductsInline#ImportProductsInline": ImportProductsInline_ae9fc4a3f8086f7b1ad9cfc61ea5abb7,
+  "/components/admin/QRCodeRedirectPreview#QRCodeRedirectPreview": QRCodeRedirectPreview_806bdafa0252d6456ce73d49e083e783,
   "/components/admin/QRGeneratorComponent#QRGeneratorComponent": QRGeneratorComponent_39c4d6bdaae306a023277eb4bb4b6f98,
   "/components/admin/Dashboard#Dashboard": Dashboard_16b88e9b8c48e393fa86591406efd08f,
   "@payloadcms/next/rsc#CollectionCards": CollectionCards_f9c02e79a4aed9a3924487c0cd4cafb1

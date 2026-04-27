@@ -1,4 +1,15 @@
 export async function register() {
+    // Workaround for undici Illegal constructor error in Node v20+ environments
+    if (typeof globalThis.CacheStorage === 'function') {
+        try {
+            // @ts-ignore
+            delete globalThis.CacheStorage;
+        } catch (e) {
+            // @ts-ignore
+            globalThis.CacheStorage = undefined;
+        }
+    }
+
     if (process.env.NEXT_RUNTIME === 'nodejs') {
         if (process.env.DISABLE_DB_PUSH === '1') {
             console.log('Skipping Payload DB initialization during build phase...');
