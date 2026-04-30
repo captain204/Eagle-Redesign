@@ -18,7 +18,7 @@ async function run() {
                     lga: "Test",
                     state: "Lagos",
                     country: "Nigeria",
-                    zip: "123"
+                    zip: "5300001"
                 }
             }
         })
