@@ -70,13 +70,7 @@ export default function CheckoutPage() {
 
     const initializePayment = usePaystackPayment(config);
 
-    if (!mounted) {
-        return (
-            <div className="min-h-screen bg-[#f5f5f5] pt-24 pb-20 flex items-center justify-center">
-                <div className="text-gray-500">Loading checkout...</div>
-            </div>
-        );
-    }
+
     const onSuccess = useCallback(async (reference: any) => {
         setIsLoading(true);
         try {
@@ -168,6 +162,14 @@ export default function CheckoutPage() {
         setIsLoading(true);
         initializePayment({ onSuccess, onClose });
     };
+
+    if (!mounted) {
+        return (
+            <div className="min-h-screen bg-[#f5f5f5] pt-24 pb-20 flex items-center justify-center">
+                <div className="text-gray-500">Loading checkout...</div>
+            </div>
+        );
+    }
 
     return (
         <div className="min-h-screen bg-[#f5f5f5] pt-24 pb-20">
