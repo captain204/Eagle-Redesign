@@ -15,14 +15,6 @@ export default function CheckoutPage() {
     const [mounted, setMounted] = useState(false);
     useEffect(() => setMounted(true), []);
 
-    if (!mounted) {
-        return (
-            <div className="min-h-screen bg-[#f5f5f5] pt-24 pb-20 flex items-center justify-center">
-                <div className="text-gray-500">Loading checkout...</div>
-            </div>
-        );
-    }
-
     const [step, setStep] = useState(1);
     const [isLoading, setIsLoading] = useState(false);
     const { cartItems, cartTotal, clearCart } = useCart();
@@ -78,6 +70,13 @@ export default function CheckoutPage() {
 
     const initializePayment = usePaystackPayment(config);
 
+    if (!mounted) {
+        return (
+            <div className="min-h-screen bg-[#f5f5f5] pt-24 pb-20 flex items-center justify-center">
+                <div className="text-gray-500">Loading checkout...</div>
+            </div>
+        );
+    }
     const onSuccess = useCallback(async (reference: any) => {
         setIsLoading(true);
         try {
