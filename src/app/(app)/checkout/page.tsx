@@ -43,9 +43,22 @@ export default function CheckoutPage() {
     const [reference] = useState(() => `txn_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`);
 
     useEffect(() => {
-        const key = process.env.NEXT_PUBLIC_PAYSTACK_PUBLIC_KEY;
-        if (!key || (!key.startsWith('pk_test_') && !key.startsWith('pk_live_'))) {
-            console.error('Invalid Paystack public key');
+        const rawKey = process.env.NEXT_PUBLIC_PAYSTACK_PUBLIC_KEY;
+        const key = rawKey?.trim() || '';
+        
+        console.log('[Checkout] Paystack Initialization:', {
+            hasKey: !!key,
+            keyPrefix: key ? key.substring(0, 7) : 'none',
+            keyLength: key.length,
+            isLive: key.startsWith('pk_live'),
+            isTest: key.startsWith('pk_test')
+        });
+
+        if (!key) {
+            console.error('[Checkout] Paystack public key is missing from environment variables');
+            toast.error('Payment configuration error. Please contact support.');
+        } else if (!key.startsWith('pk_test_') && !key.startsWith('pk_live_')) {
+            console.error('[Checkout] Invalid Paystack public key format. Must start with pk_test_ or pk_live_');
             toast.error('Payment system misconfigured. Please contact support.');
         }
     }, []);
@@ -53,22 +66,25 @@ export default function CheckoutPage() {
     const [createdOrderId, setCreatedOrderId] = useState<string | null>(null);
     const [isOrderCreating, setIsOrderCreating] = useState(false);
 
-    const config = useMemo(() => ({
-        reference,
-        email,
-        amount: Math.round(cartTotal * 100),
-        publicKey: process.env.NEXT_PUBLIC_PAYSTACK_PUBLIC_KEY || '',
-        metadata: {
-            custom_fields: [
-                { display_name: "Customer Name", variable_name: "customer_name", value: `${firstName} ${lastName}` },
-                ...(createdOrderId ? [{ display_name: "Order ID", variable_name: "order_id", value: createdOrderId }] : []),
-                { display_name: "Customer Phone", variable_name: "customer_phone", value: phone },
-            ],
-            orderId: createdOrderId,
-        },
-    }), [reference, email, cartTotal, firstName, lastName, createdOrderId, phone]);
+    // Define a stable config for Paystack. Ensure it's valid to prevent hook errors.
+    const paystackConfig = useMemo(() => {
+        return {
+            reference,
+            email,
+            amount: Math.round((cartTotal || 0) * 100),
+            publicKey: process.env.NEXT_PUBLIC_PAYSTACK_PUBLIC_KEY?.trim() || '',
+            metadata: {
+                custom_fields: [
+                    { display_name: "Customer Name", variable_name: "customer_name", value: `${firstName} ${lastName}` },
+                    ...(createdOrderId ? [{ display_name: "Order ID", variable_name: "order_id", value: createdOrderId }] : []),
+                    { display_name: "Customer Phone", variable_name: "customer_phone", value: phone },
+                ],
+                orderId: createdOrderId,
+            },
+        };
+    }, [reference, email, cartTotal, firstName, lastName, createdOrderId, phone]);
 
-    const initializePayment = usePaystackPayment(config);
+    const initializePayment = usePaystackPayment(paystackConfig);
 
 
     const onSuccess = useCallback(async (reference: any) => {
@@ -141,14 +157,26 @@ export default function CheckoutPage() {
                 body: JSON.stringify(orderData)
             });
 
+            if (!res.ok) {
+                const errorData = await res.json().catch(() => ({}));
+                console.error('[Checkout] Order creation failed:', {
+                    status: res.status,
+                    statusText: res.statusText,
+                    error: errorData
+                });
+                toast.error(errorData.errors?.[0]?.message || errorData.error || `Failed to create order (${res.status})`);
+                return;
+            }
+
             const data = await res.json();
             const order = data.doc || data;
 
-            if (res.ok && order.id) {
+            if (order && order.id) {
                 setCreatedOrderId(order.id);
                 toast.success("Order placed successfully! Please proceed to payment.");
             } else {
-                toast.error(data.errors?.[0]?.message || "Failed to create order");
+                console.error('[Checkout] Order data missing ID:', data);
+                toast.error("Failed to process order response");
             }
         } catch (error) {
             console.error('Order creation error:', error);
