@@ -124,7 +124,7 @@ export default function AccountPage() {
                                         {orders.map((order) => (
                                             <div key={order.id} className="border rounded-lg p-4 flex flex-col md:flex-row justify-between gap-4 hover:shadow-sm transition-shadow">
                                                 <div>
-                                                    <p className="font-bold text-sm text-gray-400 mb-1">Order #{order.id.slice(-6).toUpperCase()}</p>
+                                                    <p className="font-bold text-sm text-gray-400 mb-1">Order #{String(order.id).slice(-6).toUpperCase()}</p>
                                                     <p className="font-bold">
                                                         {order.items?.length > 0 ? (
                                                             `${order.items[0]?.product?.title || 'Unknown Product'} ${order.items.length > 1 ? `+ ${order.items.length - 1} more items` : ''}`

@@ -36,6 +36,7 @@ import { Sliders } from './collections/Sliders'
 import { QRCodes } from './collections/QRCodes'
 import { ContactSubmissions } from './collections/ContactSubmissions'
 import { Support } from './globals/Support'
+import { resendAdapter } from '@payloadcms/email-resend'
 
 
 
@@ -100,6 +101,11 @@ export default buildConfig({
 
 
     editor: lexicalEditor(),
+    email: resendAdapter({
+        defaultFromAddress: 'onboarding@resend.dev',
+        defaultFromName: 'Eagle',
+        apiKey: process.env.RESEND_API_KEY || 're_123_fallback',
+    }),
     db: sqliteAdapter({
         client: {
             url: process.env.DATABASE_URI || 'file:./payload.db',
