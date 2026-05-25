@@ -12,15 +12,7 @@ export const Ambassadors: CollectionConfig = {
         group: 'Ambassadors Portal',
     },
     access: {
-        read: ({ req: { user } }) => {
-            if (user?.role === 'super-admin' || user?.role === 'admin' || user?.role === 'sales-admin') return true
-            if (!user) return false;
-            return {
-                id: {
-                    equals: user.id,
-                },
-            }
-        },
+        read: () => true, // Publicly readable for the ambassadors page
         create: () => true, // Anyone can register
         update: ({ req: { user } }) => {
             if (user?.role === 'super-admin' || user?.role === 'admin' || user?.role === 'sales-admin') return true
@@ -42,6 +34,9 @@ export const Ambassadors: CollectionConfig = {
             admin: {
                 position: 'sidebar',
             },
+            access: {
+                read: ({ req: { user } }) => Boolean(user),
+            },
         },
         {
             name: 'name',
@@ -53,11 +48,17 @@ export const Ambassadors: CollectionConfig = {
             type: 'email',
             required: true,
             unique: true,
+            access: {
+                read: ({ req: { user } }) => Boolean(user),
+            },
         },
         {
             name: 'phone',
             type: 'text',
             required: true,
+            access: {
+                read: ({ req: { user } }) => Boolean(user),
+            },
         },
         {
             name: 'state',
@@ -88,6 +89,9 @@ export const Ambassadors: CollectionConfig = {
         {
             name: 'address',
             type: 'textarea',
+            access: {
+                read: ({ req: { user } }) => Boolean(user),
+            },
         },
         {
             name: 'profilePhoto',

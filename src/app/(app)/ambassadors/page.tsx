@@ -16,10 +16,20 @@ export default function PublicAmbassadorsPage() {
         const fetchAmbassadors = async () => {
             try {
                 const response = await fetch("/api/ambassadors?limit=100&sort=state");
+                if (!response.ok) {
+                    console.error("API error:", response.status);
+                    setAmbassadors([]);
+                    return;
+                }
                 const data = await response.json();
-                setAmbassadors(data.docs);
+                if (data && Array.isArray(data.docs)) {
+                    setAmbassadors(data.docs);
+                } else {
+                    setAmbassadors([]);
+                }
             } catch (error) {
                 console.error("Failed to fetch ambassadors:", error);
+                setAmbassadors([]);
             } finally {
                 setIsLoading(false);
             }
