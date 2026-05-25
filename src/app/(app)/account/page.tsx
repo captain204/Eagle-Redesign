@@ -1,11 +1,68 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Package, User, MapPin, LogOut } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 export default function AccountPage() {
     const [activeTab, setActiveTab] = useState("orders");
+    const [user, setUser] = useState<any>(null);
+    const [orders, setOrders] = useState<any[]>([]);
+    const [isLoading, setIsLoading] = useState(true);
+    const router = useRouter();
+
+    useEffect(() => {
+        const fetchUserData = async () => {
+            try {
+                // Fetch current user
+                const userRes = await fetch("/api/users/me");
+                if (!userRes.ok) throw new Error("Not logged in");
+                const userData = await userRes.json();
+                
+                if (!userData.user) {
+                    router.push("/login?message=Please login to view your account.");
+                    return;
+                }
+                
+                setUser(userData.user);
+
+                // Fetch orders for this user
+                const ordersRes = await fetch(`/api/orders?where[customer][equals]=${userData.user.id}&sort=-createdAt`);
+                if (ordersRes.ok) {
+                    const ordersData = await ordersRes.json();
+                    setOrders(ordersData.docs || []);
+                }
+            } catch (error) {
+                console.error("Failed to load account data:", error);
+                router.push("/login?message=Please login to view your account.");
+            } finally {
+                setIsLoading(false);
+            }
+        };
+
+        fetchUserData();
+    }, [router]);
+
+    const handleLogout = async () => {
+        try {
+            await fetch("/api/users/logout", { method: "POST" });
+            router.push("/login?message=You have been logged out.");
+            router.refresh();
+        } catch (err) {
+            console.error("Logout failed:", err);
+        }
+    };
+
+    if (isLoading) {
+        return (
+            <div className="min-h-screen bg-[#f5f5f5] pt-32 pb-20 flex justify-center items-center">
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+            </div>
+        );
+    }
+
+    if (!user) return null;
 
     return (
         <div className="min-h-screen bg-[#f5f5f5] pt-32 pb-20">
@@ -16,12 +73,12 @@ export default function AccountPage() {
                     {/* Sidebar */}
                     <aside className="w-full md:w-64 bg-white p-6 rounded-lg shadow-sm h-fit">
                         <div className="flex items-center gap-3 mb-8 border-b pb-4">
-                            <div className="w-12 h-12 bg-gray-200 rounded-full flex items-center justify-center">
+                            <div className="w-12 h-12 bg-gray-200 rounded-full flex items-center justify-center shrink-0">
                                 <User className="w-6 h-6 text-gray-500" />
                             </div>
-                            <div>
+                            <div className="overflow-hidden">
                                 <p className="font-bold text-sm">Hello,</p>
-                                <p className="font-bold text-lg">User Name</p>
+                                <p className="font-bold text-lg truncate">{user.name || user.email.split('@')[0]}</p>
                             </div>
                         </div>
 
@@ -47,7 +104,7 @@ export default function AccountPage() {
                             >
                                 <MapPin className="w-4 h-4" /> Addresses
                             </button>
-                            <button className="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-red-500 hover:bg-red-50 transition-colors mt-8">
+                            <button onClick={handleLogout} className="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-red-500 hover:bg-red-50 transition-colors mt-8">
                                 <LogOut className="w-4 h-4" /> Logout
                             </button>
                         </nav>
@@ -58,53 +115,57 @@ export default function AccountPage() {
                         {activeTab === "orders" && (
                             <div>
                                 <h2 className="text-xl font-bold mb-6">Order History</h2>
-                                <div className="space-y-4">
-                                    {/* Mock Order */}
-                                    <div className="border rounded-lg p-4 flex flex-col md:flex-row justify-between gap-4">
-                                        <div>
-                                            <p className="font-bold text-sm text-gray-400 mb-1">Order #123456</p>
-                                            <p className="font-bold">FreePods 4 Active Noise Cancelling Earbuds</p>
-                                            <p className="text-sm text-gray-500">Placed on Oct 12, 2023</p>
-                                        </div>
-                                        <div className="text-right">
-                                            <span className="bg-primary/10 text-primary text-xs font-bold px-2 py-1 rounded">DELIVERED</span>
-                                            <p className="font-bold mt-2">₦21,900</p>
-                                        </div>
+                                {orders.length === 0 ? (
+                                    <div className="text-center py-10 bg-gray-50 rounded-lg border border-dashed">
+                                        <p className="text-gray-500">You haven't placed any orders yet.</p>
                                     </div>
-                                    {/* Mock Order 2 */}
-                                    <div className="border rounded-lg p-4 flex flex-col md:flex-row justify-between gap-4">
-                                        <div>
-                                            <p className="font-bold text-sm text-gray-400 mb-1">Order #123455</p>
-                                            <p className="font-bold">20000mAh Power Bank</p>
-                                            <p className="text-sm text-gray-500">Placed on Sep 05, 2023</p>
-                                        </div>
-                                        <div className="text-right">
-                                            <span className="bg-primary/10 text-primary text-xs font-bold px-2 py-1 rounded">DELIVERED</span>
-                                            <p className="font-bold mt-2">₦12,500</p>
-                                        </div>
+                                ) : (
+                                    <div className="space-y-4">
+                                        {orders.map((order) => (
+                                            <div key={order.id} className="border rounded-lg p-4 flex flex-col md:flex-row justify-between gap-4 hover:shadow-sm transition-shadow">
+                                                <div>
+                                                    <p className="font-bold text-sm text-gray-400 mb-1">Order #{order.id.slice(-6).toUpperCase()}</p>
+                                                    <p className="font-bold">
+                                                        {order.items?.length > 0 ? (
+                                                            `${order.items[0]?.product?.title || 'Unknown Product'} ${order.items.length > 1 ? `+ ${order.items.length - 1} more items` : ''}`
+                                                        ) : (
+                                                            'Empty Order'
+                                                        )}
+                                                    </p>
+                                                    <p className="text-sm text-gray-500">Placed on {new Date(order.createdAt).toLocaleDateString()}</p>
+                                                </div>
+                                                <div className="text-right">
+                                                    <span className={`text-xs font-bold px-2 py-1 rounded uppercase ${order.status === 'completed' ? 'bg-green-100 text-green-700' : 'bg-primary/10 text-primary'}`}>
+                                                        {order.status}
+                                                    </span>
+                                                    <p className="font-bold mt-2">₦{order.total?.toLocaleString()}</p>
+                                                </div>
+                                            </div>
+                                        ))}
                                     </div>
-                                </div>
+                                )}
                             </div>
                         )}
 
                         {activeTab === "profile" && (
                             <div>
                                 <h2 className="text-xl font-bold mb-6">Personal Information</h2>
-                                <form className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <form className="grid grid-cols-1 md:grid-cols-2 gap-6" onSubmit={(e) => e.preventDefault()}>
                                     <div>
                                         <label className="block text-sm font-medium text-gray-700 mb-1">First Name</label>
-                                        <input type="text" defaultValue="User" className="w-full p-3 border rounded-lg outline-none focus:ring-1 focus:ring-primary" />
+                                        <input type="text" defaultValue={user.name?.split(' ')[0] || ''} className="w-full p-3 border rounded-lg outline-none focus:ring-1 focus:ring-primary" />
                                     </div>
                                     <div>
                                         <label className="block text-sm font-medium text-gray-700 mb-1">Last Name</label>
-                                        <input type="text" defaultValue="Name" className="w-full p-3 border rounded-lg outline-none focus:ring-1 focus:ring-primary" />
+                                        <input type="text" defaultValue={user.name?.split(' ').slice(1).join(' ') || ''} className="w-full p-3 border rounded-lg outline-none focus:ring-1 focus:ring-primary" />
                                     </div>
                                     <div className="md:col-span-2">
                                         <label className="block text-sm font-medium text-gray-700 mb-1">Email Address</label>
-                                        <input type="email" defaultValue="user@example.com" className="w-full p-3 border rounded-lg outline-none focus:ring-1 focus:ring-primary" disabled />
+                                        <input type="email" defaultValue={user.email || ''} className="w-full p-3 border rounded-lg outline-none focus:ring-1 focus:ring-primary bg-gray-50" disabled />
+                                        <p className="text-xs text-gray-500 mt-1">Email cannot be changed directly.</p>
                                     </div>
-                                    <div className="md:col-span-2">
-                                        <Button className="bg-black text-white hover:bg-gray-800 px-8">Save Changes</Button>
+                                    <div className="md:col-span-2 mt-2">
+                                        <Button type="submit" className="bg-black text-white hover:bg-gray-800 px-8">Save Changes</Button>
                                     </div>
                                 </form>
                             </div>
@@ -113,18 +174,12 @@ export default function AccountPage() {
                         {activeTab === "address" && (
                             <div>
                                 <h2 className="text-xl font-bold mb-6">Saved Addresses</h2>
-                                <div className="border p-4 rounded-lg relative">
-                                    <div className="absolute top-4 right-4 flex gap-2">
-                                        <button className="text-primary text-sm font-bold hover:underline">Edit</button>
-                                        <button className="text-red-500 text-sm font-bold hover:underline">Delete</button>
-                                    </div>
-                                    <p className="font-bold mb-1">User Name</p>
-                                    <p className="text-gray-600 text-sm">21 Obafemi Awolowo way B67 asset corp plaza ikeja, close to ikeja club</p>
-                                    <p className="text-gray-600 text-sm mt-2">+234 800 000 0000</p>
+                                <div className="text-center py-10 bg-gray-50 rounded-lg border border-dashed">
+                                    <p className="text-gray-500 mb-4">You have not saved any addresses yet.</p>
+                                    <Button className="bg-primary text-black hover:bg-black hover:text-white border border-primary font-bold">
+                                        Add New Address
+                                    </Button>
                                 </div>
-                                <Button className="mt-6 bg-primary text-black hover:bg-black hover:text-white border border-primary font-bold">
-                                    Add New Address
-                                </Button>
                             </div>
                         )}
                     </main>

@@ -56,9 +56,6 @@ export const Ambassadors: CollectionConfig = {
             name: 'phone',
             type: 'text',
             required: true,
-            access: {
-                read: ({ req: { user } }) => Boolean(user),
-            },
         },
         {
             name: 'state',

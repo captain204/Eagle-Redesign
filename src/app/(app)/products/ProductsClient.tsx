@@ -1,8 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { ProductCard } from "@/components/products/ProductCard";
 import { ChevronDown } from "lucide-react";
+import { useSearchParams } from "next/navigation";
 
 interface Category {
     id: string | number;
@@ -11,8 +12,19 @@ interface Category {
 }
 
 export default function ProductsClient({ initialProducts, categories, pageTitle = "All Products" }: { initialProducts: any[], categories: Category[], pageTitle?: string }) {
-    const [selectedCategory, setSelectedCategory] = useState("All");
-    const [priceRange, setPriceRange] = useState(100000); // Increased default range
+    const searchParams = useSearchParams();
+    
+    const urlCategory = searchParams.get("category") || "All";
+    const urlQuery = searchParams.get("q") || "";
+    
+    const [selectedCategory, setSelectedCategory] = useState(urlCategory);
+    const [searchQuery, setSearchQuery] = useState(urlQuery);
+    const [priceRange, setPriceRange] = useState(200000); // Increased default range
+
+    useEffect(() => {
+        setSelectedCategory(searchParams.get("category") || "All");
+        setSearchQuery(searchParams.get("q") || "");
+    }, [searchParams]);
 
     const filteredProducts = initialProducts.filter(
         (product) => {
@@ -22,22 +34,33 @@ export default function ProductsClient({ initialProducts, categories, pageTitle 
                 // If categories is an array of objects (depth: 1)
                 matchesCategory = product.categories.some((c: any) => c.title === selectedCategory || c.slug === selectedCategory);
             }
+            
+            // Check search query
+            let matchesSearch = true;
+            if (searchQuery) {
+                const q = searchQuery.toLowerCase();
+                const titleMatch = product.title?.toLowerCase().includes(q);
+                const descMatch = product.description?.toLowerCase().includes(q);
+                matchesSearch = Boolean(titleMatch || descMatch);
+            }
 
             // Check price
             const productPrice = product.salePrice || product.price || 0;
             const matchesPrice = productPrice <= priceRange;
 
-            return matchesCategory && matchesPrice;
+            return matchesCategory && matchesPrice && matchesSearch;
         }
     );
+
+    const displayTitle = searchQuery ? `Search Results for "${searchQuery}"` : (selectedCategory !== "All" ? selectedCategory : pageTitle);
 
     return (
         <div className="min-h-screen bg-[#f5f5f5] pt-24 pb-12">
             <div className="container mx-auto px-4">
                 {/* Breadcrumb / Title */}
                 <div className="mb-8">
-                    <h1 className="text-3xl font-bold uppercase">{pageTitle}</h1>
-                    <p className="text-gray-500 text-sm mt-2">Home / {pageTitle}</p>
+                    <h1 className="text-3xl font-bold uppercase">{displayTitle}</h1>
+                    <p className="text-gray-500 text-sm mt-2">Home / {displayTitle}</p>
                 </div>
 
                 <div className="flex flex-col md:flex-row gap-8">
