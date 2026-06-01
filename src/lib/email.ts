@@ -24,8 +24,8 @@ export async function sendOrderConfirmationEmail(order: any, customerEmail: stri
         `;
 
         const { data, error } = await resend.emails.send({
-            from: '1st𝓔agle <onboarding@resend.dev>', // Use a verified domain in production
-            to: [customerEmail, 'nurudeenakindele8@gmail.com', 'mrdydx92@yahoo.com'],
+            from: process.env.RESEND_DEFAULT_FROM || 'onboarding@resend.dev',
+            to: [customerEmail],
             subject: `Order Confirmation - #${orderId}`,
             html: html,
         });

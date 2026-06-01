@@ -225,7 +225,7 @@ export const Products: CollectionConfig = {
             name: 'mainImage',
             type: 'upload',
             relationTo: 'media',
-            required: true,
+            required: false,
             label: 'Main Product Image',
             admin: { position: 'sidebar' },
         },

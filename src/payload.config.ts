@@ -102,7 +102,7 @@ export default buildConfig({
 
     editor: lexicalEditor(),
     email: resendAdapter({
-        defaultFromAddress: 'onboarding@resend.dev',
+        defaultFromAddress: process.env.RESEND_DEFAULT_FROM || 'onboarding@resend.dev',
         defaultFromName: 'Eagle',
         apiKey: process.env.RESEND_API_KEY || 're_123_fallback',
     }),

@@ -66,7 +66,6 @@ export default function CheckoutPage() {
     const [createdOrderId, setCreatedOrderId] = useState<string | null>(null);
     const [isOrderCreating, setIsOrderCreating] = useState(false);
 
-    // Define a stable config for Paystack. Ensure it's valid to prevent hook errors.
     const paystackConfig = useMemo(() => {
         return {
             reference,
@@ -76,16 +75,15 @@ export default function CheckoutPage() {
             metadata: {
                 custom_fields: [
                     { display_name: "Customer Name", variable_name: "customer_name", value: `${firstName} ${lastName}` },
-                    ...(createdOrderId ? [{ display_name: "Order ID", variable_name: "order_id", value: createdOrderId }] : []),
                     { display_name: "Customer Phone", variable_name: "customer_phone", value: phone },
                 ],
-                orderId: createdOrderId,
+                cartData: JSON.stringify(cartItems.map(item => ({ product: item.id, quantity: item.quantity, price: item.price }))),
+                shippingData: JSON.stringify({ name: `${firstName} ${lastName}`, street: address, lga: city, state, country: 'Nigeria' }),
             },
         };
-    }, [reference, email, cartTotal, firstName, lastName, createdOrderId, phone]);
+    }, [reference, email, cartTotal, firstName, lastName, address, city, state, phone, cartItems]);
 
     const initializePayment = usePaystackPayment(paystackConfig);
-
 
     const onSuccess = useCallback(async (reference: any) => {
         setIsLoading(true);
@@ -113,7 +111,7 @@ export default function CheckoutPage() {
         setIsLoading(false);
     }, []);
 
-    const handleCreateOrder = async () => {
+    const handlePayment = () => {
         if (!email || !firstName || !lastName || !address || !city || !state || !phone) {
             toast.error("Please fill in all shipping details");
             setStep(1);
@@ -123,70 +121,6 @@ export default function CheckoutPage() {
             toast.error("Invalid cart. Please refresh and try again.");
             return;
         }
-
-        setIsOrderCreating(true);
-        try {
-            let customerId: string | undefined;
-            try {
-                const userRes = await fetch("/api/users/me");
-                if (userRes.ok) {
-                    const userData = await userRes.json();
-                    customerId = userData?.user?.id;
-                }
-            } catch { }
-
-            const orderData = {
-                email,
-                items: cartItems.map(item => ({ product: item.id, quantity: item.quantity, price: item.price })),
-                total: cartTotal,
-                status: 'pending',
-                paymentStatus: 'unpaid',
-                shippingAddress: {
-                    name: `${firstName} ${lastName}`,
-                    street: address,
-                    lga: city,
-                    state,
-                    country: 'Nigeria',
-                },
-                ...(customerId && { customer: customerId }),
-            };
-
-            const res = await fetch("/api/orders", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(orderData)
-            });
-
-            if (!res.ok) {
-                const errorData = await res.json().catch(() => ({}));
-                console.error('[Checkout] Order creation failed:', {
-                    status: res.status,
-                    statusText: res.statusText,
-                    error: errorData
-                });
-                toast.error(errorData.errors?.[0]?.message || errorData.error || `Failed to create order (${res.status})`);
-                return;
-            }
-
-            const data = await res.json();
-            const order = data.doc || data;
-
-            if (order && order.id) {
-                setCreatedOrderId(order.id);
-                toast.success("Order placed successfully! Please proceed to payment.");
-            } else {
-                console.error('[Checkout] Order data missing ID:', data);
-                toast.error("Failed to process order response");
-            }
-        } catch (error) {
-            console.error('Order creation error:', error);
-            toast.error("Network error during order creation.");
-        } finally {
-            setIsOrderCreating(false);
-        }
-    };
-
-    const handlePayment = () => {
         setIsLoading(true);
         initializePayment({ onSuccess, onClose });
     };
@@ -266,23 +200,13 @@ export default function CheckoutPage() {
                                     </label>
                                 </div>
 
-                                {!createdOrderId ? (
-                                    <Button
-                                        onClick={handleCreateOrder}
-                                        disabled={isOrderCreating || cartItems.length === 0}
-                                        className="w-full mt-6 bg-primary text-black py-6 text-lg font-bold hover:bg-black hover:text-white shadow-lg"
-                                    >
-                                        {isOrderCreating ? 'Creating Order...' : `Confirm Order ₦${cartTotal.toLocaleString()}`}
-                                    </Button>
-                                ) : (
-                                    <Button
-                                        onClick={handlePayment}
-                                        disabled={isLoading}
-                                        className="w-full mt-6 bg-green-600 text-white py-6 text-lg font-bold hover:bg-green-700 shadow-lg animate-bounce"
-                                    >
-                                        {isLoading ? 'Opening Payment Window...' : 'Pay Now Securely'}
-                                    </Button>
-                                )}
+                                <Button
+                                    onClick={handlePayment}
+                                    disabled={isLoading || cartItems.length === 0}
+                                    className="w-full mt-6 bg-green-600 text-white py-6 text-lg font-bold hover:bg-green-700 shadow-lg animate-bounce"
+                                >
+                                    {isLoading ? 'Opening Payment Window...' : `Pay Now ₦${cartTotal.toLocaleString()}`}
+                                </Button>
                             </div>
                         )}
 

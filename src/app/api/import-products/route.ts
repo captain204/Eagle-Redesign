@@ -130,16 +130,6 @@ export async function POST(req: Request) {
                     }
                 }
 
-                // Fallback to placeholder if mainImage is still null and required in schema
-                if (!mainImageId) {
-                    const defaultMedia = await payload.find({ collection: 'media', limit: 1 });
-                    mainImageId = defaultMedia.docs[0]?.id || null;
-                }
-
-                if (!mainImageId) {
-                    throw new Error('Please upload at least one image in the Media library first to use as a placeholder.');
-                }
-
                 await payload.create({
                     collection: 'products',
                     data: {
@@ -151,7 +141,7 @@ export async function POST(req: Request) {
                         status: 'published',
                         shortDescription,
                         description: htmlToLexical(descriptionHtml),
-                        mainImage: mainImageId,
+                        ...(mainImageId ? { mainImage: mainImageId } : {}),
                         gallery: galleryIds.map(id => ({ image: id })),
                         productType: 'simple',
                         stockStatus: row['In stock?'] === '0' || row.stock_status === 'outofstock' ? 'outofstock' : 'instock',
