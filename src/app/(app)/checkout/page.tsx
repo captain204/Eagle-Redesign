@@ -29,6 +29,10 @@ export default function CheckoutPage() {
 
     const [recommendedProducts, setRecommendedProducts] = useState<any[]>([]);
 
+    const [shippingSettings, setShippingSettings] = useState<any>(null);
+    const [shippingMethod, setShippingMethod] = useState("delivery");
+    const [shippingCost, setShippingCost] = useState(0);
+
     useEffect(() => {
         const fetchRecs = async () => {
             try {
@@ -38,7 +42,41 @@ export default function CheckoutPage() {
             } catch (e) { }
         };
         fetchRecs();
+
+        const fetchShippingSettings = async () => {
+            try {
+                const res = await fetch('/api/globals/shipping-settings');
+                const data = await res.json();
+                if (data) setShippingSettings(data);
+            } catch (e) {
+                console.error("Error fetching shipping settings:", e);
+            }
+        };
+        fetchShippingSettings();
     }, []);
+
+    useEffect(() => {
+        if (shippingMethod === 'pickup') {
+            setShippingCost(0);
+            return;
+        }
+
+        if (!shippingSettings) {
+            setShippingCost(0);
+            return;
+        }
+
+        let applicableCost = shippingSettings.defaultShippingPrice || 0;
+
+        if (state && shippingSettings.stateShippingPrices) {
+            const stateOverride = shippingSettings.stateShippingPrices.find((s: any) => s.state === state);
+            if (stateOverride && typeof stateOverride.price === 'number') {
+                applicableCost = stateOverride.price;
+            }
+        }
+
+        setShippingCost(applicableCost);
+    }, [shippingMethod, state, shippingSettings]);
 
     const [reference] = useState(() => `txn_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`);
 
@@ -70,7 +108,7 @@ export default function CheckoutPage() {
         return {
             reference,
             email,
-            amount: Math.round((cartTotal || 0) * 100),
+            amount: Math.round((cartTotal + shippingCost) * 100),
             publicKey: process.env.NEXT_PUBLIC_PAYSTACK_PUBLIC_KEY?.trim() || '',
             metadata: {
                 custom_fields: [
@@ -78,10 +116,18 @@ export default function CheckoutPage() {
                     { display_name: "Customer Phone", variable_name: "customer_phone", value: phone },
                 ],
                 cartData: JSON.stringify(cartItems.map(item => ({ product: item.id, quantity: item.quantity, price: item.price }))),
-                shippingData: JSON.stringify({ name: `${firstName} ${lastName}`, street: address, lga: city, state, country: 'Nigeria' }),
+                shippingData: JSON.stringify({ 
+                    method: shippingMethod, 
+                    name: `${firstName} ${lastName}`, 
+                    street: address, 
+                    lga: city, 
+                    state, 
+                    country: 'Nigeria',
+                    cost: shippingCost
+                }),
             },
         };
-    }, [reference, email, cartTotal, firstName, lastName, address, city, state, phone, cartItems]);
+    }, [reference, email, cartTotal, shippingCost, firstName, lastName, address, city, state, phone, cartItems, shippingMethod]);
 
     const initializePayment = usePaystackPayment(paystackConfig);
 
@@ -112,8 +158,13 @@ export default function CheckoutPage() {
     }, []);
 
     const handlePayment = () => {
-        if (!email || !firstName || !lastName || !address || !city || !state || !phone) {
-            toast.error("Please fill in all shipping details");
+        if (!email || !firstName || !lastName || !phone) {
+            toast.error("Please fill in all contact details");
+            setStep(1);
+            return;
+        }
+        if (shippingMethod === 'delivery' && (!address || !city || !state)) {
+            toast.error("Please fill in all shipping address details");
             setStep(1);
             return;
         }
@@ -156,24 +207,46 @@ export default function CheckoutPage() {
                         {step === 1 && (
                             <div className="space-y-4 animate-in fade-in slide-in-from-right-4 duration-300">
                                 <h2 className="font-bold text-lg mb-4">Contact Information</h2>
-                                <input type="email" placeholder="Email Address" value={email} onChange={(e) => setEmail(e.target.value)} className="w-full p-3 border rounded-lg bg-gray-50 focus:bg-white focus:ring-1 focus:ring-primary outline-none" />
-                                <h2 className="font-bold text-lg pt-4 mb-4">Shipping Address</h2>
-                                <div className="grid grid-cols-2 gap-4">
+                                <input type="email" placeholder="Email Address" value={email} onChange={(e) => setEmail(e.target.value)} className="w-full p-3 border rounded-lg bg-gray-50 focus:bg-white focus:ring-1 focus:ring-primary outline-none mb-4" />
+                                <div className="grid grid-cols-2 gap-4 mb-4">
                                     <input type="text" placeholder="First Name" value={firstName} onChange={(e) => setFirstName(e.target.value)} className="w-full p-3 border rounded-lg bg-gray-50 focus:bg-white focus:ring-1 focus:ring-primary outline-none" />
                                     <input type="text" placeholder="Last Name" value={lastName} onChange={(e) => setLastName(e.target.value)} className="w-full p-3 border rounded-lg bg-gray-50 focus:bg-white focus:ring-1 focus:ring-primary outline-none" />
                                 </div>
-                                <input type="text" placeholder="Address" value={address} onChange={(e) => setAddress(e.target.value)} className="w-full p-3 border rounded-lg bg-gray-50 focus:bg-white focus:ring-1 focus:ring-primary outline-none" />
-                                <div className="grid grid-cols-2 gap-4">
-                                    <input type="text" placeholder="City / LGA" value={city} onChange={(e) => setCity(e.target.value)} className="w-full p-3 border rounded-lg bg-gray-50 focus:bg-white focus:ring-1 focus:ring-primary outline-none" />
-                                    <select value={state} onChange={(e) => setState(e.target.value)} className="w-full p-3 border rounded-lg bg-gray-50 focus:bg-white focus:ring-1 focus:ring-primary outline-none">
-                                        <option value="" disabled>Select State</option>
-                                        {Object.keys(nigeriaData).map((st) => <option key={st} value={st}>{st}</option>)}
-                                    </select>
+                                <input type="tel" placeholder="Phone Number" value={phone} onChange={(e) => setPhone(e.target.value)} className="w-full p-3 border rounded-lg bg-gray-50 focus:bg-white focus:ring-1 focus:ring-primary outline-none mb-4" />
+
+                                <h2 className="font-bold text-lg pt-4 mb-4">Delivery Method</h2>
+                                <div className="grid grid-cols-2 gap-4 mb-4">
+                                    <label className={`p-4 border rounded-lg cursor-pointer flex items-center justify-center font-bold transition-all ${shippingMethod === 'delivery' ? 'border-primary bg-primary/5 text-primary ring-2 ring-primary ring-offset-1' : 'bg-gray-50 hover:bg-white text-gray-600'}`}>
+                                        <input type="radio" name="method" className="hidden" checked={shippingMethod === 'delivery'} onChange={() => setShippingMethod('delivery')} />
+                                        Delivery
+                                    </label>
+                                    <label className={`p-4 border rounded-lg cursor-pointer flex items-center justify-center font-bold transition-all ${shippingMethod === 'pickup' ? 'border-primary bg-primary/5 text-primary ring-2 ring-primary ring-offset-1' : 'bg-gray-50 hover:bg-white text-gray-600'}`}>
+                                        <input type="radio" name="method" className="hidden" checked={shippingMethod === 'pickup'} onChange={() => setShippingMethod('pickup')} />
+                                        Local Pickup
+                                    </label>
                                 </div>
-                                <input type="tel" placeholder="Phone Number" value={phone} onChange={(e) => setPhone(e.target.value)} className="w-full p-3 border rounded-lg bg-gray-50 focus:bg-white focus:ring-1 focus:ring-primary outline-none" />
+
+                                {shippingMethod === 'delivery' && (
+                                    <div className="space-y-4 animate-in fade-in duration-300">
+                                        <h2 className="font-bold text-lg pt-4 mb-4">Shipping Address</h2>
+                                        <input type="text" placeholder="Address" value={address} onChange={(e) => setAddress(e.target.value)} className="w-full p-3 border rounded-lg bg-gray-50 focus:bg-white focus:ring-1 focus:ring-primary outline-none" />
+                                        <div className="grid grid-cols-2 gap-4">
+                                            <input type="text" placeholder="City / LGA" value={city} onChange={(e) => setCity(e.target.value)} className="w-full p-3 border rounded-lg bg-gray-50 focus:bg-white focus:ring-1 focus:ring-primary outline-none" />
+                                            <select value={state} onChange={(e) => setState(e.target.value)} className="w-full p-3 border rounded-lg bg-gray-50 focus:bg-white focus:ring-1 focus:ring-primary outline-none">
+                                                <option value="" disabled>Select State</option>
+                                                {Object.keys(nigeriaData).map((st) => <option key={st} value={st}>{st}</option>)}
+                                            </select>
+                                        </div>
+                                    </div>
+                                )}
+
                                 <Button onClick={() => {
-                                    if (!email || !firstName || !lastName || !address || !city || !state || !phone) {
-                                        toast.error("Please fill in all shipping details");
+                                    if (!email || !firstName || !lastName || !phone) {
+                                        toast.error("Please fill in contact details");
+                                        return;
+                                    }
+                                    if (shippingMethod === 'delivery' && (!address || !city || !state)) {
+                                        toast.error("Please fill in shipping address");
                                         return;
                                     }
                                     setStep(2);
@@ -190,7 +263,10 @@ export default function CheckoutPage() {
                                     <button onClick={() => setStep(1)} className="text-primary text-sm font-bold">Change</button>
                                 </div>
                                 <div className="border p-4 rounded-lg flex items-center justify-between bg-gray-50">
-                                    <div className="flex flex-col"><span className="text-gray-500 text-sm">Ship to</span><span className="font-medium">{address}, {city}, {state}</span></div>
+                                    <div className="flex flex-col">
+                                        <span className="text-gray-500 text-sm">{shippingMethod === 'delivery' ? 'Ship to' : 'Method'}</span>
+                                        <span className="font-medium">{shippingMethod === 'delivery' ? `${address}, ${city}, ${state}` : 'Local Pickup'}</span>
+                                    </div>
                                     <button onClick={() => setStep(1)} className="text-primary text-sm font-bold">Change</button>
                                 </div>
                                 <div className="space-y-3">
@@ -205,7 +281,7 @@ export default function CheckoutPage() {
                                     disabled={isLoading || cartItems.length === 0}
                                     className="w-full mt-6 bg-green-600 text-white py-6 text-lg font-bold hover:bg-green-700 shadow-lg animate-bounce"
                                 >
-                                    {isLoading ? 'Opening Payment Window...' : `Pay Now ₦${cartTotal.toLocaleString()}`}
+                                    {isLoading ? 'Opening Payment Window...' : `Pay Now ₦${(cartTotal + shippingCost).toLocaleString()}`}
                                 </Button>
                             </div>
                         )}
@@ -245,11 +321,14 @@ export default function CheckoutPage() {
                         </div>
                         <div className="border-t pt-4 space-y-2 text-sm">
                             <div className="flex justify-between"><span className="text-gray-500">Subtotal</span><span className="font-medium">₦{cartTotal.toLocaleString()}</span></div>
-                            <div className="flex justify-between"><span className="text-gray-500">Shipping</span><span className="font-medium">Free</span></div>
+                            <div className="flex justify-between">
+                                <span className="text-gray-500">Shipping {shippingMethod === 'pickup' && '(Pickup)'}</span>
+                                <span className="font-medium">{shippingCost === 0 ? 'Free' : `₦${shippingCost.toLocaleString()}`}</span>
+                            </div>
                         </div>
                         <div className="border-t pt-4 mt-4 flex justify-between items-center">
                             <span className="text-lg font-bold">Total</span>
-                            <span className="text-2xl font-bold text-primary">₦{cartTotal.toLocaleString()}</span>
+                            <span className="text-2xl font-bold text-primary">₦{(cartTotal + shippingCost).toLocaleString()}</span>
                         </div>
                     </div>
                 </div>
