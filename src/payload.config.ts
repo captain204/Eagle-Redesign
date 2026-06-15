@@ -110,7 +110,7 @@ export default buildConfig({
         client: {
             url: process.env.DATABASE_URI || 'file:./payload.db',
         },
-        push: true, // Enabled to allow automatic schema synchronization
+        push: false, // Disabled to ensure no schema changes on redeploy
     }),
     secret: process.env.PAYLOAD_SECRET || 'secret-key-for-development-only',
     typescript: {

@@ -2,31 +2,51 @@ import type { GlobalConfig } from 'payload'
 
 export const ShippingSettings: GlobalConfig = {
     slug: 'shipping-settings',
+    label: 'Shipping',
+    admin: {
+        group: 'Settings',
+    },
+    access: {
+        read: () => true,
+    },
     fields: [
         {
             name: 'defaultShippingPrice',
             type: 'number',
             defaultValue: 0,
             required: true,
+            label: 'Default Shipping Price',
             admin: {
                 description: 'The default shipping price applied to all checkouts if no state is selected or no state override exists.',
             }
         },
         {
+            name: 'localPickupEnabled',
+            type: 'checkbox',
+            label: 'Enable Local Pickup',
+            defaultValue: true,
+            admin: {
+                description: 'Allow customers to pick up their orders locally for free.',
+            }
+        },
+        {
             name: 'stateShippingPrices',
             type: 'array',
+            label: 'State Shipping Prices (Overrides)',
             admin: {
                 description: 'Set specific shipping prices for individual Nigerian states.',
             },
             fields: [
                 {
                     name: 'state',
-                    type: 'text', // A simple text field is fine, the frontend uses exact strings
+                    type: 'text',
+                    label: 'State Name',
                     required: true,
                 },
                 {
                     name: 'price',
                     type: 'number',
+                    label: 'Shipping Price',
                     required: true,
                 }
             ]
@@ -41,13 +61,12 @@ export const ShippingSettings: GlobalConfig = {
                 {
                     name: 'name',
                     type: 'text',
-                    required: true,
                 },
                 {
                     name: 'regions',
                     type: 'array',
                     fields: [
-                        { name: 'country', type: 'text', required: true },
+                        { name: 'country', type: 'text' },
                         { name: 'state', type: 'text' },
                     ],
                 },
@@ -63,14 +82,13 @@ export const ShippingSettings: GlobalConfig = {
                                 { label: 'Free Shipping', value: 'free_shipping' },
                                 { label: 'Local Pickup', value: 'local_pickup' },
                             ],
-                            required: true,
                         },
-                        { name: 'label', type: 'text', required: true },
+                        { name: 'label', type: 'text' },
                         { name: 'cost', type: 'number', defaultValue: 0 },
-                        { name: 'minAmount', type: 'number', label: 'Minimum Amount for Free Shipping', admin: { condition: (_, data) => data.type === 'free_shipping' } },
+                        { name: 'minAmount', type: 'number' },
                     ],
                 },
             ],
-        },
+        }
     ],
 }
