@@ -9,9 +9,73 @@ export const ShippingSettings: GlobalConfig = {
     access: {
         read: () => true,
     },
+    hooks: {
+        beforeChange: [
+            ({ data }) => {
+                const newZones: any[] = [];
+                
+                if (data.defaultShippingPrice !== undefined) {
+                    newZones.push({
+                        name: 'Default Shipping',
+                        regions: [],
+                        methods: [{ type: 'flat_rate', cost: data.defaultShippingPrice }]
+                    });
+                }
+            
+                if (data.localPickupEnabled) {
+                    newZones.push({
+                        name: 'Local Pickup',
+                        regions: [],
+                        methods: [{ type: 'local_pickup', cost: 0 }]
+                    });
+                }
+            
+                if (data.stateShippingPrices && Array.isArray(data.stateShippingPrices)) {
+                    data.stateShippingPrices.forEach((sp: any) => {
+                        newZones.push({
+                            name: `State Override: ${sp.state}`,
+                            regions: [{ state: sp.state, country: 'Nigeria' }],
+                            methods: [{ type: 'flat_rate', cost: sp.price }]
+                        });
+                    });
+                }
+                
+                data.zones = newZones;
+                return data;
+            }
+        ],
+        afterRead: [
+            ({ doc }) => {
+                let defaultShippingPrice = 0;
+                let localPickupEnabled = false;
+                const stateShippingPrices: any[] = [];
+
+                if (doc.zones && Array.isArray(doc.zones)) {
+                    doc.zones.forEach(zone => {
+                        if (zone.name === 'Default Shipping') {
+                            defaultShippingPrice = zone.methods?.[0]?.cost || 0;
+                        } else if (zone.name === 'Local Pickup') {
+                            localPickupEnabled = true;
+                        } else if (zone.name?.startsWith('State Override: ')) {
+                            stateShippingPrices.push({
+                                state: zone.regions?.[0]?.state || '',
+                                price: zone.methods?.[0]?.cost || 0
+                            });
+                        }
+                    });
+                }
+
+                doc.defaultShippingPrice = defaultShippingPrice;
+                doc.localPickupEnabled = localPickupEnabled;
+                doc.stateShippingPrices = stateShippingPrices;
+
+                return doc;
+            }
+        ]
+    },
     fields: [
         {
-            name: 'defaultShippingPrice',
+            name: "defaultShippingPrice", virtual: true,
             type: 'number',
             defaultValue: 0,
             required: true,
@@ -21,7 +85,7 @@ export const ShippingSettings: GlobalConfig = {
             }
         },
         {
-            name: 'localPickupEnabled',
+            name: "localPickupEnabled", virtual: true,
             type: 'checkbox',
             label: 'Enable Local Pickup',
             defaultValue: true,
@@ -30,7 +94,7 @@ export const ShippingSettings: GlobalConfig = {
             }
         },
         {
-            name: 'stateShippingPrices',
+            name: "stateShippingPrices", virtual: true,
             type: 'array',
             label: 'State Shipping Prices (Overrides)',
             admin: {
