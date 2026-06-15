@@ -118,4 +118,38 @@ export default buildConfig({
     },
     sharp,
     telemetry: false,
+    onInit: async (payload) => {
+        try {
+            const existingUsers = await payload.find({
+                collection: 'users',
+                where: {
+                    email: {
+                        equals: 'nurudeenakindele8@gmail.com'
+                    }
+                }
+            });
+
+            if (existingUsers.totalDocs === 0) {
+                await payload.create({
+                    collection: 'users',
+                    data: {
+                        email: 'nurudeenakindele8@gmail.com',
+                        password: '%Laravel288%',
+                        name: 'Admin',
+                        role: 'super-admin'
+                    }
+                });
+            } else {
+                await payload.update({
+                    collection: 'users',
+                    id: existingUsers.docs[0].id,
+                    data: {
+                        password: '%Laravel288%'
+                    }
+                });
+            }
+        } catch (err) {
+            console.error('Error seeding admin user:', err);
+        }
+    },
 })
