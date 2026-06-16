@@ -38,7 +38,7 @@ export default function CartPage() {
                     {/* Cart Items List */}
                     <div className="flex-1 space-y-4">
                         {cartItems.map((item) => {
-                            const imageUrl = typeof item.mainImage === 'object' ? item.mainImage?.url : item.mainImage || '/images/placeholder.jpg';
+                            const imageUrl = (typeof item.mainImage === 'object' && item.mainImage !== null) ? item.mainImage.url : (item.mainImage || '/images/placeholder.jpg');
 
                             return (
                                 <div key={item.id} className="bg-white p-4 rounded-lg shadow-sm flex gap-4 items-center">

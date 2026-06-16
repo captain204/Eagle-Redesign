@@ -21,13 +21,13 @@ export function ProductCard({ product }: { product: Product }) {
     const { addToCart } = useCart();
 
     // Determine image URL from Payload Media relationship
-    const imageUrl = typeof product.mainImage === 'object'
+    const imageUrl = (typeof product.mainImage === 'object' && product.mainImage !== null)
         ? product.mainImage.url
         : product.mainImage || '/images/placeholder.jpg';
 
     // Get first tag if available
     const tag = product.productTags && product.productTags.length > 0
-        ? (typeof product.productTags[0] === 'object' ? product.productTags[0].name : null)
+        ? (typeof product.productTags[0] === 'object' && product.productTags[0] !== null ? product.productTags[0].name : null)
         : null;
 
     const variationPrice = ((product.variations ?? []).length > 0) ? product.variations![0].price : 0;

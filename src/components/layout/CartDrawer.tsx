@@ -37,7 +37,7 @@ export function CartDrawer() {
                     ) : (
                         <div className="space-y-4">
                             {cartItems.map((item) => {
-                                const imageUrl = typeof item.mainImage === 'object'
+                                const imageUrl = (typeof item.mainImage === 'object' && item.mainImage !== null)
                                     ? item.mainImage.url
                                     : (item.mainImage || "/images/placeholder.jpg");
 

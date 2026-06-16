@@ -19,12 +19,12 @@ interface Product {
 export function QuickViewModal({ product, children }: { product: Product, children: React.ReactNode }) {
     const [quantity, setQuantity] = useState(1);
 
-    const imageUrl = typeof product.mainImage === 'object'
+    const imageUrl = (typeof product.mainImage === 'object' && product.mainImage !== null)
         ? product.mainImage.url
         : product.mainImage || '/images/placeholder.jpg';
 
     const tag = product.productTags && product.productTags.length > 0
-        ? (typeof product.productTags[0] === 'object' ? product.productTags[0].name : null)
+        ? (typeof product.productTags[0] === 'object' && product.productTags[0] !== null ? product.productTags[0].name : null)
         : null;
 
     return (

@@ -304,7 +304,7 @@ export default function CheckoutPage() {
                         <h3 className="font-bold text-gray-900 mb-4">Order Summary</h3>
                         <div className="space-y-4 mb-6">
                             {cartItems.map((item) => {
-                                const imageUrl = typeof item.mainImage === 'object' ? item.mainImage?.url : item.mainImage || '/images/placeholder.jpg';
+                                const imageUrl = (typeof item.mainImage === 'object' && item.mainImage !== null) ? item.mainImage.url : (item.mainImage || '/images/placeholder.jpg');
                                 return (
                                     <div key={item.id} className="flex gap-3">
                                         <div className="w-16 h-16 bg-white border rounded-md flex items-center justify-center relative overflow-hidden">

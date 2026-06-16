@@ -72,7 +72,7 @@ export async function POST(req: NextRequest) {
                         overrideAccess: true,
                     });
 
-                    const email = (typeof populatedOrder.customer === 'object' ? populatedOrder.customer.email : null) || populatedOrder.email;
+                    const email = (typeof populatedOrder.customer === 'object' && populatedOrder.customer !== null ? populatedOrder.customer.email : null) || populatedOrder.email;
                     if (email) {
                         const emailResult = await sendOrderConfirmationEmail(populatedOrder, email);
                         if (emailResult.success) {

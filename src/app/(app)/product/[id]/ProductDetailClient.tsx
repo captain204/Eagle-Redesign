@@ -11,8 +11,8 @@ import { RichText } from "@/components/ui/RichText";
 import { useCart } from "@/providers/CartProvider";
 
 export default function ProductDetailClient({ product, relatedProducts }: { product: any, relatedProducts: any[] }) {
-    const defaultImage = typeof product.mainImage === 'object' ? product.mainImage.url : (product.mainImage || "/images/placeholder.jpg");
-    const galleryImages = product.gallery ? product.gallery.map((g: any) => typeof g.image === 'object' ? g.image.url : g.image) : [];
+    const defaultImage = (typeof product.mainImage === 'object' && product.mainImage !== null) ? product.mainImage.url : (product.mainImage || "/images/placeholder.jpg");
+    const galleryImages = product.gallery ? product.gallery.map((g: any) => (typeof g.image === 'object' && g.image !== null) ? g.image.url : g.image) : [];
     const allImages = [defaultImage, ...galleryImages].filter(Boolean);
 
     const [selectedImage, setSelectedImage] = useState(0);

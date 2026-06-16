@@ -9,7 +9,7 @@ export async function sendOrderConfirmationEmail(order: any, customerEmail: stri
         const items = order.items || [];
 
         const itemsList = Array.isArray(items) ? items.map((item: any) => {
-            const productTitle = typeof item.product === 'object' ? item.product.title : 'Product';
+            const productTitle = (typeof item.product === 'object' && item.product !== null) ? item.product.title : 'Product';
             return `<li>${productTitle} x ${item.quantity} - ₦${item.price.toLocaleString()}</li>`;
         }).join('') : '<li>Items details unavailable</li>';
 
