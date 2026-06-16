@@ -18,22 +18,15 @@ export default function ProductDetailClient({ product, relatedProducts }: { prod
     const [selectedImage, setSelectedImage] = useState(0);
     const [quantity, setQuantity] = useState(1);
 
-    // Fallback for UI if variations/colors exist in schema
-    const colors = ["#1a1a1a", "#ffffff", "#82E600"];
-    const [selectedColor, setSelectedColor] = useState(colors[0]);
+    const [selectedVarIdx, setSelectedVarIdx] = useState(0);
 
     const router = useRouter();
 
-    let price = 0;
-    let originalPrice = 0;
+    const isVariable = product.productType === 'variable' && product.variations?.length > 0;
+    const variation = isVariable ? product.variations[selectedVarIdx] : null;
 
-    if (product.productType === 'variable' && product.variations?.length > 0) {
-        price = product.variations[0].salePrice || product.variations[0].price || 0;
-        originalPrice = product.variations[0].price || 0;
-    } else {
-        price = product.salePrice || product.price || 0;
-        originalPrice = product.price || 0;
-    }
+    const price = variation ? (variation.salePrice || variation.price || 0) : (product.salePrice || product.price || 0);
+    const originalPrice = variation ? (variation.price || 0) : (product.price || 0);
     const { addToCart } = useCart();
 
     const handleAddToCart = () => {
@@ -43,11 +36,12 @@ export default function ProductDetailClient({ product, relatedProducts }: { prod
         }
         addToCart({
             id: product.id,
-            title: product.title,
+            title: `${product.title} ${variation ? `(${variation.name})` : ''}`.trim(),
             price: price,
-            mainImage: allImages[0],
+            mainImage: variation?.image || allImages[0],
             quantity: quantity
         });
+        toast.success(`Added to cart: ${product.title} ${variation ? `(${variation.name})` : ''}`);
     }
 
     return (
@@ -115,6 +109,27 @@ export default function ProductDetailClient({ product, relatedProducts }: { prod
                                 <span className="text-sm text-gray-500">({product.reviews || Math.floor(Math.random() * 200)} Reviews)</span>
                             </div>
 
+                            {isVariable && (
+                                <div className="mb-6">
+                                    <h3 className="text-sm font-bold text-gray-900 mb-3 uppercase tracking-wider">Select Option:</h3>
+                                    <div className="flex flex-wrap gap-2">
+                                        {product.variations.map((v: any, idx: number) => (
+                                            <button
+                                                key={v.id || idx}
+                                                onClick={() => setSelectedVarIdx(idx)}
+                                                className={`px-4 py-2 border rounded-lg text-sm font-bold transition-colors ${
+                                                    selectedVarIdx === idx 
+                                                    ? 'border-primary bg-primary text-black' 
+                                                    : 'border-gray-300 text-gray-700 hover:border-gray-500'
+                                                }`}
+                                            >
+                                                {v.name}
+                                            </button>
+                                        ))}
+                                    </div>
+                                </div>
+                            )}
+
                             <div className="mb-8 p-4 bg-gray-50 rounded-lg border border-gray-100">
                                 <div className="flex items-end gap-3 mb-2">
                                     <span className="text-4xl font-extrabold text-primary">₦{price.toLocaleString()}</span>
@@ -157,9 +172,9 @@ export default function ProductDetailClient({ product, relatedProducts }: { prod
                                         }
                                         addToCart({
                                             id: product.id,
-                                            title: product.title,
+                                            title: `${product.title} ${variation ? `(${variation.name})` : ''}`.trim(),
                                             price: price,
-                                            mainImage: allImages[0],
+                                            mainImage: variation?.image || allImages[0],
                                             quantity: quantity
                                         });
                                         router.push('/checkout');
