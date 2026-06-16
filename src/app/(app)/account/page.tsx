@@ -138,7 +138,7 @@ export default function AccountPage() {
                                                     <span className={`text-xs font-bold px-2 py-1 rounded uppercase ${order.status === 'completed' ? 'bg-green-100 text-green-700' : 'bg-primary/10 text-primary'}`}>
                                                         {order.status}
                                                     </span>
-                                                    <p className="font-bold mt-2">₦{order.total?.toLocaleString()}</p>
+                                                    <p className="font-bold mt-2">₦{(order.total || 0).toLocaleString()}</p>
                                                 </div>
                                             </div>
                                         ))}

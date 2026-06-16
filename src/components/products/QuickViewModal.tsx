@@ -14,6 +14,7 @@ interface Product {
     mainImage?: any;
     productTags?: any[];
     description?: any;
+    variations?: any[];
 }
 
 export function QuickViewModal({ product, children }: { product: Product, children: React.ReactNode }) {
@@ -26,6 +27,14 @@ export function QuickViewModal({ product, children }: { product: Product, childr
     const tag = product.productTags && product.productTags.length > 0
         ? (typeof product.productTags[0] === 'object' && product.productTags[0] !== null ? product.productTags[0].name : null)
         : null;
+
+    const variationPrice = ((product.variations ?? []).length > 0) ? product.variations![0].price : 0;
+    const variationSalePrice = ((product.variations ?? []).length > 0) ? product.variations![0].salePrice : 0;
+
+    const finalSalePrice = product.salePrice || variationSalePrice || 0;
+    const finalPrice = product.price || variationPrice || 0;
+    const activePrice = finalSalePrice || finalPrice || 0;
+    const hasDiscount = !!(finalSalePrice && finalPrice && finalSalePrice < finalPrice);
 
     return (
         <Dialog>
@@ -59,11 +68,11 @@ export function QuickViewModal({ product, children }: { product: Product, childr
                         <h2 className="text-2xl font-bold mb-2 text-gray-900">{product.title}</h2>
                         <div className="flex items-end gap-3 mb-6">
                             <span className="text-3xl font-extrabold text-primary">
-                                ₦{(product.salePrice || product.price).toLocaleString()}
+                                ₦{activePrice.toLocaleString()}
                             </span>
-                            {product.salePrice && product.price && (
+                            {hasDiscount && (
                                 <span className="text-lg text-gray-400 line-through mb-1">
-                                    ₦{product.price.toLocaleString()}
+                                    ₦{finalPrice.toLocaleString()}
                                 </span>
                             )}
                         </div>

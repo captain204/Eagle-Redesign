@@ -53,7 +53,7 @@ export const RecentOrders = ({ orders }: { orders: any[] }) => {
 
                                 <div className="text-right min-w-[80px]">
                                     <div className="text-xs text-slate-400 font-bold uppercase tracking-tighter">Total</div>
-                                    <div className="font-bold text-slate-900">₦{order.total.toLocaleString()}</div>
+                                    <div className="font-bold text-slate-900">₦{(order.total || 0).toLocaleString()}</div>
                                 </div>
 
                                 <div className="text-slate-400">
@@ -74,7 +74,7 @@ export const RecentOrders = ({ orders }: { orders: any[] }) => {
                                             {order.items?.map((item: any, idx: number) => (
                                                 <div key={idx} className="flex justify-between items-center text-sm">
                                                     <span className="text-slate-600 font-medium">{item.product?.title || 'Product'} × {item.quantity}</span>
-                                                    <span className="text-slate-900 font-bold">₦{item.price.toLocaleString()}</span>
+                                                    <span className="text-slate-900 font-bold">₦{(item.price || 0).toLocaleString()}</span>
                                                 </div>
                                             ))}
                                         </div>
