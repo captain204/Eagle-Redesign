@@ -9,7 +9,7 @@ export function BottomNav() {
 
     const navItems = [
         { name: "Home", href: "/", icon: Home },
-        { name: "Categories", href: "/categories", icon: Grid },
+        { name: "Categories", href: "/products", icon: Grid },
         { name: "Cart", href: "/cart", icon: ShoppingBag },
         { name: "Account", href: "/account", icon: User },
     ];

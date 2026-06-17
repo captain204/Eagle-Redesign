@@ -35,7 +35,7 @@ export function FlashSales({ products = [] }: { products?: any[] }) {
                     </div>
                 </div>
 
-                <Link href="/flash-sales" className="text-primary font-bold flex items-center gap-1 hover:underline group">
+                <Link href="/daily-deals" className="text-primary font-bold flex items-center gap-1 hover:underline group">
                     View All Deals <span className="text-xl group-hover:translate-x-1 transition-transform">›</span>
                 </Link>
             </div>
