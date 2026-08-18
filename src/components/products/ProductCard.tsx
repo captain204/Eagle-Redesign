@@ -15,6 +15,7 @@ interface Product {
     mainImage?: any;
     productTags?: any[];
     variations?: any[];
+    referralPercentage?: number;
 }
 
 export function ProductCard({ product }: { product: Product }) {
@@ -34,8 +35,14 @@ export function ProductCard({ product }: { product: Product }) {
     const variationSalePrice = ((product.variations ?? []).length > 0) ? product.variations![0].salePrice : 0;
 
     // Safely extract active pricing
-    const finalSalePrice = product.salePrice || variationSalePrice || 0;
-    const finalPrice = product.price || variationPrice || 0;
+    const baseSalePrice = product.salePrice || variationSalePrice || 0;
+    const basePrice = product.price || variationPrice || 0;
+    
+    // Add referral percentage to prices
+    const refPercent = product.referralPercentage || 0;
+    const finalSalePrice = baseSalePrice > 0 ? baseSalePrice + (baseSalePrice * (refPercent / 100)) : 0;
+    const finalPrice = basePrice > 0 ? basePrice + (basePrice * (refPercent / 100)) : 0;
+    
     const hasDiscount = !!(finalSalePrice && finalPrice && finalSalePrice < finalPrice);
 
     // Displayed active price (if has sale price, use it, else generic price)

@@ -17,6 +17,7 @@ interface Product {
     productTags?: any[];
     description?: any;
     variations?: any[];
+    referralPercentage?: number;
 }
 
 export function QuickViewModal({ product, children }: { product: Product, children: React.ReactNode }) {
@@ -37,8 +38,13 @@ export function QuickViewModal({ product, children }: { product: Product, childr
         ? (typeof product.productTags[0] === 'object' && product.productTags[0] !== null ? product.productTags[0].name : null)
         : null;
 
-    const finalSalePrice = variation ? variation.salePrice : product.salePrice;
-    const finalPrice = variation ? variation.price : product.price;
+    const baseSalePrice = variation ? variation.salePrice : product.salePrice;
+    const basePrice = variation ? variation.price : product.price;
+    const refPercent = product.referralPercentage || 0;
+
+    const finalSalePrice = baseSalePrice > 0 ? baseSalePrice + (baseSalePrice * (refPercent / 100)) : 0;
+    const finalPrice = basePrice > 0 ? basePrice + (basePrice * (refPercent / 100)) : 0;
+    
     const activePrice = finalSalePrice || finalPrice || 0;
     const hasDiscount = !!(finalSalePrice && finalPrice && finalSalePrice < finalPrice);
 

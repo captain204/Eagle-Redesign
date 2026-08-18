@@ -25,8 +25,12 @@ export default function ProductDetailClient({ product, relatedProducts }: { prod
     const isVariable = product.productType === 'variable' && product.variations?.length > 0;
     const variation = isVariable ? product.variations[selectedVarIdx] : null;
 
-    const price = variation ? (variation.salePrice || variation.price || 0) : (product.salePrice || product.price || 0);
-    const originalPrice = variation ? (variation.price || 0) : (product.price || 0);
+    const basePriceCalc = variation ? (variation.salePrice || variation.price || 0) : (product.salePrice || product.price || 0);
+    const baseOriginalPriceCalc = variation ? (variation.price || 0) : (product.price || 0);
+    const refPercent = product.referralPercentage || 0;
+
+    const price = basePriceCalc > 0 ? basePriceCalc + (basePriceCalc * (refPercent / 100)) : 0;
+    const originalPrice = baseOriginalPriceCalc > 0 ? baseOriginalPriceCalc + (baseOriginalPriceCalc * (refPercent / 100)) : 0;
     const { addToCart } = useCart();
 
     const handleAddToCart = () => {
