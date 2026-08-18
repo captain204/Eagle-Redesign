@@ -2,13 +2,15 @@
 
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { Package, User, MapPin, LogOut } from "lucide-react";
+import { Package, User, MapPin, LogOut, DollarSign, Share2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 
 export default function AccountPage() {
     const [activeTab, setActiveTab] = useState("orders");
     const [user, setUser] = useState<any>(null);
     const [orders, setOrders] = useState<any[]>([]);
+    const [referrals, setReferrals] = useState<any[]>([]);
+    const [totalEarnings, setTotalEarnings] = useState(0);
     const [isLoading, setIsLoading] = useState(true);
     const router = useRouter();
 
@@ -32,6 +34,15 @@ export default function AccountPage() {
                 if (ordersRes.ok) {
                     const ordersData = await ordersRes.json();
                     setOrders(ordersData.docs || []);
+                }
+
+                // Fetch referrals for this user
+                const referralsRes = await fetch(`/api/referralEarnings?where[referrer][equals]=${userData.user.id}&sort=-createdAt`);
+                if (referralsRes.ok) {
+                    const referralsData = await referralsRes.json();
+                    const docs = referralsData.docs || [];
+                    setReferrals(docs);
+                    setTotalEarnings(docs.reduce((acc: number, curr: any) => acc + (curr.amountEarned || 0), 0));
                 }
             } catch (error) {
                 console.error("Failed to load account data:", error);
@@ -96,6 +107,13 @@ export default function AccountPage() {
                                     }`}
                             >
                                 <User className="w-4 h-4" /> Personal Info
+                            </button>
+                            <button
+                                onClick={() => setActiveTab("referrals")}
+                                className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${activeTab === "referrals" ? "bg-primary text-black font-bold" : "text-gray-600 hover:bg-gray-50"
+                                    }`}
+                            >
+                                <DollarSign className="w-4 h-4" /> My Referrals
                             </button>
                             <button
                                 onClick={() => setActiveTab("address")}
@@ -180,6 +198,62 @@ export default function AccountPage() {
                                         Add New Address
                                     </Button>
                                 </div>
+                            </div>
+                        )}
+
+                        {activeTab === "referrals" && (
+                            <div>
+                                <h2 className="text-xl font-bold mb-6">My Referrals & Earnings</h2>
+                                
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                                    <div className="bg-primary/10 border border-primary/20 rounded-xl p-6">
+                                        <p className="text-sm font-bold text-gray-600 uppercase mb-2">Total Earnings</p>
+                                        <p className="text-4xl font-extrabold text-primary">₦{totalEarnings.toLocaleString()}</p>
+                                    </div>
+                                    <div className="bg-gray-50 border rounded-xl p-6 flex flex-col justify-center">
+                                        <p className="text-sm font-bold text-gray-600 uppercase mb-2">My Referral Code</p>
+                                        <div className="flex items-center gap-3">
+                                            <code className="bg-white border px-4 py-2 rounded text-lg font-bold flex-1 text-center">
+                                                {user.referralCode || "Generating..."}
+                                            </code>
+                                            <Button 
+                                                variant="outline"
+                                                onClick={() => {
+                                                    navigator.clipboard.writeText(user.referralCode);
+                                                    alert("Referral code copied!");
+                                                }}
+                                            >
+                                                Copy
+                                            </Button>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <h3 className="font-bold text-lg mb-4 border-b pb-2">Recent Referrals</h3>
+                                {referrals.length === 0 ? (
+                                    <div className="text-center py-10 bg-gray-50 rounded-lg border border-dashed">
+                                        <p className="text-gray-500">You haven't referred any purchases yet.</p>
+                                    </div>
+                                ) : (
+                                    <div className="space-y-3">
+                                        {referrals.map((ref) => (
+                                            <div key={ref.id} className="border rounded-lg p-4 flex justify-between items-center bg-white hover:shadow-sm transition-shadow">
+                                                <div>
+                                                    <p className="font-bold text-sm text-gray-500 mb-1">
+                                                        Order #{typeof ref.order === 'object' ? String(ref.order.id).slice(-6).toUpperCase() : String(ref.order).slice(-6).toUpperCase()}
+                                                    </p>
+                                                    <p className="text-sm text-gray-500">{new Date(ref.createdAt).toLocaleDateString()}</p>
+                                                </div>
+                                                <div className="text-right">
+                                                    <span className={`text-xs font-bold px-2 py-1 rounded uppercase ${ref.status === 'paid' ? 'bg-green-100 text-green-700' : 'bg-primary/10 text-primary'}`}>
+                                                        {ref.status}
+                                                    </span>
+                                                    <p className="font-bold mt-1 text-lg text-primary">+₦{(ref.amountEarned || 0).toLocaleString()}</p>
+                                                </div>
+                                            </div>
+                                        ))}
+                                    </div>
+                                )}
                             </div>
                         )}
                     </main>

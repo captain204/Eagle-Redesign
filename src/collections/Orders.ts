@@ -178,7 +178,11 @@ export const Orders: CollectionConfig = {
                                         });
                                         const perc = product.referralPercentage || 0;
                                         if (perc > 0) {
-                                            totalCommission += (item.price * item.quantity * perc) / 100;
+                                            // The item.price is the INFLATED price (basePrice + (basePrice * perc/100))
+                                            // We must reverse-calculate the base price to find the exact commission amount
+                                            const basePrice = item.price / (1 + (perc / 100));
+                                            const commissionPerItem = item.price - basePrice;
+                                            totalCommission += commissionPerItem * item.quantity;
                                         }
                                     }
                                 }
