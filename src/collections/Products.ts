@@ -82,6 +82,30 @@ export const Products: CollectionConfig = {
                             ],
                         },
                         {
+                            type: 'row',
+                            fields: [
+                                {
+                                    name: 'referralPercentage',
+                                    type: 'number',
+                                    label: 'Referral Percentage (%)',
+                                    min: 0,
+                                    max: 100,
+                                    defaultValue: 0,
+                                    admin: { width: '50%' },
+                                },
+                                {
+                                    name: 'referralAmountNaira',
+                                    type: 'ui',
+                                    admin: {
+                                        width: '50%',
+                                        components: {
+                                            Field: '/components/admin/ReferralAmount#ReferralAmount',
+                                        },
+                                    },
+                                },
+                            ],
+                        },
+                        {
                             name: 'variations',
                             type: 'array',
                             label: 'Product Variations',

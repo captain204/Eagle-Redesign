@@ -42,6 +42,33 @@ export const Users: CollectionConfig = {
                 position: 'sidebar',
             },
         },
+        {
+            name: 'referralCode',
+            type: 'text',
+            unique: true,
+            index: true,
+            admin: {
+                position: 'sidebar',
+                readOnly: true,
+            },
+            hooks: {
+                beforeValidate: [
+                    ({ value }) => {
+                        if (value) return value;
+                        // Generate a 6-character alphanumeric code
+                        return Math.random().toString(36).substring(2, 8).toUpperCase();
+                    }
+                ]
+            }
+        },
+        {
+            name: 'referredBy',
+            type: 'relationship',
+            relationTo: 'users',
+            admin: {
+                position: 'sidebar',
+            },
+        },
     ],
 }
 

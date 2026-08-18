@@ -35,6 +35,7 @@ import { Submissions } from './collections/Submissions'
 import { Sliders } from './collections/Sliders'
 import { QRCodes } from './collections/QRCodes'
 import { ContactSubmissions } from './collections/ContactSubmissions'
+import { ReferralEarnings } from './collections/ReferralEarnings'
 import { Support } from './globals/Support'
 import { resendAdapter } from '@payloadcms/email-resend'
 
@@ -80,6 +81,7 @@ export default buildConfig({
         Sliders,
         QRCodes,
         ContactSubmissions,
+        ReferralEarnings,
     ],
 
 

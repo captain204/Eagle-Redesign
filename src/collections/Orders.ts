@@ -140,7 +140,88 @@ export const Orders: CollectionConfig = {
                 position: 'sidebar',
                 readOnly: true,
             }
+        },
+        {
+            name: 'appliedReferralCode',
+            type: 'text',
+            admin: {
+                position: 'sidebar',
+                readOnly: true,
+            }
         }
     ],
+    hooks: {
+        afterChange: [
+            async ({ doc, previousDoc, req }) => {
+                // If payment status just changed to paid
+                if (doc.paymentStatus === 'paid' && previousDoc.paymentStatus !== 'paid') {
+                    // 1. Process Referral Earnings
+                    if (doc.appliedReferralCode) {
+                        try {
+                            const referrerResult = await req.payload.find({
+                                collection: 'users',
+                                where: {
+                                    referralCode: { equals: doc.appliedReferralCode }
+                                },
+                            })
+                            
+                            const referrer = referrerResult.docs[0]
+                            
+                            if (referrer) {
+                                let totalCommission = 0;
+                                for (const item of doc.items || []) {
+                                    const productId = typeof item.product === 'object' ? item.product.id : item.product;
+                                    if (productId) {
+                                        const product = await req.payload.findByID({
+                                            collection: 'products',
+                                            id: productId,
+                                        });
+                                        const perc = product.referralPercentage || 0;
+                                        if (perc > 0) {
+                                            totalCommission += (item.price * item.quantity * perc) / 100;
+                                        }
+                                    }
+                                }
+                                
+                                if (totalCommission > 0) {
+                                    await req.payload.create({
+                                        collection: 'referralEarnings',
+                                        data: {
+                                            referrer: referrer.id,
+                                            order: doc.id,
+                                            amountEarned: totalCommission,
+                                            status: 'paid',
+                                        }
+                                    });
+
+                                    // Email: Send Referral Commission Email
+                                    await req.payload.sendEmail({
+                                        to: referrer.email,
+                                        subject: 'You earned a referral commission!',
+                                        html: `<h1>Congratulations!</h1><p>You just earned ₦${totalCommission.toLocaleString('en-NG')} from a referral purchase.</p>`
+                                    })
+                                }
+                            }
+                        } catch (err) {
+                            console.error('Error processing referral:', err)
+                        }
+                    }
+
+                    // 2. Email: Order Completed/Paid Email to Customer
+                    if (doc.email) {
+                        try {
+                            await req.payload.sendEmail({
+                                to: doc.email,
+                                subject: 'Your Order has been Paid & Confirmed',
+                                html: `<h1>Thank You!</h1><p>Your order #${doc.id} is confirmed and being processed.</p>`
+                            })
+                        } catch (e) {
+                            console.error('Failed to send order paid email', e)
+                        }
+                    }
+                }
+            }
+        ]
+    },
     timestamps: true,
 }

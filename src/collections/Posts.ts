@@ -11,9 +11,42 @@ export const Posts: CollectionConfig = {
     },
     fields: [
         {
-            name: 'title',
-            type: 'text',
-            required: true,
+            type: 'tabs',
+            tabs: [
+                {
+                    label: 'Content',
+                    fields: [
+                        {
+                            name: 'title',
+                            type: 'text',
+                            required: true,
+                        },
+                        {
+                            name: 'content',
+                            type: 'richText',
+                            required: true,
+                        },
+                        {
+                            name: 'excerpt',
+                            type: 'textarea',
+                        },
+                        {
+                            name: 'featuredImage',
+                            type: 'relationship',
+                            relationTo: 'media',
+                        },
+                    ]
+                },
+                {
+                    label: 'SEO & Metadata',
+                    fields: [
+                        { name: 'metaTitle', type: 'text', label: 'Meta Title' },
+                        { name: 'metaDescription', type: 'textarea', label: 'Meta Description' },
+                        { name: 'focusKeyword', type: 'text', label: 'Focus Keyword' },
+                        { name: 'openGraphImage', type: 'relationship', relationTo: 'media', label: 'Open Graph Image (Social Sharing)' },
+                    ]
+                }
+            ]
         },
         {
             name: 'slug',
@@ -32,18 +65,26 @@ export const Posts: CollectionConfig = {
             },
         },
         {
-            name: 'content',
-            type: 'richText',
-            required: true,
-        },
-        {
-            name: 'excerpt',
-            type: 'textarea',
-        },
-        {
-            name: 'featuredImage',
-            type: 'relationship',
-            relationTo: 'media',
+            name: 'estimatedReadingTime',
+            type: 'number',
+            admin: {
+                position: 'sidebar',
+                readOnly: true,
+                description: 'Estimated reading time in minutes (auto-calculated).'
+            },
+            hooks: {
+                beforeChange: [
+                    ({ data }) => {
+                        if (data && data.content) {
+                            const text = JSON.stringify(data.content);
+                            // Simple word count approximation
+                            const wordCount = text.split(' ').length;
+                            return Math.max(1, Math.ceil(wordCount / 200));
+                        }
+                        return 1;
+                    }
+                ]
+            }
         },
         {
             name: 'author',
@@ -51,18 +92,21 @@ export const Posts: CollectionConfig = {
             relationTo: 'users',
             required: true,
             defaultValue: ({ user }) => user?.id,
+            admin: { position: 'sidebar' }
         },
         {
             name: 'categories',
             type: 'relationship',
             relationTo: 'categories',
             hasMany: true,
+            admin: { position: 'sidebar' }
         },
         {
             name: 'tags',
             type: 'relationship',
             relationTo: 'tags',
             hasMany: true,
+            admin: { position: 'sidebar' }
         },
         {
             name: 'publishedDate',
