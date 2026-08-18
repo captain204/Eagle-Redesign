@@ -17,23 +17,32 @@ def add_column(db_path, table_name, column_name, column_type):
 
 if __name__ == "__main__":
     db_file = "payload.db"
-    print("Fixing SQLite schema...")
+    print("Fixing SQLite schema relations...")
     
-    # Users collection
-    add_column(db_file, "users", "referral_code", "TEXT")
-    add_column(db_file, "users", "referred_by_id", "INTEGER")
+    # Missing columns in payload_locked_documents_rels
+    add_column(db_file, "payload_locked_documents_rels", "referral_earnings_id", "INTEGER")
+    add_column(db_file, "payload_locked_documents_rels", "contact_submissions_id", "INTEGER")
     
-    # Products collection
-    add_column(db_file, "products", "referral_percentage", "REAL")
-    
-    # Orders collection
-    add_column(db_file, "orders", "applied_referral_code", "TEXT")
-    
-    # Posts collection
-    add_column(db_file, "posts", "estimated_reading_time", "REAL")
-    add_column(db_file, "posts", "meta_title", "TEXT")
-    add_column(db_file, "posts", "meta_description", "TEXT")
-    add_column(db_file, "posts", "focus_keyword", "TEXT")
-    add_column(db_file, "posts", "open_graph_image_id", "INTEGER")
-    
-    print("Database fix completed! Restart the app to apply.")
+    # Just in case Drizzle push completely failed for the referral_earnings table
+    # We will create it so the app can boot successfully.
+    try:
+        conn = sqlite3.connect(db_file)
+        cursor = conn.cursor()
+        cursor.execute("""
+        CREATE TABLE IF NOT EXISTS "referral_earnings" (
+            "id" integer PRIMARY KEY AUTOINCREMENT NOT NULL,
+            "user_id" integer,
+            "order_id" integer,
+            "amount" real,
+            "status" text,
+            "updated_at" text,
+            "created_at" text
+        );
+        """)
+        conn.commit()
+        print("✅ Checked/Created referral_earnings table")
+        conn.close()
+    except Exception as e:
+        print(f"❌ Error creating table: {e}")
+
+    print("Database relations fix completed! Restart the app to apply.")
