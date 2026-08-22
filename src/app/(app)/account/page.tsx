@@ -12,6 +12,8 @@ export default function AccountPage() {
     const [referrals, setReferrals] = useState<any[]>([]);
     const [totalEarnings, setTotalEarnings] = useState(0);
     const [isLoading, setIsLoading] = useState(true);
+    const [payoutDetails, setPayoutDetails] = useState({ phone: '', bankName: '', accountName: '', accountNumber: '' });
+    const [isSavingPayout, setIsSavingPayout] = useState(false);
     const router = useRouter();
 
     useEffect(() => {
@@ -28,6 +30,9 @@ export default function AccountPage() {
                 }
                 
                 setUser(userData.user);
+                if (userData.user.payoutDetails) {
+                    setPayoutDetails(userData.user.payoutDetails);
+                }
 
                 // Fetch orders for this user
                 const ordersRes = await fetch(`/api/orders?where[customer][equals]=${userData.user.id}&sort=-createdAt`);
@@ -62,6 +67,29 @@ export default function AccountPage() {
             router.refresh();
         } catch (err) {
             console.error("Logout failed:", err);
+        }
+    };
+
+    const handleSavePayoutDetails = async (e: React.FormEvent) => {
+        e.preventDefault();
+        setIsSavingPayout(true);
+        try {
+            const res = await fetch(`/api/users/${user.id}`, {
+                method: "PATCH",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    payoutDetails
+                }),
+            });
+            if (!res.ok) throw new Error("Failed to save payout details");
+            alert("Payout details saved successfully!");
+        } catch (error) {
+            console.error(error);
+            alert("An error occurred while saving payout details.");
+        } finally {
+            setIsSavingPayout(false);
         }
     };
 
@@ -184,6 +212,55 @@ export default function AccountPage() {
                                     </div>
                                     <div className="md:col-span-2 mt-2">
                                         <Button type="submit" className="bg-black text-white hover:bg-gray-800 px-8">Save Changes</Button>
+                                    </div>
+                                </form>
+
+                                <h2 className="text-xl font-bold mt-12 mb-6">Payout Details (For Referrals)</h2>
+                                <form className="grid grid-cols-1 md:grid-cols-2 gap-6" onSubmit={handleSavePayoutDetails}>
+                                    <div>
+                                        <label className="block text-sm font-medium text-gray-700 mb-1">Phone Number</label>
+                                        <input 
+                                            type="text" 
+                                            placeholder="e.g. 08012345678"
+                                            value={payoutDetails.phone || ''}
+                                            onChange={(e) => setPayoutDetails({...payoutDetails, phone: e.target.value})}
+                                            className="w-full p-3 border rounded-lg outline-none focus:ring-1 focus:ring-primary" 
+                                        />
+                                    </div>
+                                    <div>
+                                        <label className="block text-sm font-medium text-gray-700 mb-1">Bank Name</label>
+                                        <input 
+                                            type="text" 
+                                            placeholder="e.g. GTBank"
+                                            value={payoutDetails.bankName || ''}
+                                            onChange={(e) => setPayoutDetails({...payoutDetails, bankName: e.target.value})}
+                                            className="w-full p-3 border rounded-lg outline-none focus:ring-1 focus:ring-primary" 
+                                        />
+                                    </div>
+                                    <div>
+                                        <label className="block text-sm font-medium text-gray-700 mb-1">Account Name</label>
+                                        <input 
+                                            type="text" 
+                                            placeholder="e.g. John Doe"
+                                            value={payoutDetails.accountName || ''}
+                                            onChange={(e) => setPayoutDetails({...payoutDetails, accountName: e.target.value})}
+                                            className="w-full p-3 border rounded-lg outline-none focus:ring-1 focus:ring-primary" 
+                                        />
+                                    </div>
+                                    <div>
+                                        <label className="block text-sm font-medium text-gray-700 mb-1">Account Number</label>
+                                        <input 
+                                            type="text" 
+                                            placeholder="e.g. 0123456789"
+                                            value={payoutDetails.accountNumber || ''}
+                                            onChange={(e) => setPayoutDetails({...payoutDetails, accountNumber: e.target.value})}
+                                            className="w-full p-3 border rounded-lg outline-none focus:ring-1 focus:ring-primary" 
+                                        />
+                                    </div>
+                                    <div className="md:col-span-2 mt-2">
+                                        <Button type="submit" disabled={isSavingPayout} className="bg-black text-white hover:bg-gray-800 px-8">
+                                            {isSavingPayout ? "Saving..." : "Save Payout Details"}
+                                        </Button>
                                     </div>
                                 </form>
                             </div>

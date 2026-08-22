@@ -69,6 +69,35 @@ export const Users: CollectionConfig = {
                 position: 'sidebar',
             },
         },
+        {
+            name: 'payoutDetails',
+            type: 'group',
+            fields: [
+                {
+                    name: 'phone',
+                    type: 'text',
+                    label: 'Phone Number',
+                },
+                {
+                    name: 'bankName',
+                    type: 'text',
+                    label: 'Bank Name',
+                },
+                {
+                    name: 'accountName',
+                    type: 'text',
+                    label: 'Account Name',
+                },
+                {
+                    name: 'accountNumber',
+                    type: 'text',
+                    label: 'Account Number',
+                },
+            ],
+            admin: {
+                description: 'Used for manual referral payouts.',
+            }
+        },
     ],
 }
 
