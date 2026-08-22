@@ -23,24 +23,45 @@ if __name__ == "__main__":
     add_column(db_file, "payload_locked_documents_rels", "referral_earnings_id", "INTEGER")
     add_column(db_file, "payload_locked_documents_rels", "contact_submissions_id", "INTEGER")
     
+    # Drop all non-system indexes to prevent Drizzle push from crashing on boot
+    # due to "index already exists" error (SQLite Drizzle adapter bug).
+    try:
+        conn = sqlite3.connect(db_file)
+        cursor = conn.cursor()
+        indexes = cursor.execute('SELECT name FROM sqlite_master WHERE type="index" AND name NOT LIKE "sqlite_%"').fetchall()
+        for idx in indexes:
+            cursor.execute(f'DROP INDEX IF EXISTS "{idx[0]}"')
+        conn.commit()
+        print(f"✅ Dropped {len(indexes)} existing indexes to allow clean Drizzle push.")
+        conn.close()
+    except Exception as e:
+        print(f"❌ Error dropping indexes: {e}")
+
     # Just in case Drizzle push completely failed for the referral_earnings table
     # We will create it so the app can boot successfully.
     try:
         conn = sqlite3.connect(db_file)
         cursor = conn.cursor()
+        
+        # Drop the table if it exists to recreate it with the correct schema
+        cursor.execute('DROP TABLE IF EXISTS "referral_earnings";')
+        
         cursor.execute("""
-        CREATE TABLE IF NOT EXISTS "referral_earnings" (
+        CREATE TABLE "referral_earnings" (
             "id" integer PRIMARY KEY AUTOINCREMENT NOT NULL,
-            "user_id" integer,
-            "order_id" integer,
-            "amount" real,
-            "status" text,
+            "referrer_id" integer NOT NULL,
+            "order_id" integer NOT NULL,
+            "amount_earned" numeric NOT NULL,
+            "status" text DEFAULT 'pending',
+            "earned_at" text NOT NULL,
             "updated_at" text,
-            "created_at" text
+            "created_at" text,
+            FOREIGN KEY ("referrer_id") REFERENCES "users"("id"),
+            FOREIGN KEY ("order_id") REFERENCES "orders"("id")
         );
         """)
         conn.commit()
-        print("✅ Checked/Created referral_earnings table")
+        print("✅ Checked/Created referral_earnings table with correct Payload schema")
         conn.close()
     except Exception as e:
         print(f"❌ Error creating table: {e}")
