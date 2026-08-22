@@ -4,7 +4,7 @@ export const ReferralEarnings: CollectionConfig = {
     slug: 'referralEarnings',
     admin: {
         useAsTitle: 'id',
-        defaultColumns: ['referrer', 'amountEarned', 'status', 'earnedAt'],
+        defaultColumns: ['referrer', 'amountEarned', 'expectedPayout', 'status', 'earnedAt'],
     },
     access: {
         read: ({ req: { user } }) => {
@@ -62,6 +62,17 @@ export const ReferralEarnings: CollectionConfig = {
             defaultValue: () => new Date().toISOString(),
             admin: {
                 position: 'sidebar',
+            }
+        },
+        {
+            name: 'expectedPayout',
+            type: 'ui',
+            admin: {
+                position: 'sidebar',
+                components: {
+                    Field: '@/components/admin/ExpectedPayoutField#ExpectedPayoutField',
+                    Cell: '@/components/admin/ExpectedPayoutCell#ExpectedPayoutCell',
+                }
             }
         },
     ],

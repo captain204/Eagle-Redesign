@@ -43,4 +43,4 @@ Based on the project structure, the following URLs (routes) are available on the
 ## Answer to your question
 **Yes, both a "distributors" and an "ambassadors" page exist.**
 - The Distributors page is located at `/distributors` (and there are also related portal pages like `/portal/distributor/onboarding`).
-- The Ambassadors page is located at `/ambassadors` (with portal pages like `/portal/ambassador/register`).
+- The Ambassadors page is located at `/ambassadsors` (with portal pages like `/portal/ambassador/register`).

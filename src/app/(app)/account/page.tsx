@@ -203,12 +203,21 @@ export default function AccountPage() {
 
                         {activeTab === "referrals" && (
                             <div>
-                                <h2 className="text-xl font-bold mb-6">My Referrals & Earnings</h2>
+                                <h2 className="text-xl font-bold mb-4">My Referrals & Earnings</h2>
                                 
+                                <div className="bg-blue-50 text-blue-800 p-4 rounded-lg mb-6 text-sm">
+                                    <strong>Note:</strong> The platform deducts a 20% fee from all referral earnings. The expected payout amount shown reflects this deduction.
+                                </div>
+
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
                                     <div className="bg-primary/10 border border-primary/20 rounded-xl p-6">
-                                        <p className="text-sm font-bold text-gray-600 uppercase mb-2">Total Earnings</p>
+                                        <p className="text-sm font-bold text-gray-600 uppercase mb-2">Total Gross Earnings</p>
                                         <p className="text-4xl font-extrabold text-primary">₦{totalEarnings.toLocaleString()}</p>
+                                        
+                                        <div className="mt-4 pt-4 border-t border-primary/20">
+                                            <p className="text-sm font-bold text-gray-600 uppercase mb-1">Expected Payout (After 20% Fee)</p>
+                                            <p className="text-2xl font-bold text-primary">₦{(totalEarnings * 0.8).toLocaleString()}</p>
+                                        </div>
                                     </div>
                                     <div className="bg-gray-50 border rounded-xl p-6 flex flex-col justify-center">
                                         <p className="text-sm font-bold text-gray-600 uppercase mb-2">My Referral Code</p>
@@ -248,7 +257,10 @@ export default function AccountPage() {
                                                     <span className={`text-xs font-bold px-2 py-1 rounded uppercase ${ref.status === 'paid' ? 'bg-green-100 text-green-700' : 'bg-primary/10 text-primary'}`}>
                                                         {ref.status}
                                                     </span>
-                                                    <p className="font-bold mt-1 text-lg text-primary">+₦{(ref.amountEarned || 0).toLocaleString()}</p>
+                                                    <div className="mt-2 text-right">
+                                                        <p className="text-xs font-bold text-gray-500 uppercase">Gross: ₦{(ref.amountEarned || 0).toLocaleString()}</p>
+                                                        <p className="font-bold mt-0.5 text-lg text-primary">Payout: ₦{((ref.amountEarned || 0) * 0.8).toLocaleString()}</p>
+                                                    </div>
                                                 </div>
                                             </div>
                                         ))}
