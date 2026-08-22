@@ -45,4 +45,10 @@ if __name__ == "__main__":
     except Exception as e:
         print(f"❌ Error creating table: {e}")
 
+    # Missing columns for Users payout details
+    add_column(db_file, "users", "payout_details_phone", "text")
+    add_column(db_file, "users", "payout_details_bank_name", "text")
+    add_column(db_file, "users", "payout_details_account_name", "text")
+    add_column(db_file, "users", "payout_details_account_number", "text")
+
     print("Database relations fix completed! Restart the app to apply.")
