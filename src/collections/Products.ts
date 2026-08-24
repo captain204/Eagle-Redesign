@@ -12,6 +12,30 @@ export const Products: CollectionConfig = {
     access: {
         read: () => true,
     },
+    hooks: {
+        afterChange: [
+            ({ doc }) => {
+                try {
+                    const { revalidateTag } = require('next/cache');
+                    revalidateTag('products');
+                } catch (e) {
+                    console.error('Failed to revalidate products cache on change:', e);
+                }
+                return doc;
+            }
+        ],
+        afterDelete: [
+            ({ doc }) => {
+                try {
+                    const { revalidateTag } = require('next/cache');
+                    revalidateTag('products');
+                } catch (e) {
+                    console.error('Failed to revalidate products cache on delete:', e);
+                }
+                return doc;
+            }
+        ]
+    },
     fields: [
         {
             type: 'tabs',

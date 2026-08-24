@@ -3,6 +3,7 @@ import { getPayload } from 'payload'
 import configPromise from '@/payload.config'
 import { NextResponse } from 'next/server'
 import * as XLSX from 'xlsx'
+import { revalidateTag } from 'next/cache'
 
 // Simple helper to convert string to slug
 const toSlug = (str: string) => str.toLowerCase().replace(/ /g, '-').replace(/[^\w-]+/g, '')
@@ -139,6 +140,7 @@ export async function POST(req: Request) {
                         salePrice: rawSalePrice ? Number(rawSalePrice) : undefined,
                         sku,
                         status: 'published',
+                        visibility: 'visible',
                         shortDescription,
                         description: htmlToLexical(descriptionHtml),
                         ...(mainImageId ? { mainImage: mainImageId } : {}),
@@ -151,6 +153,14 @@ export async function POST(req: Request) {
             } catch (err: any) {
                 results.errors++
                 results.details.push(`Error importing ${row.Name || row.Title || row.title || 'Unknown'}: ${err.message}`)
+            }
+        }
+
+        if (results.success > 0) {
+            try {
+                revalidateTag('products')
+            } catch (err) {
+                console.error('Error revalidating products tag:', err)
             }
         }
 
