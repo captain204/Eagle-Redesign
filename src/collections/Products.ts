@@ -1,4 +1,5 @@
 import type { CollectionConfig } from 'payload'
+import { revalidateTag } from 'next/cache'
 
 export const Products: CollectionConfig = {
     slug: 'products',
@@ -14,23 +15,21 @@ export const Products: CollectionConfig = {
     },
     hooks: {
         afterChange: [
-            ({ doc }) => {
+            ({ doc, req: { payload } }) => {
                 try {
-                    const { revalidateTag } = require('next/cache');
                     revalidateTag('products');
                 } catch (e) {
-                    console.error('Failed to revalidate products cache on change:', e);
+                    payload.logger.error(`Failed to revalidate products cache on change: ${e}`);
                 }
                 return doc;
             }
         ],
         afterDelete: [
-            ({ doc }) => {
+            ({ doc, req: { payload } }) => {
                 try {
-                    const { revalidateTag } = require('next/cache');
                     revalidateTag('products');
                 } catch (e) {
-                    console.error('Failed to revalidate products cache on delete:', e);
+                    payload.logger.error(`Failed to revalidate products cache on delete: ${e}`);
                 }
                 return doc;
             }
