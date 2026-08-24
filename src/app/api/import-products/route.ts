@@ -158,6 +158,7 @@ export async function POST(req: Request) {
 
         if (results.success > 0) {
             try {
+                // @ts-ignore - Next.js experimental types require 2 args, but runtime accepts 1
                 revalidateTag('products')
             } catch (err) {
                 console.error('Error revalidating products tag:', err)

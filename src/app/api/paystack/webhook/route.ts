@@ -135,6 +135,7 @@ export async function POST(req: NextRequest) {
                 },
                 notes: `Paid via Paystack (Webhook). Reference: ${reference}`,
                 emailSent: false,
+                appliedReferralCode: metadata.referralCode || '',
             };
 
             const newOrder = await payload.create({

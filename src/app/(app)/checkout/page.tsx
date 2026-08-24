@@ -26,6 +26,8 @@ export default function CheckoutPage() {
     const [city, setCity] = useState("");
     const [state, setState] = useState("");
     const [phone, setPhone] = useState("");
+    const [referralCode, setReferralCode] = useState("");
+
 
     const [recommendedProducts, setRecommendedProducts] = useState<any[]>([]);
 
@@ -125,9 +127,10 @@ export default function CheckoutPage() {
                     country: 'Nigeria',
                     cost: shippingCost
                 }),
+                referralCode,
             },
         };
-    }, [reference, email, cartTotal, shippingCost, firstName, lastName, address, city, state, phone, cartItems, shippingMethod]);
+    }, [reference, email, cartTotal, shippingCost, firstName, lastName, address, city, state, phone, cartItems, shippingMethod, referralCode]);
 
     const initializePayment = usePaystackPayment(paystackConfig);
 
@@ -213,6 +216,8 @@ export default function CheckoutPage() {
                                     <input type="text" placeholder="Last Name" value={lastName} onChange={(e) => setLastName(e.target.value)} className="w-full p-3 border rounded-lg bg-gray-50 focus:bg-white focus:ring-1 focus:ring-primary outline-none" />
                                 </div>
                                 <input type="tel" placeholder="Phone Number" value={phone} onChange={(e) => setPhone(e.target.value)} className="w-full p-3 border rounded-lg bg-gray-50 focus:bg-white focus:ring-1 focus:ring-primary outline-none mb-4" />
+                                <input type="text" placeholder="Referral Code (Optional)" value={referralCode} onChange={(e) => setReferralCode(e.target.value)} className="w-full p-3 border rounded-lg bg-gray-50 focus:bg-white focus:ring-1 focus:ring-primary outline-none mb-4" />
+
 
                                 <h2 className="font-bold text-lg pt-4 mb-4">Delivery Method</h2>
                                 <div className="grid grid-cols-2 gap-4 mb-4">

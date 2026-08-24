@@ -101,6 +101,7 @@ export async function GET(req: NextRequest) {
                 },
                 notes: `Paid via Paystack. Reference: ${reference}`,
                 emailSent: false,
+                appliedReferralCode: metadata.referralCode || '',
             };
 
             const newOrder = await payload.create({

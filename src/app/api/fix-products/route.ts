@@ -30,10 +30,15 @@ export async function GET() {
     }
 
     // Revalidate the Next.js cache so the homepage sees the products
+    // @ts-ignore - Next.js experimental types require 2 args, but runtime accepts 1
     revalidateTag('products');
+    // @ts-ignore
     revalidateTag('categories');
+    // @ts-ignore
     revalidateTag('daily-deals');
+    // @ts-ignore
     revalidateTag('hot-new-products');
+    // @ts-ignore
     revalidateTag('featured-products');
 
     return NextResponse.json({
