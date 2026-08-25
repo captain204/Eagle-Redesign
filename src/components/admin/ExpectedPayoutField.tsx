@@ -3,9 +3,9 @@ import React from 'react'
 import { useFormFields } from '@payloadcms/ui'
 
 export const ExpectedPayoutField: React.FC = () => {
-    const amountEarnedField = useFormFields(([fields]) => fields.amountEarned)
+    const amountEarnedField = useFormFields(([fields]) => fields?.amountEarned)
 
-    const amountEarned = amountEarnedField?.value as number || 0
+    const amountEarned = (amountEarnedField?.value as number) || 0
     const expectedPayout = amountEarned * 0.8
 
     const formatter = new Intl.NumberFormat('en-NG', {

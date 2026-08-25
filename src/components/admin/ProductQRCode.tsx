@@ -8,7 +8,7 @@ import { toast } from 'sonner'
 
 export const ProductQRCode: React.FC = () => {
     const { getData } = useForm()
-    const data = getData()
+    const data = getData() || {}
     const slug = data.slug
 
     const [baseUrl, setBaseUrl] = useState('')
