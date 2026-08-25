@@ -27,6 +27,9 @@ import { QRCodeRedirectPreview as QRCodeRedirectPreview_806bdafa0252d6456ce73d49
 import { QRGeneratorComponent as QRGeneratorComponent_39c4d6bdaae306a023277eb4bb4b6f98 } from '../../../components/admin/QRGeneratorComponent'
 import { Dashboard as Dashboard_16b88e9b8c48e393fa86591406efd08f } from '../../../components/admin/Dashboard'
 import { CollectionCards as CollectionCards_f9c02e79a4aed9a3924487c0cd4cafb1 } from '@payloadcms/next/rsc'
+import { ReferralAmount as ReferralAmount_custom } from '../../../components/admin/ReferralAmount'
+import { ExpectedPayoutField as ExpectedPayoutField_custom } from '../../../components/admin/ExpectedPayoutField'
+import { ExpectedPayoutCell as ExpectedPayoutCell_custom } from '../../../components/admin/ExpectedPayoutCell'
 
 export const importMap = {
   "@payloadcms/richtext-lexical/rsc#RscEntryLexicalCell": RscEntryLexicalCell_44fe37237e0ebf4470c9990d8cb7b07e,
@@ -57,5 +60,8 @@ export const importMap = {
   "/components/admin/QRCodeRedirectPreview#QRCodeRedirectPreview": QRCodeRedirectPreview_806bdafa0252d6456ce73d49e083e783,
   "/components/admin/QRGeneratorComponent#QRGeneratorComponent": QRGeneratorComponent_39c4d6bdaae306a023277eb4bb4b6f98,
   "/components/admin/Dashboard#Dashboard": Dashboard_16b88e9b8c48e393fa86591406efd08f,
-  "@payloadcms/next/rsc#CollectionCards": CollectionCards_f9c02e79a4aed9a3924487c0cd4cafb1
+  "@payloadcms/next/rsc#CollectionCards": CollectionCards_f9c02e79a4aed9a3924487c0cd4cafb1,
+  "/components/admin/ReferralAmount#ReferralAmount": ReferralAmount_custom,
+  "@/components/admin/ExpectedPayoutField#ExpectedPayoutField": ExpectedPayoutField_custom,
+  "@/components/admin/ExpectedPayoutCell#ExpectedPayoutCell": ExpectedPayoutCell_custom
 }
