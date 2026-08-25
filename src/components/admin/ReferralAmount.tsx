@@ -3,8 +3,14 @@ import React from 'react'
 import { useFormFields } from '@payloadcms/ui'
 
 export const ReferralAmount: React.FC = () => {
-    const priceField = useFormFields(([fields]) => fields?.price)
-    const percentageField = useFormFields(([fields]) => fields?.referralPercentage)
+    const priceField = useFormFields((context) => {
+        if (!context || !Array.isArray(context)) return undefined;
+        return context[0]?.price;
+    })
+    const percentageField = useFormFields((context) => {
+        if (!context || !Array.isArray(context)) return undefined;
+        return context[0]?.referralPercentage;
+    })
 
     const price = (priceField?.value as number) || 0
     const percentage = (percentageField?.value as number) || 0
