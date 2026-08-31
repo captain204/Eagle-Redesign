@@ -210,7 +210,8 @@ export default function RaffleAdminPage() {
                             <thead>
                                 <tr className="bg-gray-50 border-b text-gray-500 text-sm font-medium">
                                     <th className="p-4">Date</th>
-                                    <th className="p-4">Email / Phone</th>
+                                    <th className="p-4">Customer Details</th>
+                                    <th className="p-4">Product</th>
                                     <th className="p-4">Photo Evidence</th>
                                     <th className="p-4">Location (GPS)</th>
                                     <th className="p-4">Status</th>
@@ -222,8 +223,12 @@ export default function RaffleAdminPage() {
                                     <tr key={entry.id} className="border-b last:border-0 hover:bg-gray-50/50">
                                         <td className="p-4 text-sm">{new Date(entry.createdAt).toLocaleString()}</td>
                                         <td className="p-4">
-                                            <p className="font-medium">{entry.userEmail}</p>
+                                            <p className="font-bold text-gray-800">{entry.firstName || ''} {entry.lastName || ''}</p>
+                                            <p className="font-medium text-sm text-gray-600">{entry.userEmail}</p>
                                             <p className="text-xs text-gray-500">{entry.userPhone || '-'}</p>
+                                        </td>
+                                        <td className="p-4 text-sm font-medium text-gray-700">
+                                            {entry.product || '-'}
                                         </td>
                                         <td className="p-4">
                                             {entry.imagePath ? (

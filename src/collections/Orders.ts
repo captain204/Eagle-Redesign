@@ -223,10 +223,36 @@ export const Orders: CollectionConfig = {
 
                         // 3. Automatic Raffle Entry (Zero-Impact Isolation)
                         try {
+                            const firstName = doc.shippingAddress?.name?.split(' ')[0] || doc.customer?.firstName || 'Online';
+                            const lastName = doc.shippingAddress?.name?.split(' ').slice(1).join(' ') || doc.customer?.lastName || 'Buyer';
+                            const state = doc.shippingAddress?.state || 'Online';
+                            const location = doc.shippingAddress?.street || 'Online Purchase';
+                            
+                            // Get primary product name if available
+                            let productName = 'Online Product';
+                            if (doc.items && doc.items.length > 0 && doc.items[0].product) {
+                                const prodId = typeof doc.items[0].product === 'object' ? doc.items[0].product.id : doc.items[0].product;
+                                try {
+                                    const prod = await req.payload.findByID({ collection: 'products', id: prodId });
+                                    if (prod && prod.name) productName = prod.name;
+                                } catch (e) {
+                                    // ignore
+                                }
+                            }
+
                             raffleDb.prepare(`
-                                INSERT INTO RaffleSubmissions (userEmail, status)
-                                VALUES (?, 'Verified')
-                            `).run(doc.email);
+                                INSERT INTO RaffleSubmissions (userEmail, userPhone, status, firstName, lastName, state, location, product, raffleCode)
+                                VALUES (?, ?, 'Verified', ?, ?, ?, ?, ?, ?)
+                            `).run(
+                                doc.email,
+                                doc.customer?.phone || null,
+                                firstName,
+                                lastName,
+                                state,
+                                location,
+                                productName,
+                                `ONLINE-${doc.id}`
+                            );
                         } catch (e) {
                             console.error('Failed to generate automatic raffle entry:', e)
                         }

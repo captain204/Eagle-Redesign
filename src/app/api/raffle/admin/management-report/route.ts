@@ -15,7 +15,7 @@ export async function GET(req: Request) {
 
         const pdfBuffer = await new Promise<Buffer>((resolve, reject) => {
             try {
-                const doc = new PDFDocument({ margin: 50, size: 'A4' });
+                const doc = new PDFDocument({ margin: 30, size: 'A4', layout: 'landscape' });
                 const chunks: Buffer[] = [];
                 
                 doc.on('data', (chunk) => chunks.push(chunk));
@@ -28,36 +28,41 @@ export async function GET(req: Request) {
                 // Table Header
                 doc.fontSize(10).font('Helvetica-Bold');
                 const startY = doc.y;
-                doc.text('Date', 50, startY);
-                doc.text('Email', 150, startY);
-                doc.text('Phone', 300, startY);
-                doc.text('Status', 400, startY);
-                doc.text('Location', 480, startY);
-                doc.moveTo(50, startY + 15).lineTo(550, startY + 15).stroke();
+                doc.text('Date', 30, startY);
+                doc.text('Name', 100, startY);
+                doc.text('Phone', 220, startY);
+                doc.text('Location', 310, startY);
+                doc.text('Product', 440, startY);
+                doc.text('Code', 620, startY);
+                doc.text('Status', 720, startY);
+                doc.moveTo(30, startY + 15).lineTo(780, startY + 15).stroke();
                 
                 doc.font('Helvetica');
                 let currentY = startY + 25;
 
                 submissions.forEach((sub, index) => {
-                    if (currentY > 750) {
+                    if (currentY > 550) { // Landscape height is approx 595
                         doc.addPage();
                         currentY = 50;
                     }
 
                     const date = new Date(sub.createdAt).toLocaleDateString();
-                    const location = sub.exifLatitude && sub.exifLongitude 
-                        ? `${sub.exifLatitude.toFixed(2)}, ${sub.exifLongitude.toFixed(2)}` 
-                        : (sub.status === 'Verified' && !sub.distance ? 'Online Purchase' : 'No GPS Data');
+                    const name = sub.firstName && sub.lastName ? `${sub.firstName} ${sub.lastName}` : (sub.userEmail || 'N/A');
+                    const location = sub.location && sub.state ? `${sub.location}, ${sub.state}` : (sub.exifLatitude ? `${sub.exifLatitude.toFixed(2)}, ${sub.exifLongitude.toFixed(2)}` : 'N/A');
+                    const product = sub.product || 'N/A';
+                    const code = sub.raffleCode || 'N/A';
 
-                    doc.text(date, 50, currentY);
-                    doc.text(sub.userEmail || 'N/A', 150, currentY, { width: 140, ellipsis: true });
-                    doc.text(sub.userPhone || 'N/A', 300, currentY);
+                    doc.text(date, 30, currentY);
+                    doc.text(name, 100, currentY, { width: 110, ellipsis: true });
+                    doc.text(sub.userPhone || 'N/A', 220, currentY);
+                    doc.text(location, 310, currentY, { width: 120, ellipsis: true });
+                    doc.text(product, 440, currentY, { width: 170, ellipsis: true });
+                    doc.text(code, 620, currentY, { width: 90, ellipsis: true });
                     
                     doc.fillColor(sub.status === 'Verified' ? 'green' : 'red');
-                    doc.text(sub.status, 400, currentY);
+                    doc.text(sub.status, 720, currentY);
                     
                     doc.fillColor('black');
-                    doc.text(location, 480, currentY, { width: 70, ellipsis: true });
 
                     currentY += 20;
                 });

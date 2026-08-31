@@ -27,7 +27,13 @@ export async function POST(req: Request) {
         const userEmail = formData.get('userEmail') as string;
         const userPhone = formData.get('userPhone') as string;
 
-        if (!file || !code || !userEmail) {
+        const firstName = formData.get('firstName') as string;
+        const lastName = formData.get('lastName') as string;
+        const state = formData.get('state') as string;
+        const location = formData.get('location') as string;
+        const product = formData.get('product') as string;
+
+        if (!file || !code || !userEmail || !firstName || !lastName || !state || !location || !product) {
             return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
         }
 
@@ -108,8 +114,8 @@ export async function POST(req: Request) {
         // 5. Save Submission (Zero-Impact on Payload)
         db.transaction(() => {
             db.prepare(`
-                INSERT INTO RaffleSubmissions (userEmail, userPhone, imageHash, imagePath, exifLatitude, exifLongitude, distance, status)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+                INSERT INTO RaffleSubmissions (userEmail, userPhone, imageHash, imagePath, exifLatitude, exifLongitude, distance, status, firstName, lastName, state, location, product, raffleCode)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             `).run(
                 userEmail, 
                 userPhone || null, 
@@ -118,7 +124,13 @@ export async function POST(req: Request) {
                 exifData?.latitude || null, 
                 exifData?.longitude || null, 
                 distance, 
-                status
+                status,
+                firstName,
+                lastName,
+                state,
+                location,
+                product,
+                code
             );
 
             // Mark code as used

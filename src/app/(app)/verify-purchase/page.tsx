@@ -1,42 +1,24 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { useRouter } from "next/navigation";
 import { Ticket, Upload, MapPin, CheckCircle, AlertTriangle } from "lucide-react";
 
 export default function VerifyPurchasePage() {
-    const [user, setUser] = useState<any>(null);
-    const [isLoading, setIsLoading] = useState(true);
     const [isSubmitting, setIsSubmitting] = useState(false);
+    
+    // Form State
+    const [firstName, setFirstName] = useState("");
+    const [lastName, setLastName] = useState("");
+    const [email, setEmail] = useState("");
+    const [phone, setPhone] = useState("");
+    const [state, setState] = useState("");
+    const [location, setLocation] = useState("");
+    const [product, setProduct] = useState("");
     const [code, setCode] = useState("");
     const [photo, setPhoto] = useState<File | null>(null);
+    
     const [result, setResult] = useState<{ success: boolean; status?: string; message: string } | null>(null);
-    const router = useRouter();
-
-    useEffect(() => {
-        const fetchUserData = async () => {
-            try {
-                const userRes = await fetch("/api/users/me");
-                if (!userRes.ok) throw new Error("Not logged in");
-                const userData = await userRes.json();
-                
-                if (!userData.user) {
-                    router.push("/login?message=Please login to enter the raffle.");
-                    return;
-                }
-                
-                setUser(userData.user);
-            } catch (error) {
-                console.error("Failed to load user:", error);
-                router.push("/login?message=Please login to enter the raffle.");
-            } finally {
-                setIsLoading(false);
-            }
-        };
-
-        fetchUserData();
-    }, [router]);
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -48,10 +30,13 @@ export default function VerifyPurchasePage() {
         const formData = new FormData();
         formData.append("code", code.toUpperCase());
         formData.append("photo", photo);
-        formData.append("userEmail", user.email);
-        if (user.payoutDetails?.phone) {
-            formData.append("userPhone", user.payoutDetails.phone);
-        }
+        formData.append("firstName", firstName);
+        formData.append("lastName", lastName);
+        formData.append("userEmail", email);
+        formData.append("userPhone", phone);
+        formData.append("state", state);
+        formData.append("location", location);
+        formData.append("product", product);
 
         try {
             const res = await fetch("/api/raffle/verify", {
@@ -73,16 +58,6 @@ export default function VerifyPurchasePage() {
         }
     };
 
-    if (isLoading) {
-        return (
-            <div className="min-h-screen bg-[#f5f5f5] pt-32 pb-20 flex justify-center items-center">
-                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
-            </div>
-        );
-    }
-
-    if (!user) return null;
-
     return (
         <div className="min-h-screen bg-[#f5f5f5] pt-32 pb-20">
             <div className="container mx-auto px-4 max-w-2xl">
@@ -103,7 +78,11 @@ export default function VerifyPurchasePage() {
                             <p className="text-gray-700">{result.message}</p>
                             
                             <Button 
-                                onClick={() => setResult(null)} 
+                                onClick={() => {
+                                    setResult(null);
+                                    setCode("");
+                                    setPhoto(null);
+                                }} 
                                 className="mt-6 bg-black text-white hover:bg-gray-800"
                             >
                                 Submit Another Entry
@@ -111,6 +90,80 @@ export default function VerifyPurchasePage() {
                         </div>
                     ) : (
                         <form onSubmit={handleSubmit} className="space-y-6">
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div>
+                                    <label className="block text-sm font-bold text-gray-700 mb-2">First Name</label>
+                                    <input 
+                                        type="text" 
+                                        value={firstName} onChange={e => setFirstName(e.target.value)}
+                                        className="w-full p-3 border-2 border-gray-200 rounded-xl outline-none focus:border-primary" 
+                                        required
+                                    />
+                                </div>
+                                <div>
+                                    <label className="block text-sm font-bold text-gray-700 mb-2">Last Name</label>
+                                    <input 
+                                        type="text" 
+                                        value={lastName} onChange={e => setLastName(e.target.value)}
+                                        className="w-full p-3 border-2 border-gray-200 rounded-xl outline-none focus:border-primary" 
+                                        required
+                                    />
+                                </div>
+                            </div>
+
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div>
+                                    <label className="block text-sm font-bold text-gray-700 mb-2">Email Address</label>
+                                    <input 
+                                        type="email" 
+                                        value={email} onChange={e => setEmail(e.target.value)}
+                                        className="w-full p-3 border-2 border-gray-200 rounded-xl outline-none focus:border-primary" 
+                                        required
+                                    />
+                                </div>
+                                <div>
+                                    <label className="block text-sm font-bold text-gray-700 mb-2">Phone Number</label>
+                                    <input 
+                                        type="tel" 
+                                        value={phone} onChange={e => setPhone(e.target.value)}
+                                        className="w-full p-3 border-2 border-gray-200 rounded-xl outline-none focus:border-primary" 
+                                        required
+                                    />
+                                </div>
+                            </div>
+
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div>
+                                    <label className="block text-sm font-bold text-gray-700 mb-2">State</label>
+                                    <input 
+                                        type="text" 
+                                        value={state} onChange={e => setState(e.target.value)}
+                                        className="w-full p-3 border-2 border-gray-200 rounded-xl outline-none focus:border-primary" 
+                                        required
+                                    />
+                                </div>
+                                <div>
+                                    <label className="block text-sm font-bold text-gray-700 mb-2">City / Location</label>
+                                    <input 
+                                        type="text" 
+                                        value={location} onChange={e => setLocation(e.target.value)}
+                                        className="w-full p-3 border-2 border-gray-200 rounded-xl outline-none focus:border-primary" 
+                                        required
+                                    />
+                                </div>
+                            </div>
+
+                            <div>
+                                <label className="block text-sm font-bold text-gray-700 mb-2">Product Purchased</label>
+                                <input 
+                                    type="text" 
+                                    placeholder="e.g. 1stEagle Powerbank 20000mAh"
+                                    value={product} onChange={e => setProduct(e.target.value)}
+                                    className="w-full p-3 border-2 border-gray-200 rounded-xl outline-none focus:border-primary" 
+                                    required
+                                />
+                            </div>
+
                             <div>
                                 <label className="block text-sm font-bold text-gray-700 mb-2">8-Character Raffle Code</label>
                                 <input 

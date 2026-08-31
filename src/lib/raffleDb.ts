@@ -42,9 +42,25 @@ if (!global.__raffleDb) {
       exifLongitude REAL,
       distance REAL,
       status TEXT NOT NULL,
-      createdAt DATETIME DEFAULT CURRENT_TIMESTAMP
+      createdAt DATETIME DEFAULT CURRENT_TIMESTAMP,
+      firstName TEXT,
+      lastName TEXT,
+      state TEXT,
+      location TEXT,
+      product TEXT,
+      raffleCode TEXT
     );
   `);
+
+  // Run migrations safely
+  const columnsToAdd = ['firstName', 'lastName', 'state', 'location', 'product', 'raffleCode'];
+  for (const col of columnsToAdd) {
+    try {
+      global.__raffleDb.exec(`ALTER TABLE RaffleSubmissions ADD COLUMN ${col} TEXT`);
+    } catch (e) {
+      // Ignore if column already exists
+    }
+  }
 }
 
 db = global.__raffleDb;
