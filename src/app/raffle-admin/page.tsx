@@ -120,7 +120,7 @@ export default function RaffleAdminPage() {
 
     if (!isAuthenticated) {
         return (
-            <div className="min-h-screen bg-[#f5f5f5] pt-32 pb-20 flex justify-center items-center">
+            <div className="min-h-screen bg-[#f5f5f5] flex justify-center items-center p-4">
                 <div className="bg-white p-10 rounded-xl shadow-sm text-center max-w-sm w-full">
                     <Settings className="w-12 h-12 text-primary mx-auto mb-4" />
                     <h1 className="text-2xl font-bold mb-6">Raffle Admin</h1>
@@ -140,7 +140,7 @@ export default function RaffleAdminPage() {
     }
 
     return (
-        <div className="min-h-screen bg-[#f5f5f5] pt-32 pb-20">
+        <div className="min-h-screen bg-[#f5f5f5] py-10">
             <div className="container mx-auto px-4">
                 <div className="flex flex-col md:flex-row justify-between items-center mb-8 gap-4">
                     <h1 className="text-3xl font-extrabold flex items-center gap-3">
