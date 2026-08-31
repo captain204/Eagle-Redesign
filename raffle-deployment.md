@@ -42,7 +42,7 @@ The new system operates entirely on three isolated frontend URLs:
 ### A. The Public Verification Form
 Where customers go to upload their photos and enter their codes.
 * **URL:** `https://www.1steagle.com.ng/verify-purchase`
-* **Access:** Requires the user to be logged into their standard Payload account (so we can soft-link their email and phone).
+* **Access:** Fully Public (No login required. Users manually enter their Name, Email, Phone, Location, and Product details).
 
 ### B. The Standalone Admin Dashboard
 Where management can oversee the raffle, generate codes, and draw winners.
