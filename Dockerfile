@@ -2,7 +2,7 @@
 FROM node:20-alpine AS builder
 
 # Install only essential build dependencies
-RUN apk add --no-cache libc6-compat python3 && \
+RUN apk add --no-cache libc6-compat python3 build-base make g++ && \
     rm -rf /var/cache/apk/*
 
 WORKDIR /app
