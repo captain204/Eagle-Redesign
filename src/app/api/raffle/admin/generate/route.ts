@@ -54,23 +54,46 @@ export async function POST(req: Request) {
                 doc.on('data', (chunk) => chunks.push(chunk));
                 doc.on('end', () => resolve(Buffer.concat(chunks)));
 
-                doc.fontSize(24).fillColor('#FF5F1F').text('1stEagle Technology', { align: 'center' });
-                doc.fontSize(18).fillColor('#000000').text('Official Raffle Draw Codes', { align: 'center' });
-                doc.moveDown();
-                doc.fontSize(12).text(`Batch ID: ${batchId}`, { align: 'center' });
-                doc.moveDown(2);
+                // Add Logo
+                const logoPath = path.join(process.cwd(), 'public', 'images', '1steagle', 'logo.jpg');
+                if (fs.existsSync(logoPath)) {
+                    doc.image(logoPath, 250, 30, { width: 100 });
+                }
 
-                const startY = doc.y + 20;
+                doc.fontSize(24).fillColor('#FF5F1F').text('1stEagle Technology', 0, 140, { align: 'center' });
+                doc.fontSize(16).fillColor('#000000').text('Admin Raffle Codes', { align: 'center' });
+                doc.moveDown();
+                
+                // Instructions Block
+                doc.rect(50, 200, 500, 60).fillAndStroke('#FFF5F2', '#FF5F1F');
+                doc.fontSize(10).fillColor('#FF5F1F').text('INSTRUCTIONS FOR DISTRIBUTORS:', 60, 210, { font: 'Helvetica-Bold' });
+                doc.fillColor('#333').text('Assign one code per purchase. Uploaded/used codes will not work.', 60, 225, { font: 'Helvetica' });
+                doc.text('This is a monthly raffle draw and winners are picked at random.', 60, 240);
+
+                doc.fontSize(12).fillColor('#000000').text(`Batch ID: ${batchId}`, 50, 280, { align: 'center' });
+                doc.moveDown(1);
+
+                // Table Headers
+                const startY = 320;
+                doc.fontSize(12).font('Helvetica-Bold');
+                doc.text('S/N', 130, startY);
+                doc.text('Raffle Code', 180, startY);
+                doc.text('S/N', 360, startY);
+                doc.text('Raffle Code', 410, startY);
+                
+                doc.moveTo(120, startY + 15).lineTo(490, startY + 15).stroke();
+                
+                doc.font('Helvetica');
 
                 codes.forEach((code, index) => {
                     const isLeftColumn = index < 25;
-                    const xOffset = isLeftColumn ? 120 : 350;
+                    const xOffset = isLeftColumn ? 130 : 360;
                     const rowIndex = isLeftColumn ? index : index - 25;
-                    const yOffset = startY + (rowIndex * 22);
+                    const yOffset = startY + 25 + (rowIndex * 20);
                     
                     const serialNumber = (index + 1).toString().padStart(2, '0');
-                    doc.fontSize(14).fillColor('#333333').text(`${serialNumber}.`, xOffset, yOffset);
-                    doc.fontSize(14).fillColor('#000000').text(code, xOffset + 40, yOffset);
+                    doc.fontSize(12).fillColor('#666666').text(`${serialNumber}.`, xOffset, yOffset);
+                    doc.fontSize(14).fillColor('#000000').font('Helvetica-Bold').text(code, xOffset + 50, yOffset - 1);
                 });
 
                 doc.end();

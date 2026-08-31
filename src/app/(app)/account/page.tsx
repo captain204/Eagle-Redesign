@@ -13,6 +13,7 @@ export default function AccountPage() {
     const [referrals, setReferrals] = useState<any[]>([]);
     const [totalEarnings, setTotalEarnings] = useState(0);
     const [isLoading, setIsLoading] = useState(true);
+    const [isGeneratingCodes, setIsGeneratingCodes] = useState(false);
     const [payoutDetails, setPayoutDetails] = useState({ phone: '', bankName: '', accountName: '', accountNumber: '' });
     const [isSavingPayout, setIsSavingPayout] = useState(false);
     const router = useRouter();
@@ -94,6 +95,46 @@ export default function AccountPage() {
         }
     };
 
+    const handleGenerateDistributorCodes = async () => {
+        setIsGeneratingCodes(true);
+        try {
+            const res = await fetch("/api/raffle/distributor/generate", {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    pin: 'EAGLE2026',
+                    distributorId: user.id
+                })
+            });
+
+            const data = await res.json();
+            
+            if (res.ok && data.success) {
+                // Convert base64 to blob
+                const byteCharacters = atob(data.pdfBase64);
+                const byteNumbers = new Array(byteCharacters.length);
+                for (let i = 0; i < byteCharacters.length; i++) {
+                    byteNumbers[i] = byteCharacters.charCodeAt(i);
+                }
+                const byteArray = new Uint8Array(byteNumbers);
+                const blob = new Blob([byteArray], { type: 'application/pdf' });
+                
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = data.filename;
+                a.click();
+            } else {
+                alert(data.error || "Failed to generate codes. You may have exceeded your limit.");
+            }
+        } catch (e) {
+            console.error(e);
+            alert("An error occurred while generating codes.");
+        } finally {
+            setIsGeneratingCodes(false);
+        }
+    };
+
     if (isLoading) {
         return (
             <div className="min-h-screen bg-[#f5f5f5] pt-32 pb-20 flex justify-center items-center">
@@ -150,6 +191,13 @@ export default function AccountPage() {
                                     }`}
                             >
                                 <MapPin className="w-4 h-4" /> Addresses
+                            </button>
+                            <button
+                                onClick={() => setActiveTab("distributor")}
+                                className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${activeTab === "distributor" ? "bg-primary text-black font-bold" : "text-gray-600 hover:bg-gray-50"
+                                    }`}
+                            >
+                                <Ticket className="w-4 h-4" /> Distributor Hub
                             </button>
                             <Link
                                 href="/verify-purchase"
@@ -350,6 +398,32 @@ export default function AccountPage() {
                                         ))}
                                     </div>
                                 )}
+                            </div>
+                        )}
+
+                        {activeTab === "distributor" && (
+                            <div>
+                                <h2 className="text-xl font-bold mb-4">Distributor Hub</h2>
+                                <p className="text-gray-600 mb-8">
+                                    As a distributor, you can generate up to 200 scratch card codes per month.
+                                    Give these codes to customers who make physical purchases at your store.
+                                </p>
+
+                                <div className="bg-primary/5 border border-primary/20 rounded-xl p-8 text-center max-w-xl mx-auto">
+                                    <Ticket className="w-16 h-16 text-primary mx-auto mb-4" />
+                                    <h3 className="text-2xl font-bold mb-2">Generate Monthly Codes</h3>
+                                    <p className="text-gray-600 text-sm mb-6">
+                                        Click below to download a PDF containing a fresh batch of 50 codes.
+                                        You can print this PDF or send it to your store managers.
+                                    </p>
+                                    <Button 
+                                        onClick={handleGenerateDistributorCodes} 
+                                        disabled={isGeneratingCodes}
+                                        className="bg-black text-white hover:bg-gray-800 w-full h-14 text-lg font-bold"
+                                    >
+                                        {isGeneratingCodes ? "Generating PDF..." : "Download Batch of 50 Codes"}
+                                    </Button>
+                                </div>
                             </div>
                         )}
                     </main>
