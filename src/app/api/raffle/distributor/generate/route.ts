@@ -2,6 +2,8 @@ import { NextResponse } from 'next/server';
 import db from '@/lib/raffleDb';
 import crypto from 'crypto';
 import PDFDocument from 'pdfkit';
+import path from 'path';
+import fs from 'fs';
 
 const generateCode = () => crypto.randomBytes(4).toString('hex').toUpperCase();
 
