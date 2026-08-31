@@ -76,3 +76,4 @@ missing_names.txt
 *.corrupted
 *.old
 *.backup
+raffle.sqlite*
