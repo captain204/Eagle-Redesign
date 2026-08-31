@@ -60,20 +60,17 @@ export async function POST(req: Request) {
                 doc.fontSize(12).text(`Batch ID: ${batchId}`, { align: 'center' });
                 doc.moveDown(2);
 
-                let xOffset = 50;
-                let yOffset = doc.y;
+                const startY = doc.y + 20;
 
                 codes.forEach((code, index) => {
-                    if (index > 0 && index % 10 === 0) {
-                        xOffset = 50;
-                        yOffset += 40;
-                    }
-                    if (yOffset > 700) {
-                        doc.addPage();
-                        yOffset = 50;
-                    }
-                    doc.text(code, xOffset, yOffset);
-                    xOffset += 80;
+                    const isLeftColumn = index < 25;
+                    const xOffset = isLeftColumn ? 120 : 350;
+                    const rowIndex = isLeftColumn ? index : index - 25;
+                    const yOffset = startY + (rowIndex * 22);
+                    
+                    const serialNumber = (index + 1).toString().padStart(2, '0');
+                    doc.fontSize(14).fillColor('#333333').text(`${serialNumber}.`, xOffset, yOffset);
+                    doc.fontSize(14).fillColor('#000000').text(code, xOffset + 40, yOffset);
                 });
 
                 doc.end();
