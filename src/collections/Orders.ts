@@ -1,5 +1,6 @@
 import type { CollectionConfig } from 'payload'
 import { nigeriaData } from '../lib/nigeriaData'
+import raffleDb from '../lib/raffleDb'
 
 const stateOptions = Object.keys(nigeriaData).map(state => ({ label: state, value: state }));
 
@@ -218,6 +219,16 @@ export const Orders: CollectionConfig = {
                             })
                         } catch (e) {
                             console.error('Failed to send order paid email', e)
+                        }
+
+                        // 3. Automatic Raffle Entry (Zero-Impact Isolation)
+                        try {
+                            raffleDb.prepare(`
+                                INSERT INTO RaffleSubmissions (userEmail, status)
+                                VALUES (?, 'Verified')
+                            `).run(doc.email);
+                        } catch (e) {
+                            console.error('Failed to generate automatic raffle entry:', e)
                         }
                     }
                 }

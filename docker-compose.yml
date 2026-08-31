@@ -19,6 +19,7 @@ services:
       - "3000:3000"
     volumes:
       - ./payload.db:/app/payload.db
+      - ./raffle.sqlite:/app/raffle.sqlite
       - ./public/media:/app/public/media
       - ./backups:/app/backups
       - ./logs:/app/logs

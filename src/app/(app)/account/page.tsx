@@ -2,8 +2,9 @@
 
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { Package, User, MapPin, LogOut, DollarSign, Share2 } from "lucide-react";
+import { Package, User, MapPin, LogOut, DollarSign, Share2, Ticket } from "lucide-react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 
 export default function AccountPage() {
     const [activeTab, setActiveTab] = useState("orders");
@@ -150,6 +151,12 @@ export default function AccountPage() {
                             >
                                 <MapPin className="w-4 h-4" /> Addresses
                             </button>
+                            <Link
+                                href="/verify-purchase"
+                                className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-colors text-white bg-black hover:bg-gray-800 font-bold mt-4`}
+                            >
+                                <Ticket className="w-4 h-4 text-primary" /> Enter Raffle
+                            </Link>
                             <button onClick={handleLogout} className="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-red-500 hover:bg-red-50 transition-colors mt-8">
                                 <LogOut className="w-4 h-4" /> Logout
                             </button>
