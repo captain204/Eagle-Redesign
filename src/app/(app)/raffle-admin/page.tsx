@@ -45,8 +45,7 @@ export default function RaffleAdminPage() {
     };
 
     const handleGenerateCodes = async () => {
-        window.open("/api/raffle/admin/generate", "_blank");
-        // To pass authorization header to a new window natively is tricky,
+        // To pass authorization header natively is tricky,
         // so we'll fetch the blob instead.
         try {
             const res = await fetch("/api/raffle/admin/generate", {
