@@ -59,7 +59,7 @@ export async function POST(req: Request) {
         // Generate PDF
         const pdfBuffer = await new Promise<Buffer>((resolve, reject) => {
             try {
-                const doc = new PDFDocument();
+                const doc = new PDFDocument({ margins: { top: 30, bottom: 30, left: 50, right: 50 } });
                 const chunks: Buffer[] = [];
                 
                 doc.on('data', (chunk) => chunks.push(chunk));
@@ -71,21 +71,19 @@ export async function POST(req: Request) {
                     doc.image(logoPath, 250, 30, { width: 100 });
                 }
 
-                doc.fontSize(24).fillColor('#FF5F1F').text('1stEagle Technology', 0, 140, { align: 'center' });
+                doc.fontSize(24).fillColor('#FF5F1F').text('1stEagle Technology', 0, 110, { align: 'center' });
                 doc.fontSize(16).fillColor('#000000').text('Distributor Raffle Codes', { align: 'center' });
-                doc.moveDown();
                 
                 // Instructions Block
-                doc.rect(50, 200, 500, 60).fillAndStroke('#FFF5F2', '#FF5F1F');
-                doc.fontSize(10).fillColor('#FF5F1F').text('INSTRUCTIONS FOR DISTRIBUTORS:', 60, 210, { font: 'Helvetica-Bold' });
-                doc.fillColor('#333').text('Assign one code per purchase. Uploaded/used codes will not work.', 60, 225, { font: 'Helvetica' });
-                doc.text('This is a monthly raffle draw and winners are picked at random.', 60, 240);
+                doc.rect(50, 160, 500, 60).fillAndStroke('#FFF5F2', '#FF5F1F');
+                doc.fontSize(10).fillColor('#FF5F1F').text('INSTRUCTIONS FOR DISTRIBUTORS:', 60, 170, { font: 'Helvetica-Bold' });
+                doc.fillColor('#333').text('Assign one code per purchase. Uploaded/used codes will not work.', 60, 185, { font: 'Helvetica' });
+                doc.text('This is a monthly raffle draw and winners are picked at random.', 60, 200);
 
-                doc.fontSize(12).fillColor('#000000').text(`Batch ID: ${batchId} | Distributor ID: ${distributorId}`, 50, 280, { align: 'center' });
-                doc.moveDown(1);
+                doc.fontSize(12).fillColor('#000000').text(`Batch ID: ${batchId} | Distributor ID: ${distributorId}`, 50, 240, { align: 'center' });
 
                 // Table Headers
-                const startY = 320;
+                const startY = 270;
                 doc.fontSize(12).font('Helvetica-Bold');
                 doc.text('S/N', 130, startY);
                 doc.text('Raffle Code', 180, startY);
@@ -100,7 +98,7 @@ export async function POST(req: Request) {
                     const isLeftColumn = index < 25;
                     const xOffset = isLeftColumn ? 130 : 360;
                     const rowIndex = isLeftColumn ? index : index - 25;
-                    const yOffset = startY + 25 + (rowIndex * 20);
+                    const yOffset = startY + 25 + (rowIndex * 18);
                     
                     const serialNumber = (index + 1).toString().padStart(2, '0');
                     doc.fontSize(12).fillColor('#666666').text(`${serialNumber}.`, xOffset, yOffset);

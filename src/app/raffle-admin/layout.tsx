@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Outfit } from "next/font/google";
 import "@/app/(app)/globals.css";
 
-const inter = Inter({ subsets: ["latin"], variable: "--font-sans" });
+const outfit = Outfit({ subsets: ["latin"], variable: "--font-outfit" });
 
 export const metadata: Metadata = {
   title: "Raffle Admin - 1stEagle Technology",
@@ -16,7 +16,7 @@ export default function RaffleAdminLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${inter.variable} font-sans bg-[#f5f5f5]`}>
+      <body className={`${outfit.variable} font-outfit bg-[#f5f5f5]`}>
         {children}
       </body>
     </html>

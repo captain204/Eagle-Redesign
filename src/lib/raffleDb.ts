@@ -61,6 +61,13 @@ if (!global.__raffleDb) {
       // Ignore if column already exists
     }
   }
+
+  // Ensure RaffleCodes has the month column (fixes 500 error on /api/raffle/admin/generate)
+  try {
+    global.__raffleDb.exec(`ALTER TABLE RaffleCodes ADD COLUMN month TEXT NOT NULL DEFAULT ''`);
+  } catch (e) {
+    // Ignore if column already exists
+  }
 }
 
 db = global.__raffleDb;
