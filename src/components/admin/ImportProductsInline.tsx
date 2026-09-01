@@ -1,7 +1,7 @@
 'use client'
 
 import React, { useState } from 'react'
-import { Upload } from 'lucide-react'
+import { Upload, Download } from 'lucide-react'
 import { ProductMigration } from './ProductMigration'
 
 export const ImportProductsInline = () => {
@@ -10,13 +10,24 @@ export const ImportProductsInline = () => {
     return (
         <div className="mb-6">
             {!isOpen ? (
-                <button
-                    onClick={() => setIsOpen(true)}
-                    className="flex flex-row items-center gap-2 bg-slate-900 text-white px-4 py-2 rounded-lg font-medium hover:bg-slate-800 transition-colors"
-                >
-                    <Upload size={16} />
-                    Import Products via CSV
-                </button>
+                <div className="flex gap-4">
+                    <button
+                        onClick={() => setIsOpen(true)}
+                        className="flex flex-row items-center gap-2 bg-slate-900 text-white px-4 py-2 rounded-lg font-medium hover:bg-slate-800 transition-colors"
+                    >
+                        <Upload size={16} />
+                        Import Products via CSV
+                    </button>
+                    
+                    <a
+                        href="/api/export-products"
+                        download="products_export.csv"
+                        className="flex flex-row items-center gap-2 bg-white border border-slate-200 text-slate-700 px-4 py-2 rounded-lg font-medium hover:bg-slate-50 transition-colors shadow-sm"
+                    >
+                        <Download size={16} />
+                        Download & Export All Products
+                    </a>
+                </div>
             ) : (
                 <div className="space-y-4 rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
                     <div className="flex justify-between items-center mb-4">
