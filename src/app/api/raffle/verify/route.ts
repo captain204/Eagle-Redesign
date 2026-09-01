@@ -54,7 +54,7 @@ export async function POST(req: Request) {
 
         const existingSubmission = db.prepare('SELECT * FROM RaffleSubmissions WHERE imageHash = ?').get(imageHash);
         if (existingSubmission) {
-            return NextResponse.json({ error: 'Image already submitted for verification' }, { status: 400 });
+            return NextResponse.json({ error: 'this image has been submited before please upload image of a new product' }, { status: 400 });
         }
 
         // 3. Extract EXIF Data
