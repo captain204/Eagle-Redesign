@@ -65,7 +65,7 @@ export async function POST(req: Request) {
             console.warn('No valid EXIF found', e);
         }
 
-        let status = 'Flagged';
+        let status = 'Pending';
         let distance = null;
         let imagePath = null;
 
@@ -86,30 +86,19 @@ export async function POST(req: Request) {
             if (minDistance <= 50) {
                 status = 'Verified';
             } else {
-                status = 'Flagged'; // Flag if GPS exists but is incredibly far away from any distributor
+                status = 'Pending'; // Pending if GPS exists but is incredibly far away from any distributor
             }
         } else {
-            status = 'Flagged'; // No GPS data
+            status = 'Pending'; // No GPS data
         }
 
-        // 4.5 If Flagged for manual review, compress and save the image heavily to save disk space
-        if (status === 'Flagged') {
-            const uploadDir = path.join(process.cwd(), 'public', 'raffle-uploads');
-            if (!fs.existsSync(uploadDir)) {
-                fs.mkdirSync(uploadDir, { recursive: true });
-            }
+        // 4.5 Save image for ALL submissions as a heavily compressed Base64 string directly in SQLite
+        const compressedBuffer = await sharp(buffer)
+            .resize({ width: 800, withoutEnlargement: true })
+            .webp({ quality: 60 })
+            .toBuffer();
             
-            const fileName = `${Date.now()}_${imageHash.substring(0, 8)}.webp`;
-            const filePath = path.join(uploadDir, fileName);
-            
-            // Compress heavily: max 800px width, convert to webp, 60% quality (usually ~50KB instead of 5MB)
-            await sharp(buffer)
-                .resize({ width: 800, withoutEnlargement: true })
-                .webp({ quality: 60 })
-                .toFile(filePath);
-                
-            imagePath = `/raffle-uploads/${fileName}`;
-        }
+        imagePath = `data:image/webp;base64,${compressedBuffer.toString('base64')}`;
 
         // 5. Save Submission (Zero-Impact on Payload)
         db.transaction(() => {

@@ -8,7 +8,7 @@ export default function RaffleAdminPage() {
     const [password, setPassword] = useState("");
     const [isAuthenticated, setIsAuthenticated] = useState(false);
     const [entries, setEntries] = useState<any[]>([]);
-    const [stats, setStats] = useState({ total: 0, verified: 0, flagged: 0 });
+    const [stats, setStats] = useState({ total: 0, verified: 0, pending: 0, rejected: 0 });
     const [winner, setWinner] = useState<any>(null);
     const [isLoading, setIsLoading] = useState(false);
 
@@ -22,7 +22,7 @@ export default function RaffleAdminPage() {
                 setIsAuthenticated(true);
                 const data = await res.json();
                 setEntries(data.submissions || []);
-                setStats(data.stats || { total: 0, verified: 0, flagged: 0 });
+                setStats(data.stats || { total: 0, verified: 0, pending: 0, rejected: 0 });
             } else {
                 alert("Invalid password");
             }
@@ -40,7 +40,7 @@ export default function RaffleAdminPage() {
         if (res.ok) {
             const data = await res.json();
             setEntries(data.submissions || []);
-            setStats(data.stats || { total: 0, verified: 0, flagged: 0 });
+            setStats(data.stats || { total: 0, verified: 0, pending: 0, rejected: 0 });
         }
     };
 
@@ -170,7 +170,7 @@ export default function RaffleAdminPage() {
                     </div>
                 )}
 
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
                     <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100 flex items-center justify-between">
                         <div>
                             <p className="text-gray-500 font-medium">Total Entries</p>
@@ -189,10 +189,19 @@ export default function RaffleAdminPage() {
                             <CheckCircle className="w-6 h-6 text-green-500" />
                         </div>
                     </div>
+                    <div className="bg-white p-6 rounded-xl shadow-sm border border-yellow-100 flex items-center justify-between">
+                        <div>
+                            <p className="text-yellow-600 font-medium">Pending Review</p>
+                            <p className="text-3xl font-bold text-yellow-700">{stats.pending}</p>
+                        </div>
+                        <div className="w-12 h-12 bg-yellow-50 rounded-full flex items-center justify-center">
+                            <Settings className="w-6 h-6 text-yellow-500" />
+                        </div>
+                    </div>
                     <div className="bg-white p-6 rounded-xl shadow-sm border border-red-100 flex items-center justify-between">
                         <div>
-                            <p className="text-red-600 font-medium">Flagged (No GPS)</p>
-                            <p className="text-3xl font-bold text-red-700">{stats.flagged}</p>
+                            <p className="text-red-600 font-medium">Rejected</p>
+                            <p className="text-3xl font-bold text-red-700">{stats.rejected}</p>
                         </div>
                         <div className="w-12 h-12 bg-red-50 rounded-full flex items-center justify-center">
                             <XCircle className="w-6 h-6 text-red-500" />
@@ -203,7 +212,7 @@ export default function RaffleAdminPage() {
                 <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
                     <div className="p-6 border-b">
                         <h2 className="text-xl font-bold">Entry Queue</h2>
-                        <p className="text-gray-500 text-sm mt-1">Review flagged entries without GPS data below.</p>
+                        <p className="text-gray-500 text-sm mt-1">Review pending entries below. Approve or reject submissions.</p>
                     </div>
                     <div className="overflow-x-auto">
                         <table className="w-full text-left border-collapse">
@@ -232,9 +241,12 @@ export default function RaffleAdminPage() {
                                         </td>
                                         <td className="p-4">
                                             {entry.imagePath ? (
-                                                <a href={entry.imagePath} target="_blank" rel="noreferrer" className="text-primary hover:underline text-sm font-bold flex items-center gap-1">
+                                                <button onClick={() => {
+                                                    const w = window.open("");
+                                                    w?.document.write(`<html><body style="margin:0;display:flex;justify-content:center;align-items:center;background:#111;height:100vh;"><img src="${entry.imagePath}" style="max-width:100%;max-height:100vh;" /></body></html>`);
+                                                }} className="text-primary hover:underline text-sm font-bold flex items-center gap-1">
                                                     View Image
-                                                </a>
+                                                </button>
                                             ) : (
                                                 <span className="text-xs text-gray-400">None</span>
                                             )}
@@ -243,14 +255,15 @@ export default function RaffleAdminPage() {
                                             {entry.exifLatitude ? `${entry.exifLatitude.toFixed(4)}, ${entry.exifLongitude.toFixed(4)}` : 'None (Auto or Missing)'}
                                         </td>
                                         <td className="p-4">
-                                            <span className={`px-2 py-1 rounded text-xs font-bold uppercase ${entry.status === 'Verified' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>
+                                            <span className={`px-2 py-1 rounded text-xs font-bold uppercase ${entry.status === 'Verified' ? 'bg-green-100 text-green-700' : entry.status === 'Rejected' ? 'bg-red-100 text-red-700' : 'bg-yellow-100 text-yellow-700'}`}>
                                                 {entry.status}
                                             </span>
                                         </td>
                                         <td className="p-4">
-                                            {entry.status === 'Flagged' && (
+                                            {entry.status === 'Pending' && (
                                                 <div className="flex gap-2">
                                                     <Button size="sm" onClick={() => handleUpdateStatus(entry.id, 'Verified')} className="bg-green-500 hover:bg-green-600 text-white h-8 text-xs">Approve</Button>
+                                                    <Button size="sm" onClick={() => handleUpdateStatus(entry.id, 'Rejected')} className="bg-red-500 hover:bg-red-600 text-white h-8 text-xs">Reject</Button>
                                                 </div>
                                             )}
                                         </td>

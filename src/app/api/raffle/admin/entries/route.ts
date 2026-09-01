@@ -15,7 +15,8 @@ export async function GET(req: Request) {
         const stats = {
             total: submissions.length,
             verified: submissions.filter((s: any) => s.status === 'Verified').length,
-            flagged: submissions.filter((s: any) => s.status === 'Flagged').length,
+            pending: submissions.filter((s: any) => s.status === 'Pending').length,
+            rejected: submissions.filter((s: any) => s.status === 'Rejected').length,
         };
 
         return NextResponse.json({ success: true, submissions, stats });
