@@ -10,6 +10,7 @@ import { useCart } from "@/providers/CartProvider";
 
 interface Product {
     id: string | number;
+    slug?: string;
     title: string;
     price: number;
     salePrice?: number;
@@ -147,7 +148,7 @@ export function QuickViewModal({ product, children }: { product: Product, childr
                                     <ShoppingCart className="w-4 h-4 mr-2" /> Add to Cart
                                 </Button>
                             </div>
-                            <Button variant="link" className="w-full text-gray-500 hover:text-black" onClick={() => router.push(`/product/${product.id}`)}>
+                            <Button variant="link" className="w-full text-gray-500 hover:text-black" onClick={() => router.push(`/product/${product.slug || product.id}`)}>
                                 View Full Details
                             </Button>
                         </div>

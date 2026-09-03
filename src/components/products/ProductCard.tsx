@@ -9,6 +9,7 @@ import { useCart } from "@/providers/CartProvider";
 
 interface Product {
     id: string | number;
+    slug?: string;
     title: string;
     price: number;
     salePrice?: number;
@@ -54,7 +55,7 @@ export function ProductCard({ product }: { product: Product }) {
 
     return (
         <div className="relative group h-full">
-            <Link href={`/product/${product.id}`} className="block h-full">
+            <Link href={`/product/${product.slug || product.id}`} className="block h-full">
                 <motion.div
                     className="bg-white rounded-xl p-4 cursor-pointer hover:shadow-2xl transition-all duration-300 relative h-full flex flex-col border border-transparent hover:border-gray-100"
                     initial={{ opacity: 0 }}
