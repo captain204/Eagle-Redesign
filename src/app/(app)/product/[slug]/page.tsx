@@ -11,6 +11,12 @@ type Props = {
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
     const resolvedParams = await params;
     const { slug } = resolvedParams;
+    let decodedSlug = slug;
+    try {
+        decodedSlug = decodeURIComponent(slug);
+    } catch (e) {
+        console.warn('Could not decode slug in metadata:', slug);
+    }
     const payload = await getPayload({ config: configPromise });
 
     try {
@@ -19,7 +25,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
         // Find by slug
         const productRes = await payload.find({
             collection: "products",
-            where: { slug: { equals: slug } },
+            where: { slug: { equals: decodedSlug } },
             depth: 0,
         });
         product = productRes.docs[0];
@@ -45,6 +51,12 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 export default async function ProductDetailPage({ params }: Props) {
     const resolvedParams = await params;
     const { slug } = resolvedParams;
+    let decodedSlug = slug;
+    try {
+        decodedSlug = decodeURIComponent(slug);
+    } catch (e) {
+        console.warn('Could not decode slug in page:', slug);
+    }
 
     const payload = await getPayload({ config: configPromise });
 
@@ -54,13 +66,15 @@ export default async function ProductDetailPage({ params }: Props) {
     try {
         const productRes = await payload.find({
             collection: "products",
-            where: { slug: { equals: slug } },
+            where: { slug: { equals: decodedSlug } },
             depth: 1,
         });
         product = productRes.docs[0];
-    } catch (e) {}
+    } catch (e) {
+        console.error(`Error querying by slug:`, e);
+    }
 
-    // Fallback to numeric ID (Backwards Compatibility)
+    // Fallback to ID (Backwards Compatibility)
     if (!product && !isNaN(Number(slug))) {
         try {
             product = await payload.findByID({ collection: "products", id: slug, depth: 1 });
@@ -73,7 +87,7 @@ export default async function ProductDetailPage({ params }: Props) {
 
     // Redirect to slug if accessed via ID and slug exists
     if (product.slug && String(product.id) === slug) {
-        redirect(`/product/${product.slug}`);
+        redirect(`/product/${encodeURIComponent(product.slug)}`);
     }
 
     // Use the actual product ID for fetching related products
