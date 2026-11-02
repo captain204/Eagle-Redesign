@@ -1,44 +1,83 @@
+import { getPayload } from "payload";
+import configPromise from "@/payload.config";
+import NewsClient, { PostItem } from "./NewsClient";
+
 export const metadata = {
-    title: "News | 1st𝓔agle Technology",
-    description: "Stay updated with the latest news, product launches, and events from 1st𝓔agle.",
+    title: "News & Announcements | 1st𝓔agle Technology",
+    description: "Stay updated with the latest news, product launches, innovations, and stories from 1st𝓔agle.",
+    openGraph: {
+        title: "News & Announcements | 1st𝓔agle Technology",
+        description: "Stay updated with the latest news, product launches, innovations, and stories from 1st𝓔agle.",
+        url: "https://www.1steagle.com.ng/news",
+        siteName: "1st𝓔agle Technology",
+        type: "website",
+    },
+    twitter: {
+        card: "summary_large_image",
+        title: "News & Announcements | 1st𝓔agle Technology",
+        description: "Stay updated with the latest news, product launches, innovations, and stories from 1st𝓔agle.",
+    },
 };
 
-export default function NewsPage() {
+export const dynamic = "force-dynamic";
+
+export default async function NewsPage() {
+    const payload = await getPayload({ config: configPromise });
+
+    let posts: PostItem[] = [];
+
+    try {
+        const postsResult = await payload.find({
+            collection: "posts",
+            sort: "-createdAt",
+            depth: 2,
+            limit: 100,
+            overrideAccess: true,
+        });
+
+        // Filter for published posts
+        let published = postsResult.docs.filter((p: any) => {
+            const isPublished = p.status === "published" || p._status === "published";
+            const notTrash = p.status !== "trash" && p.status !== "private";
+            return isPublished && notTrash;
+        });
+
+        // Fallback: If no published posts found via standard query, include drafts (covers newly created admin posts)
+        if (published.length === 0) {
+            const draftResult = await payload.find({
+                collection: "posts",
+                sort: "-createdAt",
+                depth: 2,
+                limit: 100,
+                draft: true,
+                overrideAccess: true,
+            });
+            published = draftResult.docs.filter((p: any) => p.status !== "trash" && p.status !== "private");
+        }
+
+        posts = published as unknown as PostItem[];
+    } catch (err) {
+        console.error("Error fetching posts for news page:", err);
+    }
+
+    // Extract unique categories for filtering
+    const categorySet = new Set<string>();
+    categorySet.add("All");
+    posts.forEach((post) => {
+        if (Array.isArray(post.categories)) {
+            post.categories.forEach((cat) => {
+                const title = typeof cat === "object" && cat !== null ? cat.title : cat;
+                if (title && typeof title === "string") {
+                    categorySet.add(title.trim());
+                }
+            });
+        }
+    });
+
     return (
-        <div className="min-h-[60vh] bg-[#f5f5f5] pt-24 pb-20">
-            <div className="container mx-auto px-4 max-w-4xl bg-white rounded-xl shadow-sm p-8 md:p-12">
-                <h1 className="text-3xl font-bold mb-6 text-center">Latest News</h1>
-                <p className="text-gray-500 mb-12 text-center">
-                    Discover our recent product launches, company updates, and technological breakthroughs.
-                </p>
-
-                <div className="grid gap-8">
-                    {/* Placeholder Article */}
-                    <article className="flex flex-col md:flex-row gap-6 border border-gray-100 rounded-xl overflow-hidden hover:shadow-md transition-shadow">
-                        <div className="w-full md:w-1/3 h-48 bg-gray-200 animate-pulse"></div>
-                        <div className="p-6 flex-1 flex flex-col justify-center">
-                            <span className="text-xs font-bold text-primary uppercase mb-2">Press Release</span>
-                            <h2 className="text-xl font-bold mb-2">1st𝓔agle Announces Next-Gen Active Noise Cancelling Earbuds</h2>
-                            <p className="text-gray-600 mb-4 line-clamp-2">
-                                We are thrilled to introduce the upcoming line of our flagship audio devices featuring industry-leading noise cancellation capabilities.
-                            </p>
-                            <span className="text-sm text-gray-400 font-medium">March 23, 2026</span>
-                        </div>
-                    </article>
-
-                    <article className="flex flex-col md:flex-row gap-6 border border-gray-100 rounded-xl overflow-hidden hover:shadow-md transition-shadow">
-                        <div className="w-full md:w-1/3 h-48 bg-gray-200 animate-pulse"></div>
-                        <div className="p-6 flex-1 flex flex-col justify-center">
-                            <span className="text-xs font-bold text-primary uppercase mb-2">Company Update</span>
-                            <h2 className="text-xl font-bold mb-2">Expanding Our Power Solutions Across West Africa</h2>
-                            <p className="text-gray-600 mb-4 line-clamp-2">
-                                In line with our commitment to accessible energy, 1st𝓔agle opens 50 new partner retail stores across major cities.
-                            </p>
-                            <span className="text-sm text-gray-400 font-medium">February 10, 2026</span>
-                        </div>
-                    </article>
-                </div>
-            </div>
-        </div>
+        <NewsClient
+            initialPosts={posts}
+            categories={Array.from(categorySet)}
+        />
     );
 }

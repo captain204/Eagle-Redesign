@@ -38,6 +38,7 @@ export function Header({ categories = [] }: { categories?: Category[] }) {
     const navLinks = [
         { name: "Daily Deals", href: "/daily-deals" },
         { name: "Hot & New", href: "/hot-new" },
+        { name: "News", href: "/news" },
         { name: "Support", href: "/support" },
     ];
 
