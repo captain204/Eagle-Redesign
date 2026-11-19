@@ -82,6 +82,7 @@ export async function GET(req: NextRequest) {
             }
 
             // Create the order now that payment is confirmed
+            const spinNote = metadata.spinBonusSummary ? ` | Spin Wheel Bonus: ${metadata.spinBonusSummary}` : '';
             const orderData: any = {
                 email: customerEmail || result.data.customer?.email || 'unknown@customer.com',
                 items: cartItems.map(item => ({
@@ -99,7 +100,7 @@ export async function GET(req: NextRequest) {
                     state: shippingData.state || '',
                     country: shippingData.country || 'Nigeria',
                 },
-                notes: `Paid via Paystack. Reference: ${reference}`,
+                notes: `Paid via Paystack. Reference: ${reference}${spinNote}`,
                 emailSent: false,
                 appliedReferralCode: metadata.referralCode || '',
             };

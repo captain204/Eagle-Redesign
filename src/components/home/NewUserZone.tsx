@@ -1,9 +1,11 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Gift } from "lucide-react";
+import { Gift, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
+import { toast } from "sonner";
+import { useOptionalSpinWheel } from "@/providers/SpinWheelProvider";
 
 export function NewUserZone({
     couponCode = "WELCOME5000",
@@ -14,6 +16,15 @@ export function NewUserZone({
     discountAmount?: string;
     expiryDate?: string;
 }) {
+    const spinWheel = useOptionalSpinWheel();
+
+    const handleCopyCoupon = () => {
+        if (typeof navigator !== "undefined" && navigator.clipboard) {
+            navigator.clipboard.writeText(couponCode).catch(() => {});
+        }
+        toast.success(`Coupon code ${couponCode} copied!`);
+    };
+
     return (
         <section className="container py-8">
             <motion.div
@@ -35,8 +46,22 @@ export function NewUserZone({
                         <p className="text-white/90 text-lg max-w-xl mb-6 font-medium">
                             Join the 1st𝓔agle family today and enjoy exclusive perks, early access to sales, and premium support.
                         </p>
-                        <div className="flex flex-col sm:flex-row gap-4 justify-center md:justify-start">
-                            <Button size="lg" className="bg-white text-orange-600 hover:bg-gray-100 font-bold px-8 text-lg h-12 rounded-full shadow-lg transition-transform hover:scale-105">
+                        <div className="flex flex-col sm:flex-row flex-wrap gap-3 justify-center md:justify-start">
+                            <Button
+                                type="button"
+                                size="lg"
+                                onClick={() => spinWheel?.openWheel(null)}
+                                className="bg-yellow-300 text-black hover:bg-yellow-200 font-black px-7 text-base md:text-lg h-12 rounded-full shadow-lg transition-transform hover:scale-105"
+                            >
+                                <Sparkles className="w-5 h-5 mr-2 text-orange-700" />
+                                Spin &amp; Win Bonus
+                            </Button>
+                            <Button
+                                type="button"
+                                size="lg"
+                                onClick={handleCopyCoupon}
+                                className="bg-white text-orange-600 hover:bg-gray-100 font-bold px-7 text-base md:text-lg h-12 rounded-full shadow-lg transition-transform hover:scale-105"
+                            >
                                 Claim Coupon Now
                             </Button>
                             <Link href="/brand-story">

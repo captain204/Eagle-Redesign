@@ -1,12 +1,14 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { Trash2, Plus, Minus, ArrowRight } from "lucide-react";
+import { Trash2, Plus, Minus, ArrowRight, Sparkles } from "lucide-react";
 import Link from "next/link";
 import { useCart } from "@/providers/CartProvider";
+import { useOptionalSpinWheel } from "@/providers/SpinWheelProvider";
 
 export default function CartPage() {
-    const { cartItems, updateQuantity, removeFromCart, cartTotal } = useCart();
+    const { cartItems, updateQuantity, removeFromCart, cartTotal, originalCartTotal, spinDiscountTotal, getItemPricing } = useCart();
+    const spinWheel = useOptionalSpinWheel();
 
     const subtotal = cartTotal;
     const shipping = subtotal > 20000 ? 0 : 1500;
@@ -39,6 +41,7 @@ export default function CartPage() {
                     <div className="flex-1 space-y-4">
                         {cartItems.map((item) => {
                             const imageUrl = (typeof item.mainImage === 'object' && item.mainImage !== null) ? item.mainImage.url : (item.mainImage || '/images/placeholder.jpg');
+                            const itemPricing = getItemPricing(item);
 
                             return (
                                 <div key={item.id} className="bg-white p-4 rounded-lg shadow-sm flex gap-4 items-center">
@@ -47,7 +50,17 @@ export default function CartPage() {
                                     </div>
                                     <div className="flex-1">
                                         <h3 className="font-bold text-gray-900 line-clamp-2 md:line-clamp-1">{item.title}</h3>
-                                        <div className="font-bold text-primary mt-1">₦{item.price.toLocaleString()}</div>
+                                        <div className="flex items-center gap-2 mt-1">
+                                            <div className="font-bold text-primary">₦{itemPricing.finalUnitPrice.toLocaleString()}</div>
+                                            {itemPricing.hasReward && (
+                                                <div className="text-xs text-gray-400 line-through">₦{item.price.toLocaleString()}</div>
+                                            )}
+                                        </div>
+                                        {itemPricing.hasReward && (
+                                            <span className="inline-flex items-center gap-1 text-[11px] font-bold text-green-700 bg-green-50 border border-green-200 px-2 py-0.5 rounded-full mt-1">
+                                                <Sparkles className="w-3 h-3" /> Spin Bonus -₦{itemPricing.discountPerUnit.toLocaleString()}/unit ({itemPricing.effectivePercent}%)
+                                            </span>
+                                        )}
                                     </div>
 
                                     {/* Quantity Controls */}
@@ -85,8 +98,16 @@ export default function CartPage() {
                         <div className="space-y-3 text-sm text-gray-600 mb-6">
                             <div className="flex justify-between">
                                 <span>Subtotal</span>
-                                <span>₦{subtotal.toLocaleString()}</span>
+                                <span>₦{originalCartTotal.toLocaleString()}</span>
                             </div>
+                            {spinDiscountTotal > 0 && (
+                                <div className="flex justify-between text-green-700 font-bold">
+                                    <span className="flex items-center gap-1">
+                                        <Sparkles className="w-3.5 h-3.5" /> Spin Wheel Bonus
+                                    </span>
+                                    <span>-₦{spinDiscountTotal.toLocaleString()}</span>
+                                </div>
+                            )}
                             <div className="flex justify-between">
                                 <span>Shipping</span>
                                 <span>{shipping === 0 ? "Free" : `₦${shipping.toLocaleString()}`}</span>
@@ -95,6 +116,19 @@ export default function CartPage() {
                                 <p className="text-xs text-primary bg-primary/10 p-2 rounded">
                                     In Stock
                                 </p>
+                            )}
+                            {spinDiscountTotal === 0 && spinWheel && spinWheel.spinsRemaining > 0 && (
+                                <button
+                                    type="button"
+                                    onClick={() => spinWheel.openWheel(null)}
+                                    className="w-full text-left text-xs font-bold text-orange-700 bg-amber-50 hover:bg-amber-100 border border-amber-200 rounded-lg px-3 py-2.5 flex items-center justify-between transition-colors"
+                                >
+                                    <span className="flex items-center gap-1.5">
+                                        <Sparkles className="w-4 h-4 text-orange-600" />
+                                        Spin Wheel for up to 5% OFF!
+                                    </span>
+                                    <span className="underline">Spin Now</span>
+                                </button>
                             )}
                         </div>
                         <div className="flex justify-between font-bold text-lg text-gray-900 border-t pt-4 mb-6">

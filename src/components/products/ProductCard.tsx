@@ -1,11 +1,14 @@
+"use client";
+
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
-import { ShoppingCart, Eye } from "lucide-react";
-import { toast } from "sonner";
+import { ShoppingCart, Eye, Sparkles } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
 import { QuickViewModal } from "@/components/products/QuickViewModal";
 import { useCart } from "@/providers/CartProvider";
+import { useOptionalSpinWheel } from "@/providers/SpinWheelProvider";
+import { getProductPricing } from "@/lib/spinWheel";
 
 interface Product {
     id: string | number;
@@ -21,37 +24,24 @@ interface Product {
 
 export function ProductCard({ product }: { product: Product }) {
     const { addToCart } = useCart();
-
-    // Determine image URL from Payload Media relationship
-    const imageUrl = (typeof product.mainImage === 'object' && product.mainImage !== null)
-        ? product.mainImage.url
-        : product.mainImage || '/images/placeholder.jpg';
+    const spinWheel = useOptionalSpinWheel();
 
     // Get first tag if available
     const tag = product.productTags && product.productTags.length > 0
         ? (typeof product.productTags[0] === 'object' && product.productTags[0] !== null ? product.productTags[0].name : null)
         : null;
 
-    const variationPrice = ((product.variations ?? []).length > 0) ? product.variations![0].price : 0;
-    const variationSalePrice = ((product.variations ?? []).length > 0) ? product.variations![0].salePrice : 0;
+    const {
+        imageUrl,
+        finalPrice,
+        activePrice,
+        hasDiscount,
+        discountPercent: discount,
+    } = getProductPricing(product);
 
-    // Safely extract active pricing
-    const baseSalePrice = product.salePrice || variationSalePrice || 0;
-    const basePrice = product.price || variationPrice || 0;
-    
-    // Add referral percentage to prices
-    const refPercent = product.referralPercentage || 0;
-    const finalSalePrice = baseSalePrice > 0 ? baseSalePrice + (baseSalePrice * (refPercent / 100)) : 0;
-    const finalPrice = basePrice > 0 ? basePrice + (basePrice * (refPercent / 100)) : 0;
-    
-    const hasDiscount = !!(finalSalePrice && finalPrice && finalSalePrice < finalPrice);
-
-    // Displayed active price (if has sale price, use it, else generic price)
-    const activePrice = finalSalePrice || finalPrice || 0;
-
-    const discount = hasDiscount
-        ? Math.round(((finalPrice - finalSalePrice) / finalPrice) * 100)
-        : 0;
+    const spinDiscount = spinWheel && activePrice > 0
+        ? spinWheel.getProductSpinDiscount(product.id, activePrice)
+        : null;
 
     return (
         <div className="relative group h-full">
@@ -109,13 +99,29 @@ export function ProductCard({ product }: { product: Product }) {
 
                     <div className="flex items-end justify-between mt-auto">
                         <div className="flex flex-col">
-                            <span className="font-extrabold text-lg text-primary">
-                                ₦{activePrice.toLocaleString()}
-                            </span>
-                            {hasDiscount && (
-                                <span className="text-xs text-gray-400 line-through decoration-gray-400">
-                                    ₦{finalPrice.toLocaleString()}
-                                </span>
+                            {spinDiscount?.hasReward ? (
+                                <>
+                                    <span className="inline-flex items-center gap-1 text-[10px] font-extrabold text-orange-700 bg-amber-100 border border-amber-300 px-1.5 py-0.5 rounded w-fit mb-0.5">
+                                        <Sparkles className="w-2.5 h-2.5" /> -₦{spinDiscount.discountPerUnit.toLocaleString()} Spin Bonus
+                                    </span>
+                                    <span className="font-extrabold text-lg text-primary">
+                                        ₦{spinDiscount.finalUnitPrice.toLocaleString()}
+                                    </span>
+                                    <span className="text-xs text-gray-400 line-through decoration-gray-400">
+                                        ₦{activePrice.toLocaleString()}
+                                    </span>
+                                </>
+                            ) : (
+                                <>
+                                    <span className="font-extrabold text-lg text-primary">
+                                        ₦{activePrice.toLocaleString()}
+                                    </span>
+                                    {hasDiscount && (
+                                        <span className="text-xs text-gray-400 line-through decoration-gray-400">
+                                            ₦{finalPrice.toLocaleString()}
+                                        </span>
+                                    )}
+                                </>
                             )}
                         </div>
                         <Button

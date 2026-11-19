@@ -3,10 +3,12 @@
 import { Dialog, DialogContent, DialogTrigger, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
-import { ShoppingCart, Star } from "lucide-react";
+import { ShoppingCart, Star, Sparkles } from "lucide-react";
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useCart } from "@/providers/CartProvider";
+import { useOptionalSpinWheel } from "@/providers/SpinWheelProvider";
+import { getProductPricing } from "@/lib/spinWheel";
 
 interface Product {
     id: string | number;
@@ -26,28 +28,23 @@ export function QuickViewModal({ product, children }: { product: Product, childr
     const [selectedVarIdx, setSelectedVarIdx] = useState(0);
     const router = useRouter();
     const { addToCart } = useCart();
+    const spinWheel = useOptionalSpinWheel();
 
-    const variation = (product.variations && product.variations.length > 0) ? product.variations[selectedVarIdx] : null;
-
-    const imageUrl = (variation && variation.image && typeof variation.image === 'object' && variation.image !== null)
-        ? variation.image.url
-        : (typeof product.mainImage === 'object' && product.mainImage !== null)
-            ? product.mainImage.url
-            : product.mainImage || '/images/placeholder.jpg';
+    const {
+        variation,
+        imageUrl,
+        finalPrice,
+        activePrice,
+        hasDiscount,
+    } = getProductPricing(product, selectedVarIdx);
 
     const tag = product.productTags && product.productTags.length > 0
         ? (typeof product.productTags[0] === 'object' && product.productTags[0] !== null ? product.productTags[0].name : null)
         : null;
 
-    const baseSalePrice = variation ? variation.salePrice : product.salePrice;
-    const basePrice = variation ? variation.price : product.price;
-    const refPercent = product.referralPercentage || 0;
-
-    const finalSalePrice = baseSalePrice > 0 ? baseSalePrice + (baseSalePrice * (refPercent / 100)) : 0;
-    const finalPrice = basePrice > 0 ? basePrice + (basePrice * (refPercent / 100)) : 0;
-    
-    const activePrice = finalSalePrice || finalPrice || 0;
-    const hasDiscount = !!(finalSalePrice && finalPrice && finalSalePrice < finalPrice);
+    const spinDiscount = spinWheel && activePrice > 0
+        ? spinWheel.getProductSpinDiscount(product.id, activePrice)
+        : null;
 
     return (
         <Dialog>
@@ -79,14 +76,32 @@ export function QuickViewModal({ product, children }: { product: Product, childr
                         </div>
 
                         <h2 className="text-2xl font-bold mb-2 text-gray-900">{product.title}</h2>
-                        <div className="flex items-end gap-3 mb-6">
-                            <span className="text-3xl font-extrabold text-primary">
-                                ₦{activePrice.toLocaleString()}
-                            </span>
-                            {hasDiscount && (
-                                <span className="text-lg text-gray-400 line-through mb-1">
-                                    ₦{finalPrice.toLocaleString()}
-                                </span>
+                        <div className="mb-6">
+                            {spinDiscount?.hasReward ? (
+                                <div className="space-y-1">
+                                    <div className="flex items-end gap-3">
+                                        <span className="text-3xl font-extrabold text-primary">
+                                            ₦{spinDiscount.finalUnitPrice.toLocaleString()}
+                                        </span>
+                                        <span className="text-lg text-gray-400 line-through mb-1">
+                                            ₦{activePrice.toLocaleString()}
+                                        </span>
+                                    </div>
+                                    <span className="inline-flex items-center gap-1 text-xs font-extrabold text-orange-700 bg-amber-100 border border-amber-300 px-2.5 py-0.5 rounded-full">
+                                        <Sparkles className="w-3 h-3" /> Spin Bonus Applied: -₦{spinDiscount.discountPerUnit.toLocaleString()} ({spinDiscount.effectivePercent}%)
+                                    </span>
+                                </div>
+                            ) : (
+                                <div className="flex items-end gap-3">
+                                    <span className="text-3xl font-extrabold text-primary">
+                                        ₦{activePrice.toLocaleString()}
+                                    </span>
+                                    {hasDiscount && (
+                                        <span className="text-lg text-gray-400 line-through mb-1">
+                                            ₦{finalPrice.toLocaleString()}
+                                        </span>
+                                    )}
+                                </div>
                             )}
                         </div>
 

@@ -3,12 +3,15 @@
 import { useState } from "react";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
-import { Star, Minus, Plus, Heart, Truck, ShieldCheck } from "lucide-react";
+import { Star, Minus, Plus, Heart, Truck, ShieldCheck, Sparkles } from "lucide-react";
 import { ProductCarousel } from "@/components/home/ProductCarousel";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { RichText } from "@/components/ui/RichText";
 import { useCart } from "@/providers/CartProvider";
+import { useOptionalSpinWheel } from "@/providers/SpinWheelProvider";
+import { SpinCatalogSync } from "@/components/spin-wheel/SpinCatalogSync";
+import { getProductPricing } from "@/lib/spinWheel";
 
 export default function ProductDetailClient({ product, relatedProducts }: { product: any, relatedProducts: any[] }) {
     const defaultImage = (typeof product.mainImage === 'object' && product.mainImage !== null) ? product.mainImage.url : (product.mainImage || "/images/placeholder.jpg");
@@ -23,15 +26,21 @@ export default function ProductDetailClient({ product, relatedProducts }: { prod
     const router = useRouter();
 
     const isVariable = product.productType === 'variable' && product.variations?.length > 0;
-    const variation = isVariable ? product.variations[selectedVarIdx] : null;
-
-    const basePriceCalc = variation ? (variation.salePrice || variation.price || 0) : (product.salePrice || product.price || 0);
-    const baseOriginalPriceCalc = variation ? (variation.price || 0) : (product.price || 0);
-    const refPercent = product.referralPercentage || 0;
-
-    const price = basePriceCalc > 0 ? basePriceCalc + (basePriceCalc * (refPercent / 100)) : 0;
-    const originalPrice = baseOriginalPriceCalc > 0 ? baseOriginalPriceCalc + (baseOriginalPriceCalc * (refPercent / 100)) : 0;
+    const pricing = getProductPricing(product, isVariable ? selectedVarIdx : 0);
+    const variation = isVariable ? pricing.variation : null;
+    const price = pricing.activePrice;
+    const originalPrice = pricing.finalPrice;
     const { addToCart } = useCart();
+    const spinWheel = useOptionalSpinWheel();
+    const spinDiscount = spinWheel && price > 0 ? spinWheel.getProductSpinDiscount(product.id, price) : null;
+
+    const handleOpenProductSpin = () => {
+        if (!spinWheel || price <= 0) return;
+        const spinTarget = variation
+            ? { ...product, variations: [variation] }
+            : product;
+        spinWheel.openWheel(spinTarget);
+    };
 
     const handleAddToCart = () => {
         if (price <= 0) {
@@ -50,6 +59,7 @@ export default function ProductDetailClient({ product, relatedProducts }: { prod
 
     return (
         <div className="min-h-screen bg-[#f5f5f5] pt-24 pb-12">
+            <SpinCatalogSync products={[product, ...(relatedProducts || [])]} />
             <div className="container mx-auto px-4">
                 {/* Breadcrumb */}
                 <div className="text-sm text-gray-500 mb-6">
@@ -134,15 +144,67 @@ export default function ProductDetailClient({ product, relatedProducts }: { prod
                                 </div>
                             )}
 
-                            <div className="mb-8 p-4 bg-gray-50 rounded-lg border border-gray-100">
-                                <div className="flex items-end gap-3 mb-2">
-                                    <span className="text-4xl font-extrabold text-primary">₦{price.toLocaleString()}</span>
-                                    {originalPrice > price && (
-                                        <span className="text-lg text-gray-400 line-through mb-1">₦{originalPrice.toLocaleString()}</span>
+                            <div className="mb-8 space-y-3">
+                                <div className="p-4 bg-gray-50 rounded-lg border border-gray-100">
+                                    {spinDiscount?.hasReward ? (
+                                        <>
+                                            <div className="flex items-center gap-2 mb-1.5">
+                                                <span className="inline-flex items-center gap-1 bg-amber-100 text-orange-700 border border-amber-300 text-xs font-extrabold px-2.5 py-0.5 rounded-full">
+                                                    <Sparkles className="w-3.5 h-3.5" />
+                                                    Spin Bonus Applied: -₦{spinDiscount.discountPerUnit.toLocaleString()} ({spinDiscount.effectivePercent}% OFF)
+                                                </span>
+                                            </div>
+                                            <div className="flex items-end gap-3 mb-1">
+                                                <span className="text-4xl font-extrabold text-primary">
+                                                    ₦{spinDiscount.finalUnitPrice.toLocaleString()}
+                                                </span>
+                                                <span className="text-lg text-gray-400 line-through mb-1">
+                                                    ₦{price.toLocaleString()}
+                                                </span>
+                                            </div>
+                                            <p className="text-xs text-green-700 font-semibold">
+                                                You save ₦{spinDiscount.discountPerUnit.toLocaleString()} with your Lucky Wheel bonus (capped at max 5%).
+                                            </p>
+                                        </>
+                                    ) : (
+                                        <>
+                                            <div className="flex items-end gap-3 mb-2">
+                                                <span className="text-4xl font-extrabold text-primary">₦{price.toLocaleString()}</span>
+                                                {originalPrice > price && (
+                                                    <span className="text-lg text-gray-400 line-through mb-1">₦{originalPrice.toLocaleString()}</span>
+                                                )}
+                                            </div>
+                                            {originalPrice > price && (
+                                                <p className="text-sm text-primary font-medium">You save ₦{(originalPrice - price).toLocaleString()}</p>
+                                            )}
+                                        </>
                                     )}
                                 </div>
-                                {originalPrice > price && (
-                                    <p className="text-sm text-primary font-medium">You save ₦{(originalPrice - price).toLocaleString()}</p>
+
+                                {price > 0 && spinWheel && (spinWheel.spinsRemaining > 0 || spinDiscount?.hasReward) && (
+                                    <div className="p-3.5 rounded-xl bg-gradient-to-r from-orange-50 via-amber-50 to-red-50 border border-amber-300 flex items-center justify-between gap-3">
+                                        <div className="min-w-0">
+                                            <p className="text-xs font-black uppercase tracking-wide text-orange-700 flex items-center gap-1">
+                                                <Sparkles className="w-3.5 h-3.5 text-amber-600" />
+                                                {spinDiscount?.hasReward ? "Lucky Spin Bonus Active" : "Temu-Style Lucky Spin Bonus"}
+                                            </p>
+                                            <p className="text-xs text-gray-700 font-medium mt-0.5">
+                                                {spinDiscount?.hasReward
+                                                    ? `Saving ₦${spinDiscount.discountPerUnit.toLocaleString()} on this product${spinWheel.spinsRemaining > 0 ? ` • ${spinWheel.spinsRemaining} spin left` : ""}`
+                                                    : `Spin to unlock up to ₦${Math.floor(price * 0.05).toLocaleString()} (5% max) off this product!`}
+                                            </p>
+                                        </div>
+                                        {spinWheel.spinsRemaining > 0 && (
+                                            <Button
+                                                type="button"
+                                                size="sm"
+                                                onClick={handleOpenProductSpin}
+                                                className="shrink-0 bg-gradient-to-r from-orange-500 to-red-600 hover:from-orange-600 hover:to-red-700 text-white font-bold rounded-full px-4 shadow-md"
+                                            >
+                                                {spinDiscount?.hasReward ? "Spin Again" : "Spin & Win"}
+                                            </Button>
+                                        )}
+                                    </div>
                                 )}
                             </div>
 

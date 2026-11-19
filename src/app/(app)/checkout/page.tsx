@@ -1,14 +1,24 @@
 "use client";
 
 import { useState, useEffect, useCallback, useMemo } from "react";
+import dynamic from "next/dynamic";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, CheckCircle2 } from "lucide-react";
+import { ArrowLeft, CheckCircle2, Sparkles } from "lucide-react";
 import Link from "next/link";
 import { toast } from "sonner";
 import { useCart } from "@/providers/CartProvider";
+import { useOptionalSpinWheel } from "@/providers/SpinWheelProvider";
 import { ProductCarousel } from "@/components/home/ProductCarousel";
-import { usePaystackPayment } from "react-paystack";
 import { nigeriaData } from "@/lib/nigeriaData";
+
+const PaystackPayButton = dynamic(() => import("./PaystackPayButton"), {
+    ssr: false,
+    loading: () => (
+        <Button disabled className="w-full mt-6 bg-green-600/70 text-white py-6 text-lg font-bold">
+            Loading Payment...
+        </Button>
+    ),
+});
 
 
 export default function CheckoutPage() {
@@ -17,7 +27,8 @@ export default function CheckoutPage() {
 
     const [step, setStep] = useState(1);
     const [isLoading, setIsLoading] = useState(false);
-    const { cartItems, cartTotal, clearCart } = useCart();
+    const { cartItems, cartTotal, originalCartTotal, spinDiscountTotal, getItemPricing, clearCart } = useCart();
+    const spinWheel = useOptionalSpinWheel();
 
     const [email, setEmail] = useState("");
     const [firstName, setFirstName] = useState("");
@@ -107,17 +118,31 @@ export default function CheckoutPage() {
     const [isOrderCreating, setIsOrderCreating] = useState(false);
 
     const paystackConfig = useMemo(() => {
+        const spinBonusSummary = spinDiscountTotal > 0 ? `-₦${spinDiscountTotal.toLocaleString()} (max 5% cap)` : '';
+        const customFields = [
+            { display_name: "Customer Name", variable_name: "customer_name", value: `${firstName} ${lastName}` },
+            { display_name: "Customer Phone", variable_name: "customer_phone", value: phone },
+        ];
+        if (spinBonusSummary) {
+            customFields.push({
+                display_name: "Spin Wheel Bonus",
+                variable_name: "spin_wheel_bonus",
+                value: spinBonusSummary,
+            });
+        }
+
         return {
             reference,
             email,
             amount: Math.round((cartTotal + shippingCost) * 100),
             publicKey: process.env.NEXT_PUBLIC_PAYSTACK_PUBLIC_KEY?.trim() || '',
             metadata: {
-                custom_fields: [
-                    { display_name: "Customer Name", variable_name: "customer_name", value: `${firstName} ${lastName}` },
-                    { display_name: "Customer Phone", variable_name: "customer_phone", value: phone },
-                ],
-                cartData: JSON.stringify(cartItems.map(item => ({ product: item.id, quantity: item.quantity, price: item.price }))),
+                custom_fields: customFields,
+                cartData: JSON.stringify(cartItems.map(item => ({
+                    product: item.id,
+                    quantity: item.quantity,
+                    price: getItemPricing(item).finalUnitPrice,
+                }))),
                 shippingData: JSON.stringify({ 
                     method: shippingMethod, 
                     name: `${firstName} ${lastName}`, 
@@ -128,11 +153,10 @@ export default function CheckoutPage() {
                     cost: shippingCost
                 }),
                 referralCode,
+                spinBonusSummary,
             },
         };
-    }, [reference, email, cartTotal, shippingCost, firstName, lastName, address, city, state, phone, cartItems, shippingMethod, referralCode]);
-
-    const initializePayment = usePaystackPayment(paystackConfig);
+    }, [reference, email, cartTotal, spinDiscountTotal, shippingCost, firstName, lastName, address, city, state, phone, cartItems, getItemPricing, shippingMethod, referralCode]);
 
     const onSuccess = useCallback(async (reference: any) => {
         setIsLoading(true);
@@ -142,6 +166,7 @@ export default function CheckoutPage() {
 
             if (data.success || data.data?.status === 'success') {
                 toast.success("Payment successful!");
+                spinWheel?.consumeAppliedRewards(cartItems.map((i) => i.id));
                 clearCart();
                 setStep(3);
             } else {
@@ -153,31 +178,30 @@ export default function CheckoutPage() {
         } finally {
             setIsLoading(false);
         }
-    }, [clearCart]);
+    }, [clearCart, spinWheel, cartItems]);
 
     const onClose = useCallback(() => {
         toast.info("Payment cancelled");
         setIsLoading(false);
     }, []);
 
-    const handlePayment = () => {
+    const validatePayment = useCallback(() => {
         if (!email || !firstName || !lastName || !phone) {
             toast.error("Please fill in all contact details");
             setStep(1);
-            return;
+            return false;
         }
         if (shippingMethod === 'delivery' && (!address || !city || !state)) {
             toast.error("Please fill in all shipping address details");
             setStep(1);
-            return;
+            return false;
         }
         if (cartItems.length === 0 || cartTotal <= 0) {
             toast.error("Invalid cart. Please refresh and try again.");
-            return;
+            return false;
         }
-        setIsLoading(true);
-        initializePayment({ onSuccess, onClose });
-    };
+        return true;
+    }, [email, firstName, lastName, phone, shippingMethod, address, city, state, cartItems.length, cartTotal]);
 
     if (!mounted) {
         return (
@@ -281,13 +305,16 @@ export default function CheckoutPage() {
                                     </label>
                                 </div>
 
-                                <Button
-                                    onClick={handlePayment}
+                                <PaystackPayButton
+                                    config={paystackConfig}
+                                    onValidate={validatePayment}
+                                    onStartPayment={() => setIsLoading(true)}
+                                    onSuccess={onSuccess}
+                                    onClose={onClose}
                                     disabled={isLoading || cartItems.length === 0}
-                                    className="w-full mt-6 bg-green-600 text-white py-6 text-lg font-bold hover:bg-green-700 shadow-lg animate-bounce"
-                                >
-                                    {isLoading ? 'Opening Payment Window...' : `Pay Now ₦${(cartTotal + shippingCost).toLocaleString()}`}
-                                </Button>
+                                    isLoading={isLoading}
+                                    totalAmount={cartTotal + shippingCost}
+                                />
                             </div>
                         )}
 
@@ -310,6 +337,7 @@ export default function CheckoutPage() {
                         <div className="space-y-4 mb-6">
                             {cartItems.map((item) => {
                                 const imageUrl = (typeof item.mainImage === 'object' && item.mainImage !== null) ? item.mainImage.url : (item.mainImage || '/images/placeholder.jpg');
+                                const itemPricing = getItemPricing(item);
                                 return (
                                     <div key={item.id} className="flex gap-3">
                                         <div className="w-16 h-16 bg-white border rounded-md flex items-center justify-center relative overflow-hidden">
@@ -318,14 +346,25 @@ export default function CheckoutPage() {
                                         </div>
                                         <div className="flex-1">
                                             <p className="text-sm font-medium line-clamp-2">{item.title}</p>
-                                            <p className="text-sm text-gray-500">₦{item.price.toLocaleString()}</p>
+                                            <div className="flex items-center gap-2">
+                                                <p className="text-sm font-bold text-primary">₦{itemPricing.finalUnitPrice.toLocaleString()}</p>
+                                                {itemPricing.hasReward && (
+                                                    <span className="text-xs text-gray-400 line-through">₦{item.price.toLocaleString()}</span>
+                                                )}
+                                            </div>
                                         </div>
                                     </div>
                                 )
                             })}
                         </div>
                         <div className="border-t pt-4 space-y-2 text-sm">
-                            <div className="flex justify-between"><span className="text-gray-500">Subtotal</span><span className="font-medium">₦{cartTotal.toLocaleString()}</span></div>
+                            <div className="flex justify-between"><span className="text-gray-500">Subtotal</span><span className="font-medium">₦{originalCartTotal.toLocaleString()}</span></div>
+                            {spinDiscountTotal > 0 && (
+                                <div className="flex justify-between text-green-700 font-bold">
+                                    <span className="flex items-center gap-1"><Sparkles className="w-3.5 h-3.5" /> Spin Bonus</span>
+                                    <span>-₦{spinDiscountTotal.toLocaleString()}</span>
+                                </div>
+                            )}
                             <div className="flex justify-between">
                                 <span className="text-gray-500">Shipping {shippingMethod === 'pickup' && '(Pickup)'}</span>
                                 <span className="font-medium">{shippingCost === 0 ? 'Free' : `₦${shippingCost.toLocaleString()}`}</span>

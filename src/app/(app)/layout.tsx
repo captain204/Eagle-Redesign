@@ -8,6 +8,9 @@ import { BottomNav } from "@/components/layout/BottomNav";
 import { Toaster } from "@/components/ui/sonner";
 import PerformancePolyfill from "@/components/layout/PerformancePolyfill";
 import { CartProvider } from "@/providers/CartProvider";
+import { SpinWheelProvider } from "@/providers/SpinWheelProvider";
+import { SpinWheelModal } from "@/components/spin-wheel/SpinWheelModal";
+import { SpinWheelWidget } from "@/components/spin-wheel/SpinWheelWidget";
 import { WhatsAppIcon } from "@/components/ui/WhatsAppIcon";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-sans" });
@@ -59,15 +62,19 @@ export default async function RootLayout({
     <html lang="en">
       <body className={`${inter.variable} ${outfit.variable} font-outfit`}>
         <PerformancePolyfill />
-        <CartProvider>
-          <TopBar />
-          <Header categories={categories} />
-          <main className="pb-16 md:pb-0">{children}</main> {/* Add padding bottom for mobile nav */}
-          <Footer />
-          <BottomNav />
-          <Toaster />
-          <WhatsAppIcon />
-        </CartProvider>
+        <SpinWheelProvider>
+          <CartProvider>
+            <TopBar />
+            <Header categories={categories} />
+            <main className="pb-16 md:pb-0">{children}</main> {/* Add padding bottom for mobile nav */}
+            <Footer />
+            <BottomNav />
+            <Toaster />
+            <WhatsAppIcon />
+            <SpinWheelWidget />
+            <SpinWheelModal />
+          </CartProvider>
+        </SpinWheelProvider>
       </body>
     </html>
   );

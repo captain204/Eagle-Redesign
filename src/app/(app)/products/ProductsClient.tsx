@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { ProductCard } from "@/components/products/ProductCard";
+import { SpinCatalogSync } from "@/components/spin-wheel/SpinCatalogSync";
 import { ChevronDown } from "lucide-react";
 import { useSearchParams } from "next/navigation";
 
@@ -56,6 +57,7 @@ export default function ProductsClient({ initialProducts, categories, pageTitle 
 
     return (
         <div className="min-h-screen bg-[#f5f5f5] pt-24 pb-12">
+            <SpinCatalogSync products={initialProducts} />
             <div className="container mx-auto px-4">
                 {/* Breadcrumb / Title */}
                 <div className="mb-8">

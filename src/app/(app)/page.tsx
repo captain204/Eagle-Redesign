@@ -1,5 +1,6 @@
 import { Hero } from "@/components/home/Hero";
 import { NewUserZone } from "@/components/home/NewUserZone";
+import { SpinCatalogSync } from "@/components/spin-wheel/SpinCatalogSync";
 import { Headphones, Battery, Watch, Zap, Speaker, Smartphone } from "lucide-react";
 import Link from "next/link";
 import * as motion from "framer-motion/client";
@@ -172,6 +173,7 @@ export default async function Home() {
 
   return (
     <div className="min-h-screen bg-[#f5f5f5]">
+      <SpinCatalogSync products={[...dailyDeals, ...hotNewProducts, ...featuredProducts]} />
       <Hero slides={sliders} />
       <NewUserZone
         couponCode={welcomeCoupon?.code}
